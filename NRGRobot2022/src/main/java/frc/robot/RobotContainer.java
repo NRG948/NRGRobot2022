@@ -9,6 +9,7 @@ import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.commands.DriveWithController;
+import frc.robot.subsystems.RaspberryPiVision;
 import frc.robot.subsystems.SwerveDrive;
 
 /**
@@ -26,6 +27,7 @@ public class RobotContainer {
 
   // Subsystems
   private final SwerveDrive swerveDrive = new SwerveDrive();
+  private final RaspberryPiVision raspberryPiVision = new RaspberryPiVision();
 
   // Commands
   private final DriveWithController driveWithController = new DriveWithController(swerveDrive, driveController);
@@ -58,5 +60,9 @@ public class RobotContainer {
   public Command getAutonomousCommand() {
     // An ExampleCommand will run in autonomous
     return null;
+  }
+  
+  public void initSubsystems() {
+    raspberryPiVision.initPipeline();
   }
 }
