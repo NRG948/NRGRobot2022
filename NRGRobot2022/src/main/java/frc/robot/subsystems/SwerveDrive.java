@@ -20,23 +20,18 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
-import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.SerialPort;
-import edu.wpi.first.wpilibj.motorcontrol.MotorController;
-import edu.wpi.first.wpilibj.motorcontrol.PWMSparkMax;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.RobotContainer;
 
 public class SwerveDrive extends SubsystemBase {
 
-
-  /*Swerve Module helper class*/
+  /* Swerve Module helper class */
   private class Module {
     private static final double kWheelRadius = 0.0508;
     private static final int kEncoderResolution = 2048;
-    private static final double kDrivePulsesPerMeter = kEncoderResolution / (2*kWheelRadius*Math.PI); // pulses per meter
-
+    private static final double kDrivePulsesPerMeter = kEncoderResolution / (2 * kWheelRadius * Math.PI); // pulses per
+                                                                                                          // meter
 
     private static final double kModuleMaxAngularVelocity = SwerveDrive.kMaxAngularSpeed;
     private static final double kModuleMaxAngularAcceleration = 2 * Math.PI; // radians per second squared
@@ -46,7 +41,6 @@ public class SwerveDrive extends SubsystemBase {
 
     // private final Encoder m_driveEncoder;
     private final CANCoder m_turningEncoder;
-
 
     /* TODO: Tune PID for drive and turning PID controllers */
     // Gains are for example purposes only - must be determined for your own robot!
@@ -68,22 +62,21 @@ public class SwerveDrive extends SubsystemBase {
      * Constructs a SwerveModule with a drive motor, turning motor, drive encoder
      * and turning encoder.
      *
-     * @param driveMotorChannel      PWM output for the drive motor.
-     * @param turningMotorChannel    PWM output for the turning motor.
-     * @param turningEncodeChannel        
+     * @param driveMotorChannel    CAN ID of the drive motor.
+     * @param turningMotorChannel  CAN ID of the turning motor.
+     * @param turningEncodeChannel
      */
     public Module(
         int driveMotorChannel,
         int turningMotorChannel,
         int turningEncodeChannel
 
-
-        ) {
+    ) {
       m_driveMotor = new TalonFX(driveMotorChannel);
       m_turningMotor = new TalonFX(turningMotorChannel);
 
       m_turningEncoder = new CANCoder(turningEncodeChannel);
-        
+
       m_turningEncoder.configAbsoluteSensorRange(AbsoluteSensorRange.Signed_PlusMinus180);
 
       // Limit the PID Controller's input range between -pi and pi and set the input
@@ -97,14 +90,15 @@ public class SwerveDrive extends SubsystemBase {
      * @return The current state of the module.
      */
     public SwerveModuleState getState() {
-      return new SwerveModuleState(getDriveMotorVelocity(), Rotation2d.fromDegrees(m_turningEncoder.getAbsolutePosition()));
+      return new SwerveModuleState(getDriveMotorVelocity(),
+          Rotation2d.fromDegrees(m_turningEncoder.getAbsolutePosition()));
     }
 
-    public double getDriveMotorPosition(){
+    public double getDriveMotorPosition() {
       return m_driveMotor.getSelectedSensorPosition() / kDrivePulsesPerMeter;
     }
 
-    public double getDriveMotorVelocity(){ 
+    public double getDriveMotorVelocity() {
       return m_driveMotor.getSelectedSensorVelocity() / kDrivePulsesPerMeter;
 
     }
@@ -115,7 +109,7 @@ public class SwerveDrive extends SubsystemBase {
      * @param desiredState Desired state with speed and angle.
      */
     public void setDesiredState(SwerveModuleState desiredState) {
-      
+
       // Optimize the reference state to avoid spinning further than 90 degrees
       Rotation2d currentAngle = Rotation2d.fromDegrees(m_turningEncoder.getAbsolutePosition());
       SwerveModuleState state = SwerveModuleState.optimize(desiredState, currentAngle);
