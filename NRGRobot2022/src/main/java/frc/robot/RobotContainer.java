@@ -12,18 +12,27 @@ import frc.robot.commands.DriveWithController;
 import frc.robot.subsystems.SwerveDrive;
 
 /**
- * This class is where the bulk of the robot should be declared. Since Command-based is a
- * "declarative" paradigm, very little robot logic should actually be handled in the {@link Robot}
- * periodic methods (other than the scheduler calls). Instead, the structure of the robot (including
+ * This class is where the bulk of the robot should be declared. Since
+ * Command-based is a
+ * "declarative" paradigm, very little robot logic should actually be handled in
+ * the {@link Robot}
+ * periodic methods (other than the scheduler calls). Instead, the structure of
+ * the robot (including
  * subsystems, commands, and button mappings) should be declared here.
  */
 public class RobotContainer {
-    private final XboxController driveController = new XboxController(2);
-    private final SwerveDrive swerveDrive = new SwerveDrive();
-    private final DriveWithController driveWithController = new DriveWithController(swerveDrive, driveController);
+  // Operator interface (e.g. Joysticks)
+  private final XboxController driveController = new XboxController(2);
 
+  // Subsystems
+  private final SwerveDrive swerveDrive = new SwerveDrive();
 
-  /** The container for the robot. Contains subsystems, OI devices, and commands. */
+  // Commands
+  private final DriveWithController driveWithController = new DriveWithController(swerveDrive, driveController);
+
+  /**
+   * The container for the robot. Contains subsystems, OI devices, and commands.
+   */
   public RobotContainer() {
     swerveDrive.setDefaultCommand(driveWithController);
     // Configure the button bindings
@@ -31,12 +40,15 @@ public class RobotContainer {
   }
 
   /**
-   * Use this method to define your button->command mappings. Buttons can be created by
+   * Use this method to define your button->command mappings. Buttons can be
+   * created by
    * instantiating a {@link GenericHID} or one of its subclasses ({@link
-   * edu.wpi.first.wpilibj.Joystick} or {@link XboxController}), and then passing it to a {@link
+   * edu.wpi.first.wpilibj.Joystick} or {@link XboxController}), and then passing
+   * it to a {@link
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
-  private void configureButtonBindings() {}
+  private void configureButtonBindings() {
+  }
 
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
