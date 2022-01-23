@@ -34,7 +34,7 @@ public class RobotContainer {
   private final XboxController driveController = new XboxController(2);
   private JoystickButton xboxButtonA = new JoystickButton(driveController, 1); // A Button
   private JoystickButton xboxButtonB = new JoystickButton(driveController, 2); // B Button
-
+  private JoystickButton xboxButtonx = new JoystickButton(driveController, 3); // x Button
   // Subsystems
   private final SwerveDrive swerveDrive = new SwerveDrive();
   private final RaspberryPiVision raspberryPiVision = new RaspberryPiVision();
@@ -49,10 +49,10 @@ public class RobotContainer {
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
   public RobotContainer() {
-    swerveDrive.setDefaultCommand(driveWithController);
+    //swerveDrive.setDefaultCommand(driveWithController);
     // Configure the button bindings
     configureButtonBindings();
-
+    xboxButtonx.whenPressed(driveWithController);
     ShuffleboardTab swerveDriveTab = Shuffleboard.getTab("Swerve Drive");
     ShuffleboardLayout enocderValues = swerveDriveTab.getLayout("Encoder Values", BuiltInLayouts.kList);
     double[] turningEcoderPositions = swerveDrive.getTurningEncoderPositions();
