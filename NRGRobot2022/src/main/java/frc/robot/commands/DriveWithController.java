@@ -16,9 +16,10 @@ public class DriveWithController extends CommandBase {
   /** Creates a new DriveWithController. */
   public DriveWithController(SwerveDrive sDrive, XboxController dController) {
     // Use addRequirements() here to declare subsystem dependencies.
-    addRequirements(swerveDrive);
     swerveDrive = sDrive;
     driveController = dController;
+    addRequirements(swerveDrive);
+
   }
 
   // Called when the command is initially scheduled.
