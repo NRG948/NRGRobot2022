@@ -56,10 +56,10 @@ public class RobotContainer {
     ShuffleboardTab swerveDriveTab = Shuffleboard.getTab("Swerve Drive");
     ShuffleboardLayout enocderValues = swerveDriveTab.getLayout("Encoder Values", BuiltInLayouts.kList);
     double[] turningEcoderPositions = swerveDrive.getTurningEncoderPositions();
-    enocderValues.addNumber("Front Left Turning Encoder", () -> turningEcoderPositions[0]);
-    enocderValues.addNumber("Front Right Turning Encoder", () -> turningEcoderPositions[1]);
-    enocderValues.addNumber("Back Left Turning Encoder", () -> turningEcoderPositions[2]);
-    enocderValues.addNumber("Back Right Turning Encoder", () -> turningEcoderPositions[3]);
+    enocderValues.addNumber("Front Left Turning Encoder", () ->  swerveDrive.getTurningEncoderPositions()[0]);
+    enocderValues.addNumber("Front Right Turning Encoder", () -> swerveDrive.getTurningEncoderPositions()[1]);
+    enocderValues.addNumber("Back Left Turning Encoder", () -> swerveDrive.getTurningEncoderPositions()[2]);
+    enocderValues.addNumber("Back Right Turning Encoder", () -> swerveDrive.getTurningEncoderPositions()[3]);
 
   }
 
