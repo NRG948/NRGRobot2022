@@ -129,6 +129,13 @@ public class SwerveDrive extends SubsystemBase {
       m_driveMotor.set(ControlMode.PercentOutput, (driveOutput + driveFeedforward) / batteryVolatage);
       m_turningMotor.set(ControlMode.PercentOutput, (turnOutput + turnFeedforward) / batteryVolatage);
     }
+
+    public void setCanCoder(double value){
+      m_turningEncoder.setPosition(value);
+    }
+    public double getAbsolutePosition(){
+      return m_turningEncoder.getAbsolutePosition();
+    }
   }
 
   public static final double kMaxSpeed = 3.0; // 3 meters per second
@@ -186,6 +193,9 @@ public class SwerveDrive extends SubsystemBase {
         m_frontRight.getState(),
         m_backLeft.getState(),
         m_backRight.getState());
+  }
+  public double[] getTurningEncoderPositions(){
+    return new double[] {m_frontLeft.getAbsolutePosition(), m_frontRight.getAbsolutePosition(), m_backLeft.getAbsolutePosition(), m_backRight.getAbsolutePosition()}; 
   }
 
   /** Returns the current orientation of the robot as a Rotation2d object */
