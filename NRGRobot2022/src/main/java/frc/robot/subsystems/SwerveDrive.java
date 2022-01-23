@@ -10,6 +10,8 @@ import com.ctre.phoenix.sensors.AbsoluteSensorRange;
 import com.ctre.phoenix.sensors.CANCoder;
 import com.kauailabs.navx.frc.AHRS;
 
+import org.ejml.data.ZMatrix;
+
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
@@ -26,13 +28,16 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class SwerveDrive extends SubsystemBase {
 
+  private final double[] zeroPositions = new double[]{-6.152, -51.855, -93.515, -66.621};
+
   /* Swerve Module helper class */
   private class Module {
+
     private static final double kWheelRadius = 0.047625;
     private static final int kEncoderResolution = 2048;
     private static final double kDrivePulsesPerMeter = kEncoderResolution / (2 * kWheelRadius * Math.PI); // pulses per
                                                                                                           // meter
-
+                                                                                                          
     private static final double kModuleMaxAngularVelocity = SwerveDrive.kMaxAngularSpeed;
     private static final double kModuleMaxAngularAcceleration = 2 * Math.PI; // radians per second squared
 
@@ -130,12 +135,15 @@ public class SwerveDrive extends SubsystemBase {
       m_turningMotor.set(ControlMode.PercentOutput, (turnOutput + turnFeedforward) / batteryVolatage);
     }
 
-    public void setCanCoder(double value){
-      m_turningEncoder.setPosition(value);
+    public void zeroRelativeEncoder(double absoluteZeroPosition){
+      m_turningEncoder.setPosition(absoluteZeroPosition - getAbsolutePosition());
     }
     public double getAbsolutePosition(){
       return m_turningEncoder.getAbsolutePosition();
     }
+    public double getRelativePosition(){
+      return m_turningEncoder.getPosition();
+    }  
   }
 
   public static final double kMaxSpeed = 3.0; // 3 meters per second
@@ -160,6 +168,7 @@ public class SwerveDrive extends SubsystemBase {
   private final SwerveDriveOdometry m_odometry = new SwerveDriveOdometry(m_kinematics, getRotation2d());
 
   public SwerveDrive() {
+    zeroEncoders();
     m_ahrs.reset();
   }
 
@@ -194,10 +203,39 @@ public class SwerveDrive extends SubsystemBase {
         m_backLeft.getState(),
         m_backRight.getState());
   }
-  public double[] getTurningEncoderPositions(){
-    return new double[] {m_frontLeft.getAbsolutePosition(), m_frontRight.getAbsolutePosition(), m_backLeft.getAbsolutePosition(), m_backRight.getAbsolutePosition()}; 
+  public double getAbsoluteTurningEncoderPosition(int index){
+    switch(index){
+      case 0:
+        return m_frontLeft.getAbsolutePosition();
+      case 1:
+        return m_frontRight.getAbsolutePosition();
+      case 2:
+        return m_backLeft.getAbsolutePosition();
+      case 3:
+        return m_backRight.getAbsolutePosition();
+    }
+    return 0;
   }
+  public double getRelativeTurningEncoderPosition(int index){
+    switch(index){
+      case 0:
+        return m_frontLeft.getRelativePosition();
+      case 1:
+        return m_frontRight.getRelativePosition();
+      case 2:
+        return m_backLeft.getRelativePosition();
+      case 3:
+        return m_backRight.getRelativePosition();
+    }
+    return 0; 
+  }
+  public void zeroEncoders(){
+    m_frontLeft.zeroRelativeEncoder(zeroPositions[0]);
+    m_frontRight.zeroRelativeEncoder(zeroPositions[1]);
+    m_backLeft.zeroRelativeEncoder(zeroPositions[2]);
+    m_backRight.zeroRelativeEncoder(zeroPositions[3]);
 
+  }
   /** Returns the current orientation of the robot as a Rotation2d object */
   public Rotation2d getRotation2d() {
     return Rotation2d.fromDegrees(m_ahrs.getAngle());
