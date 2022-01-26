@@ -45,6 +45,7 @@ public class RobotContainer {
   private final DriveForward driveForward = new DriveForward(swerveDrive);
 
 
+
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
@@ -52,20 +53,13 @@ public class RobotContainer {
     //swerveDrive.setDefaultCommand(driveWithController);
     // Configure the button bindings
     configureButtonBindings();
-    xboxButtonx.whenPressed(driveWithController);
-    ShuffleboardTab swerveDriveTab = Shuffleboard.getTab("Swerve Drive");
 
-    ShuffleboardLayout absoluteEncoderValues = swerveDriveTab.getLayout("Absolute Encoder Values", BuiltInLayouts.kList);
-    absoluteEncoderValues.addNumber("Front Left Turning Encoder", () ->  swerveDrive.getAbsoluteTurningEncoderPosition(0));
-    absoluteEncoderValues.addNumber("Front Right Turning Encoder", () -> swerveDrive.getAbsoluteTurningEncoderPosition(1));
-    absoluteEncoderValues.addNumber("Back Left Turning Encoder", () -> swerveDrive.getAbsoluteTurningEncoderPosition(2));
-    absoluteEncoderValues.addNumber("Back Right Turning Encoder", () -> swerveDrive.getAbsoluteTurningEncoderPosition(3));
 
-    ShuffleboardLayout relativeEncoderValues = swerveDriveTab.getLayout("Relative Encoder Values", BuiltInLayouts.kList);
-    relativeEncoderValues.addNumber("Front Left Turning Encoder", () ->  swerveDrive.getRelativeTurningEncoderPosition(0));
-    relativeEncoderValues.addNumber("Front Right Turning Encoder", () -> swerveDrive.getRelativeTurningEncoderPosition(1));
-    relativeEncoderValues.addNumber("Back Left Turning Encoder", () -> swerveDrive.getRelativeTurningEncoderPosition(2));
-    relativeEncoderValues.addNumber("Back Right Turning Encoder", () -> swerveDrive.getRelativeTurningEncoderPosition(3));
+    // Init Shuffleboard
+    swerveDrive.initShuffleboardTab();
+
+
+   
 
   }
 
@@ -78,6 +72,7 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
+    xboxButtonx.whenPressed(driveWithController);
     xboxButtonA.whenPressed(interrupt);
     xboxButtonB.whenPressed(driveForward);
   }
