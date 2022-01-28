@@ -226,6 +226,11 @@ public class SwerveDrive extends SubsystemBase {
         m_backRight.getState());
   }
 
+  @Override 
+  public void periodic() {
+    updateOdometry();
+  }
+
   public double getAbsoluteTurningEncoderPosition(int index) {
     switch (index) {
       case 0:
