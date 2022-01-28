@@ -272,16 +272,13 @@ public class SwerveDrive extends SubsystemBase {
   public void initShuffleboardTab() {
     ShuffleboardTab swerveDriveTab = Shuffleboard.getTab("Swerve Drive");
 
-    ShuffleboardLayout swerveKinematics = swerveDriveTab.getLayout("Odemetry", BuiltInLayouts.kGrid)
+    ShuffleboardLayout swerveOdometry = swerveDriveTab.getLayout("Odometry", BuiltInLayouts.kList)
       .withPosition(0, 0)
       .withSize(2, 2);
 
-      swerveKinematics.addNumber("Gyro", () -> getRotation2d().getDegrees())
-        .withPosition(0, 0)
-        .withSize(2, 1);
-      swerveKinematics.addString("Position", () -> { var pose = getPose2d(); return "X: " + pose.getX() + " Y: " + pose.getY(); })
-        .withPosition(0, 1)
-        .withSize(2, 1);
+      swerveOdometry.addNumber("Gyro", () -> getRotation2d().getDegrees());
+      swerveOdometry.addNumber("X", () -> getPose2d().getX());
+      swerveOdometry.addNumber("Y", () -> getPose2d().getY());
 
     ShuffleboardLayout swerveDriveTester = swerveDriveTab.getLayout("Drive Tester", BuiltInLayouts.kGrid)
         .withPosition(2, 0)
