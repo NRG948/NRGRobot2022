@@ -4,15 +4,11 @@
 
 package frc.robot.subsystems;
 
-import java.nio.channels.WritePendingException;
-
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.ctre.phoenix.sensors.AbsoluteSensorRange;
 import com.ctre.phoenix.sensors.CANCoder;
 import com.kauailabs.navx.frc.AHRS;
-
-import org.ejml.data.ZMatrix;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
@@ -25,9 +21,6 @@ import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.networktables.EntryListenerFlags;
-import edu.wpi.first.util.concurrent.Event;
-import edu.wpi.first.util.sendable.Sendable;
-import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.SerialPort;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
@@ -35,8 +28,6 @@ import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
-import edu.wpi.first.wpilibj.shuffleboard.WidgetType;
-import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class SwerveDrive extends SubsystemBase {
@@ -127,10 +118,6 @@ public class SwerveDrive extends SubsystemBase {
           Rotation2d.fromDegrees(m_turningEncoder.getAbsolutePosition()));
     }
 
-    public double getDriveMotorPosition() {
-      return m_driveMotor.getSelectedSensorPosition() / kDrivePulsesPerMeter;
-    }
-
     public double getDriveMotorVelocity() {
       return m_driveMotor.getSelectedSensorVelocity() / kDrivePulsesPerMeter;
 
@@ -161,10 +148,6 @@ public class SwerveDrive extends SubsystemBase {
 
       m_driveMotor.set(ControlMode.PercentOutput, (driveOutput + driveFeedforward) / batteryVolatage);
       m_turningMotor.set(ControlMode.PercentOutput, (turnOutput + turnFeedforward) / batteryVolatage);
-    }
-
-    public void zeroRelativeEncoder(double absoluteZeroPosition) {
-      m_turningEncoder.setPosition(absoluteZeroPosition - getAbsolutePosition());
     }
 
     public double getAbsolutePosition() {
