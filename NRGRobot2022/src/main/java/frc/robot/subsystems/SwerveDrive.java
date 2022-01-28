@@ -13,6 +13,7 @@ import com.kauailabs.navx.frc.AHRS;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -253,27 +254,35 @@ public class SwerveDrive extends SubsystemBase {
     return 0;
   }
 
-  public void zeroEncoders() {
-    // m_frontLeft.zeroRelativeEncoder(zeroPositions[0]);
-    // m_frontRight.zeroRelativeEncoder(zeroPositions[1]);
-    // m_backLeft.zeroRelativeEncoder(zeroPositions[2]);
-    // m_backRight.zeroRelativeEncoder(zeroPositions[3]);
-
-  }
-
   /** Returns the current orientation of the robot as a Rotation2d object */
   public Rotation2d getRotation2d() {
     return Rotation2d.fromDegrees(m_ahrs.getAngle());
   }
 
+  /** Returns the current pose of the robot as a Pose2d object */
+  public Pose2d getPose2d() {
+    return m_odometry.getPoseMeters();
+  }
+
   public void initShuffleboardTab() {
     ShuffleboardTab swerveDriveTab = Shuffleboard.getTab("Swerve Drive");
 
-    ShuffleboardLayout swerveDriveTester = swerveDriveTab.getLayout("Swerve Drive Tester", BuiltInLayouts.kGrid)
+    ShuffleboardLayout swerveKinematics = swerveDriveTab.getLayout("Odemetry", BuiltInLayouts.kGrid)
+      .withPosition(0, 0)
+      .withSize(2, 2);
+
+      swerveKinematics.addNumber("Gyro", () -> getRotation2d().getDegrees())
         .withPosition(0, 0)
+        .withSize(2, 1);
+      swerveKinematics.addString("Position", () -> { var pose = getPose2d(); return "X: " + pose.getX() + " Y: " + pose.getY(); })
+        .withPosition(0, 1)
+        .withSize(2, 1);
+
+    ShuffleboardLayout swerveDriveTester = swerveDriveTab.getLayout("Drive Tester", BuiltInLayouts.kGrid)
+        .withPosition(2, 0)
         .withSize(2, 2);
 
-    swerveDriveTester.add("Left Front Motor", 0)
+    swerveDriveTester.add("Left Front", 0)
         .withWidget(BuiltInWidgets.kNumberSlider)
         .withPosition(0, 0)
         .getEntry()
@@ -281,7 +290,7 @@ public class SwerveDrive extends SubsystemBase {
             (event) -> m_frontLeft.setDriveMotorPower(event.getEntry().getDouble(0)),
             EntryListenerFlags.kNew | EntryListenerFlags.kUpdate);
 
-    swerveDriveTester.add("Front Right Motor", 0)
+    swerveDriveTester.add("Front Right", 0)
         .withWidget(BuiltInWidgets.kNumberSlider)
         .withPosition(1, 0)
         .getEntry()
@@ -289,7 +298,7 @@ public class SwerveDrive extends SubsystemBase {
             (event) -> m_frontRight.setDriveMotorPower(event.getEntry().getDouble(0)),
             EntryListenerFlags.kNew | EntryListenerFlags.kUpdate);
 
-    swerveDriveTester.add("Back Left Motor", 0)
+    swerveDriveTester.add("Back Left", 0)
         .withWidget(BuiltInWidgets.kNumberSlider)
         .withPosition(0, 1)
         .getEntry()
@@ -297,7 +306,7 @@ public class SwerveDrive extends SubsystemBase {
             (event) -> m_backLeft.setDriveMotorPower(event.getEntry().getDouble(0)),
             EntryListenerFlags.kNew | EntryListenerFlags.kUpdate);
 
-    swerveDriveTester.add("Back Right Motor", 0)
+    swerveDriveTester.add("Back Right", 0)
         .withWidget(BuiltInWidgets.kNumberSlider)
         .withPosition(1, 1)
         .getEntry()
@@ -305,11 +314,11 @@ public class SwerveDrive extends SubsystemBase {
             (event) -> m_backRight.setDriveMotorPower(event.getEntry().getDouble(0)),
             EntryListenerFlags.kNew | EntryListenerFlags.kUpdate);
 
-    ShuffleboardLayout swerveTurnTester = swerveDriveTab.getLayout("Swerve Turn Tester", BuiltInLayouts.kGrid)
-        .withPosition(3, 0)
+    ShuffleboardLayout swerveTurnTester = swerveDriveTab.getLayout("Turn Tester", BuiltInLayouts.kGrid)
+        .withPosition(4, 0)
         .withSize(2, 2);
 
-    swerveTurnTester.add("Left Front Motor", 0)
+    swerveTurnTester.add("Left Front", 0)
         .withWidget(BuiltInWidgets.kNumberSlider)
         .withPosition(0, 0)
         .getEntry()
@@ -317,7 +326,7 @@ public class SwerveDrive extends SubsystemBase {
             (event) -> m_frontLeft.setTurnMotorPower(event.getEntry().getDouble(0)),
             EntryListenerFlags.kNew | EntryListenerFlags.kUpdate);
 
-    swerveTurnTester.add("Front Right Motor", 0)
+    swerveTurnTester.add("Front Right", 0)
         .withWidget(BuiltInWidgets.kNumberSlider)
         .withPosition(1, 0)
         .getEntry()
@@ -325,7 +334,7 @@ public class SwerveDrive extends SubsystemBase {
             (event) -> m_frontRight.setTurnMotorPower(event.getEntry().getDouble(0)),
             EntryListenerFlags.kNew | EntryListenerFlags.kUpdate);
 
-    swerveTurnTester.add("Back Left Motor", 0)
+    swerveTurnTester.add("Back Left", 0)
         .withWidget(BuiltInWidgets.kNumberSlider)
         .withPosition(0, 1)
         .getEntry()
@@ -333,7 +342,7 @@ public class SwerveDrive extends SubsystemBase {
             (event) -> m_backLeft.setTurnMotorPower(event.getEntry().getDouble(0)),
             EntryListenerFlags.kNew | EntryListenerFlags.kUpdate);
 
-    swerveTurnTester.add("Back Right Motor", 0)
+    swerveTurnTester.add("Back Right", 0)
         .withWidget(BuiltInWidgets.kNumberSlider)
         .withPosition(1, 1)
         .getEntry()
@@ -341,18 +350,12 @@ public class SwerveDrive extends SubsystemBase {
             (event) -> m_backRight.setTurnMotorPower(event.getEntry().getDouble(0)),
             EntryListenerFlags.kNew | EntryListenerFlags.kUpdate);
 
-    ShuffleboardLayout absoluteEncoderValues = swerveDriveTab.getLayout("Absolute Encoder Values", BuiltInLayouts.kList)
-        .withPosition(5, 0).withSize(2, 6);
-    absoluteEncoderValues.addNumber("Front Left Turning Encoder", () -> getAbsoluteTurningEncoderPosition(0));
-    absoluteEncoderValues.addNumber("Front Right Turning Encoder", () -> getAbsoluteTurningEncoderPosition(1));
-    absoluteEncoderValues.addNumber("Back Left Turning Encoder", () -> getAbsoluteTurningEncoderPosition(2));
-    absoluteEncoderValues.addNumber("Back Right Turning Encoder", () -> getAbsoluteTurningEncoderPosition(3));
-
-    ShuffleboardLayout relativeEncoderValues = swerveDriveTab.getLayout("Relative Encoder Values", BuiltInLayouts.kList)
-        .withPosition(7, 0).withSize(2, 6);
-    relativeEncoderValues.addNumber("Front Left Turning Encoder", () -> getRelativeTurningEncoderPosition(0));
-    relativeEncoderValues.addNumber("Front Right Turning Encoder", () -> getRelativeTurningEncoderPosition(1));
-    relativeEncoderValues.addNumber("Back Left Turning Encoder", () -> getRelativeTurningEncoderPosition(2));
-    relativeEncoderValues.addNumber("Back Right Turning Encoder", () -> getRelativeTurningEncoderPosition(3));
+    ShuffleboardLayout absoluteEncoderValues = swerveDriveTab.getLayout("Encoders", BuiltInLayouts.kList)
+        .withPosition(6, 0)
+        .withSize(2, 3);
+    absoluteEncoderValues.addNumber("Front Left", () -> m_frontLeft.getAbsolutePosition());
+    absoluteEncoderValues.addNumber("Front Right", () -> m_frontRight.getAbsolutePosition());
+    absoluteEncoderValues.addNumber("Back Left", () -> m_backLeft.getAbsolutePosition());
+    absoluteEncoderValues.addNumber("Back Right", () -> m_backRight.getAbsolutePosition());
   }
 }
