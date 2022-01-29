@@ -30,7 +30,7 @@ public class DriveWithController extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    swerveDrive.drive(-driveController.getLeftY(), driveController.getLeftX(), driveController.getRightX(), true);
+    swerveDrive.drive(-driveController.getLeftY(), -driveController.getLeftX(), -driveController.getRightX(), true);
   }
 
   // Called once the command ends or is interrupted.
