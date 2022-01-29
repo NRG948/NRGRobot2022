@@ -33,8 +33,8 @@ public class SwerveDrive extends SubsystemBase {
   /* Swerve Module helper class */
   private class Module {
 
-    private static final double kWheelRadius = 0.047625;
-    private static final int kEncoderResolution = 2048;
+    private static final double kWheelRadius = 0.047625; // Meters
+    private static final int kEncoderResolution = 2048; // Steps per Rev
     private static final double kDrivePulsesPerMeter = kEncoderResolution / (2 * kWheelRadius * Math.PI); // pulses per
                                                                                                           // meter
                                                                                                           
@@ -69,7 +69,7 @@ public class SwerveDrive extends SubsystemBase {
      *
      * @param driveMotorChannel    CAN ID of the drive motor.
      * @param turningMotorChannel  CAN ID of the turning motor.
-     * @param turningEncodeChannel
+     * @param turningEncodeChannel CAN ID of the turning encoder
      */
     public Module(
         int driveMotorChannel,
@@ -83,7 +83,7 @@ public class SwerveDrive extends SubsystemBase {
       m_turningEncoder = new CANCoder(turningEncodeChannel);
 
       m_turningEncoder.configAbsoluteSensorRange(AbsoluteSensorRange.Signed_PlusMinus180);
-
+      // m_turningEncoder.config
       // Limit the PID Controller's input range between -pi and pi and set the input
       // to be continuous.
       m_turningPIDController.enableContinuousInput(-Math.PI, Math.PI);
@@ -155,10 +155,10 @@ public class SwerveDrive extends SubsystemBase {
   private final Translation2d m_backLeftLocation = new Translation2d(-0.34925, 0.24765);
   private final Translation2d m_backRightLocation = new Translation2d(-0.34925, -0.24765);
 
-  private final Module m_frontLeft = new Module(1, 2, 9);
-  private final Module m_frontRight = new Module(3, 4, 10);
-  private final Module m_backLeft = new Module(7, 8, 12);
-  private final Module m_backRight = new Module(5, 6, 11);
+  private final Module m_frontLeft = new Module(3, 4, 10);
+  private final Module m_frontRight = new Module(1, 2, 9);
+  private final Module m_backLeft = new Module(5, 6, 11);
+  private final Module m_backRight = new Module(7, 8, 12);
 
   private final AHRS m_ahrs = new AHRS(SerialPort.Port.kMXP);
 
@@ -168,7 +168,7 @@ public class SwerveDrive extends SubsystemBase {
   private final SwerveDriveOdometry m_odometry = new SwerveDriveOdometry(m_kinematics, getRotation2d());
 
   public SwerveDrive() {
-    zeroEncoders();
+    // zeroEncoders();
     m_ahrs.reset();
   }
 
