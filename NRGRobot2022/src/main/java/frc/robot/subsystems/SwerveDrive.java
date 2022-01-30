@@ -284,12 +284,16 @@ public class SwerveDrive extends SubsystemBase {
     switch (index) {
       case 0:
         m_frontLeft.setDesiredState(state);
+        break;
       case 1:
         m_frontRight.setDesiredState(state);
+        break;
       case 2:
         m_backLeft.setDesiredState(state);
+        break;
       case 3:
         m_backRight.setDesiredState(state);
+        break;
     }   
   }
 
@@ -380,7 +384,9 @@ public class SwerveDrive extends SubsystemBase {
     properties.put("Min", -180.0);
     properties.put("Max", 180.0);
 
-    ShuffleboardLayout swerveAngleTester = swerveDriveTab.getLayout("Swerve Angle Tester", BuiltInLayouts.kGrid)
+    ShuffleboardTab angleTester = Shuffleboard.getTab("Angle Tester");
+
+    ShuffleboardLayout swerveAngleTester = angleTester.getLayout("Swerve Angle Tester", BuiltInLayouts.kGrid)
       .withPosition(6, 0)
       .withSize(2, 2);   
 
@@ -396,7 +402,7 @@ public class SwerveDrive extends SubsystemBase {
       swerveAngleTester.add("Right Front", 0)
       .withWidget(BuiltInWidgets.kNumberSlider)
       .withProperties(properties)
-      .withPosition(0, 0)
+      .withPosition(1, 0)
       .getEntry()
       .addListener(
           (event) -> setModuleState(1, 0, event.getEntry().getDouble(0)),
@@ -405,7 +411,7 @@ public class SwerveDrive extends SubsystemBase {
       swerveAngleTester.add("Left Back", 0)
       .withWidget(BuiltInWidgets.kNumberSlider)
       .withProperties(properties)
-      .withPosition(0, 0)
+      .withPosition(0, 1)
       .getEntry()
       .addListener(
           (event) -> setModuleState(2, 0, event.getEntry().getDouble(0)),
@@ -414,7 +420,7 @@ public class SwerveDrive extends SubsystemBase {
       swerveAngleTester.add("Right Back", 0)
       .withWidget(BuiltInWidgets.kNumberSlider)
       .withProperties(properties)
-      .withPosition(0, 0)
+      .withPosition(1, 1)
       .getEntry()
       .addListener(
           (event) -> setModuleState(3, 0, event.getEntry().getDouble(0)),
