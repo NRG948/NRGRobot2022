@@ -4,6 +4,10 @@
 
 package frc.robot.subsystems;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
+
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.ctre.phoenix.sensors.AbsoluteSensorRange;
@@ -274,6 +278,21 @@ public class SwerveDrive extends SubsystemBase {
     return m_odometry.getPoseMeters();
   }
 
+  public void setModuleState(int index, double speed, double angle){
+    Rotation2d rotation = Rotation2d.fromDegrees(angle);
+    SwerveModuleState state = new SwerveModuleState(speed, rotation);
+    switch (index) {
+      case 0:
+        m_frontLeft.setDesiredState(state);
+      case 1:
+        m_frontRight.setDesiredState(state);
+      case 2:
+        m_backLeft.setDesiredState(state);
+      case 3:
+        m_backRight.setDesiredState(state);
+    }   
+  }
+
   public void initShuffleboardTab() {
     ShuffleboardTab swerveDriveTab = Shuffleboard.getTab("Swerve Drive");
 
@@ -356,9 +375,53 @@ public class SwerveDrive extends SubsystemBase {
         .addListener(
             (event) -> m_backRight.setTurnMotorPower(event.getEntry().getDouble(0)),
             EntryListenerFlags.kNew | EntryListenerFlags.kUpdate);
+    
+    Map<String, Object> properties = new HashMap<>();
+    properties.put("Min", -180.0);
+    properties.put("Max", 180.0);
+
+    ShuffleboardLayout swerveAngleTester = swerveDriveTab.getLayout("Swerve Angle Tester", BuiltInLayouts.kGrid)
+      .withPosition(6, 0)
+      .withSize(2, 2);   
+
+    swerveAngleTester.add("Left Front", 0)
+      .withWidget(BuiltInWidgets.kNumberSlider)
+      .withProperties(properties)
+      .withPosition(0, 0)
+      .getEntry()
+      .addListener(
+          (event) -> setModuleState(0, 0, event.getEntry().getDouble(0)),
+          EntryListenerFlags.kNew | EntryListenerFlags.kUpdate);
+
+      swerveAngleTester.add("Right Front", 0)
+      .withWidget(BuiltInWidgets.kNumberSlider)
+      .withProperties(properties)
+      .withPosition(0, 0)
+      .getEntry()
+      .addListener(
+          (event) -> setModuleState(1, 0, event.getEntry().getDouble(0)),
+          EntryListenerFlags.kNew | EntryListenerFlags.kUpdate);
+
+      swerveAngleTester.add("Left Back", 0)
+      .withWidget(BuiltInWidgets.kNumberSlider)
+      .withProperties(properties)
+      .withPosition(0, 0)
+      .getEntry()
+      .addListener(
+          (event) -> setModuleState(2, 0, event.getEntry().getDouble(0)),
+          EntryListenerFlags.kNew | EntryListenerFlags.kUpdate);
+
+      swerveAngleTester.add("Right Back", 0)
+      .withWidget(BuiltInWidgets.kNumberSlider)
+      .withProperties(properties)
+      .withPosition(0, 0)
+      .getEntry()
+      .addListener(
+          (event) -> setModuleState(3, 0, event.getEntry().getDouble(0)),
+          EntryListenerFlags.kNew | EntryListenerFlags.kUpdate);
 
     ShuffleboardLayout absoluteEncoderValues = swerveDriveTab.getLayout("Encoders", BuiltInLayouts.kList)
-        .withPosition(6, 0)
+        .withPosition(2, 0)
         .withSize(2, 3);
     absoluteEncoderValues.addNumber("Front Left", () -> m_frontLeft.getAbsolutePosition());
     absoluteEncoderValues.addNumber("Front Right", () -> m_frontRight.getAbsolutePosition());
