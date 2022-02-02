@@ -403,8 +403,8 @@ public class SwerveDrive extends SubsystemBase {
 
   
     Map<String, Object> maxAngularSpeedSliderProperties = new HashMap<>();
-    maxSpeedSliderProperties.put("Min", 0);
-    maxSpeedSliderProperties.put("Max", MAX_ANGULAR_SPEED);
+    maxAngularSpeedSliderProperties.put("Min", 0);
+    maxAngularSpeedSliderProperties.put("Max", MAX_ANGULAR_SPEED);
 
     virtualGearBox.add("Max Angular Speed", 0)
     .withWidget(BuiltInWidgets.kNumberSlider)
