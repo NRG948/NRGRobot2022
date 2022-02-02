@@ -197,6 +197,9 @@ public class SwerveDrive extends SubsystemBase {
   public static final double kMaxSpeed = 3.0; // 3 meters per second
   public static final double kMaxAngularSpeed = Math.PI; // 1/2 rotation per second
 
+  public static double m_speed = kMaxSpeed;
+  public static double m_angularSpeed = kMaxAngularSpeed;
+
   // X and Y swaped
   private final Translation2d m_frontLeftLocation = new Translation2d(0.34925, 0.24765);
   private final Translation2d m_frontRightLocation = new Translation2d(0.34925, -0.24765);
@@ -230,9 +233,9 @@ public class SwerveDrive extends SubsystemBase {
    */
   @SuppressWarnings("ParameterName")
   public void drive(double xSpeed, double ySpeed, double rot, boolean fieldRelative) {
-    xSpeed = MathUtil.applyDeadband(xSpeed, 0.02) * 3;
-    ySpeed = MathUtil.applyDeadband(ySpeed, 0.02) * 3;
-    rot = MathUtil.applyDeadband(rot, 0.02) * 3;
+    xSpeed = MathUtil.applyDeadband(xSpeed, 0.02) * m_speed;
+    ySpeed = MathUtil.applyDeadband(ySpeed, 0.02) * m_speed;
+    rot = MathUtil.applyDeadband(rot, 0.02) * m_angularSpeed;
 
     var swerveModuleStates = m_kinematics.toSwerveModuleStates(
         fieldRelative
@@ -243,6 +246,15 @@ public class SwerveDrive extends SubsystemBase {
     m_frontRight.setDesiredState(swerveModuleStates[1]);
     m_backLeft.setDesiredState(swerveModuleStates[2]);
     m_backRight.setDesiredState(swerveModuleStates[3]);
+  }
+
+  public void setMaxSpeed(double speed) {
+    m_speed = MathUtil.clamp(speed, 0, kMaxSpeed);
+
+  }
+
+  public void setMaxAngularSpeed(double angularSpeed) {
+    m_angularSpeed = MathUtil.clamp(angularSpeed, 0, kMaxAngularSpeed);
   }
 
   /** Updates the field relative position of the robot. */
@@ -337,6 +349,37 @@ public class SwerveDrive extends SubsystemBase {
     swerveOdometry.addNumber("X", () -> getPose2d().getX());
     swerveOdometry.addNumber("Y", () -> getPose2d().getY());
 
+    ShuffleboardLayout swerveSpeedController = swerveDriveTab.getLayout("Swerve Speed Controller", BuiltInLayouts.kGrid)
+    .withPosition(0, 2)
+    .withSize(2, 2);    
+    
+    Map<String, Object> maxSpeedSliderProperties = new HashMap<>();
+    maxSpeedSliderProperties.put("Min", 0);
+    maxSpeedSliderProperties.put("Max", kMaxSpeed);
+  
+    swerveSpeedController.add("Max Speed", 0)
+    .withWidget(BuiltInWidgets.kNumberSlider)
+    .withProperties(maxSpeedSliderProperties)
+    .withPosition(0, 0)
+    .getEntry()
+    .addListener(
+      (event) -> setMaxSpeed(event.getEntry().getDouble(kMaxSpeed)),
+      EntryListenerFlags.kNew | EntryListenerFlags.kUpdate);
+
+  
+    Map<String, Object> maxAngularSpeedSliderProperties = new HashMap<>();
+    maxSpeedSliderProperties.put("Min", 0);
+    maxSpeedSliderProperties.put("Max", kMaxAngularSpeed);
+
+    swerveSpeedController.add("Max Angular Speed", 0)
+    .withWidget(BuiltInWidgets.kNumberSlider)
+    .withProperties(maxAngularSpeedSliderProperties)
+    .withPosition(1, 0)
+    .getEntry()
+    .addListener(
+      (event) -> setMaxAngularSpeed(event.getEntry().getDouble(kMaxAngularSpeed)),
+      EntryListenerFlags.kNew | EntryListenerFlags.kUpdate);
+
     ShuffleboardLayout swerveDriveTester = swerveDriveTab.getLayout("Drive Tester", BuiltInLayouts.kGrid)
         .withPosition(2, 0)
         .withSize(2, 2);
@@ -409,9 +452,9 @@ public class SwerveDrive extends SubsystemBase {
             (event) -> m_backRight.setTurnMotorPower(event.getEntry().getDouble(0)),
             EntryListenerFlags.kNew | EntryListenerFlags.kUpdate);
 
-    Map<String, Object> properties = new HashMap<>();
-    properties.put("Min", -180.0);
-    properties.put("Max", 180.0);
+    // Map<String, Object> properties = new HashMap<>();
+    // properties.put("Min", -180.0);
+    // properties.put("Max", 180.0);
 
     ShuffleboardTab angleTester = Shuffleboard.getTab("Angle Tester");
 
