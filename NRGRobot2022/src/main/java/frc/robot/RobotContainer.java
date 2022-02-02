@@ -38,7 +38,6 @@ public class RobotContainer {
   private JoystickButton xboxButtonx = new JoystickButton(driveController, 3); // x Button
   private JoystickButton xboxButtonY = new JoystickButton(driveController, 4); // y Button
 
-
   // Subsystems
   private final SwerveDrive swerveDrive = new SwerveDrive();
   private final RaspberryPiVision raspberryPiVision = new RaspberryPiVision();
@@ -54,16 +53,12 @@ public class RobotContainer {
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
   public RobotContainer() {
-    //swerveDrive.setDefaultCommand(driveWithController);
+    // swerveDrive.setDefaultCommand(driveWithController);
     // Configure the button bindings
     configureButtonBindings();
 
-
     // Init Shuffleboard
     swerveDrive.initShuffleboardTab();
-
-
-   
 
   }
 
@@ -91,7 +86,7 @@ public class RobotContainer {
     // An ExampleCommand will run in autonomous
     return null;
   }
-  
+
   public void initSubsystems() {
     raspberryPiVision.initPipeline();
   }
