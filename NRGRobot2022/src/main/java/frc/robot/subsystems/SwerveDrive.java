@@ -55,7 +55,8 @@ public class SwerveDrive extends SubsystemBase {
 
     private static final double kWheelRadius = 0.047625; // Meters
     private static final int kEncoderResolution = 2048; // Steps per Rev
-    private static final double kDrivePulsesPerMeter = kEncoderResolution / (2 * kWheelRadius * Math.PI); // pulses per
+    private static final double kDriveGearRatio = 8.14; // Gear ratio
+    private static final double kDrivePulsesPerMeter = (kEncoderResolution * kDriveGearRatio) / (2 * kWheelRadius * Math.PI); // pulses per
                                                                                                           // meter
 
     private static final double kModuleMaxAngularVelocity = SwerveDrive.kMaxAngularSpeed;
@@ -67,7 +68,7 @@ public class SwerveDrive extends SubsystemBase {
     // private final Encoder m_driveEncoder;
     private final CANCoder m_turningEncoder;
 
-    /* TODO: Tune PID for drive and turning PID controllers */
+    /* TODO: Tune P ID for drive and turning PID controllers */
     // Gains are for example purposes only - must be determined for your own robot!
     private final PIDController m_drivePIDController = new PIDController(1, 0, 0);
 
@@ -128,9 +129,15 @@ public class SwerveDrive extends SubsystemBase {
 
     }
 
+    public double getDriveMotorPosition() {
+      return m_driveMotor.getSelectedSensorPosition()/kDrivePulsesPerMeter;
+    }
+
     public SwerveModuleState getDesiredState() {
       return desiredState;
     }
+
+    
 
     /**
      * Sets the desired state for the module.
@@ -329,13 +336,18 @@ public class SwerveDrive extends SubsystemBase {
   public void initShuffleboardTab() {
     ShuffleboardTab swerveDriveTab = Shuffleboard.getTab("Swerve Drive");
 
-    ShuffleboardLayout swerveOdometry = swerveDriveTab.getLayout("Odometry", BuiltInLayouts.kList)
+    ShuffleboardLayout swerveOdometry = swerveDriveTab.getLayout("Odometry", BuiltInLayouts.kGrid)
         .withPosition(0, 0)
-        .withSize(2, 2);
+        .withSize(2, 3);
 
     swerveOdometry.addNumber("Gyro", () -> getRotation2d().getDegrees());
     swerveOdometry.addNumber("X", () -> getPose2d().getX());
     swerveOdometry.addNumber("Y", () -> getPose2d().getY());
+    swerveOdometry.addNumber("FR Encoder", ()-> m_frontRight.getDriveMotorPosition());
+    swerveOdometry.addNumber("FL Encoder", ()-> m_frontLeft.getDriveMotorPosition());
+    swerveOdometry.addNumber("BR Encoder", ()-> m_backRight.getDriveMotorPosition());
+    swerveOdometry.addNumber("BL Encoder", ()-> m_backLeft.getDriveMotorPosition());
+
 
     ShuffleboardLayout swerveDriveTester = swerveDriveTab.getLayout("Drive Tester", BuiltInLayouts.kGrid)
         .withPosition(2, 0)
@@ -438,6 +450,8 @@ public class SwerveDrive extends SubsystemBase {
       .withSize(1, 2);
       backRightModuleState.addNumber("RB Desired Rotation", () -> m_backRight.getDesiredState().angle.getDegrees());
       backRightModuleState.addNumber("RB Desired Speed", () -> m_backRight.getDesiredState().speedMetersPerSecond);
+
+    
 
 
     /*
