@@ -169,7 +169,7 @@ public class SwerveDrive extends SubsystemBase {
       m_turningMotor.set(ControlMode.PercentOutput, (turnOutput + turnFeedforward) / batteryVolatage);
     }
 
-    public void stopMotor(){
+    public void stopMotor() {
       m_driveMotor.set(ControlMode.PercentOutput, 0);
       m_turningMotor.set(ControlMode.PercentOutput, 0);
 
@@ -325,7 +325,7 @@ public class SwerveDrive extends SubsystemBase {
 
   }
 
-  public void stopMotor(){
+  public void stopMotor() {
     m_frontLeft.stopMotor();
     m_frontRight.stopMotor();
     m_backLeft.stopMotor();
@@ -427,32 +427,33 @@ public class SwerveDrive extends SubsystemBase {
 
     ShuffleboardTab angleTester = Shuffleboard.getTab("Angle Tester");
 
-    ShuffleboardLayout frontLeftModuleState = angleTester.getLayout("Left Front Swerve Module States", BuiltInLayouts.kGrid)
-      .withPosition(0, 0)
-      .withSize(1, 2);
+    ShuffleboardLayout frontLeftModuleState = angleTester
+        .getLayout("Left Front Swerve Module States", BuiltInLayouts.kGrid)
+        .withPosition(0, 0)
+        .withSize(1, 2);
     frontLeftModuleState.addNumber("LF Desired Rotation", () -> m_frontLeft.getDesiredState().angle.getDegrees());
     frontLeftModuleState.addNumber("LF Desired Speed", () -> m_frontLeft.getDesiredState().speedMetersPerSecond);
-    
-    ShuffleboardLayout frontRightModuleState = angleTester.getLayout("right Front Swerve Module States", BuiltInLayouts.kGrid)
-      .withPosition(1, 0)
-      .withSize(1, 2);
-      frontRightModuleState.addNumber("RF Desired Rotation", () -> m_frontRight.getDesiredState().angle.getDegrees());
-      frontRightModuleState.addNumber("RF Desired Speed", () -> m_frontRight.getDesiredState().speedMetersPerSecond);
-    
-    ShuffleboardLayout backLeftModuleState = angleTester.getLayout("Left Back Swerve Module States", BuiltInLayouts.kGrid)
-      .withPosition(2, 0)
-      .withSize(1, 2);
-      backLeftModuleState.addNumber("LB Desired Rotation", () -> m_backLeft.getDesiredState().angle.getDegrees());
-      backLeftModuleState.addNumber("LB Desired Speed", () -> m_backLeft.getDesiredState().speedMetersPerSecond);
-    
-    ShuffleboardLayout backRightModuleState = angleTester.getLayout("Right Back Swerve Module States", BuiltInLayouts.kGrid)
-      .withPosition(3, 0)
-      .withSize(1, 2);
-      backRightModuleState.addNumber("RB Desired Rotation", () -> m_backRight.getDesiredState().angle.getDegrees());
-      backRightModuleState.addNumber("RB Desired Speed", () -> m_backRight.getDesiredState().speedMetersPerSecond);
 
-    
+    ShuffleboardLayout frontRightModuleState = angleTester
+        .getLayout("right Front Swerve Module States", BuiltInLayouts.kGrid)
+        .withPosition(1, 0)
+        .withSize(1, 2);
+    frontRightModuleState.addNumber("RF Desired Rotation", () -> m_frontRight.getDesiredState().angle.getDegrees());
+    frontRightModuleState.addNumber("RF Desired Speed", () -> m_frontRight.getDesiredState().speedMetersPerSecond);
 
+    ShuffleboardLayout backLeftModuleState = angleTester
+        .getLayout("Left Back Swerve Module States", BuiltInLayouts.kGrid)
+        .withPosition(2, 0)
+        .withSize(1, 2);
+    backLeftModuleState.addNumber("LB Desired Rotation", () -> m_backLeft.getDesiredState().angle.getDegrees());
+    backLeftModuleState.addNumber("LB Desired Speed", () -> m_backLeft.getDesiredState().speedMetersPerSecond);
+
+    ShuffleboardLayout backRightModuleState = angleTester
+        .getLayout("Right Back Swerve Module States", BuiltInLayouts.kGrid)
+        .withPosition(3, 0)
+        .withSize(1, 2);
+    backRightModuleState.addNumber("RB Desired Rotation", () -> m_backRight.getDesiredState().angle.getDegrees());
+    backRightModuleState.addNumber("RB Desired Speed", () -> m_backRight.getDesiredState().speedMetersPerSecond);
 
     /*
      * ShuffleboardLayout swerveAngleTester =

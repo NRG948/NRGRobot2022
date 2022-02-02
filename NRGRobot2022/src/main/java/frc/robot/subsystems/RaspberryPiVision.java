@@ -23,7 +23,7 @@ public class RaspberryPiVision extends SubsystemBase {
   }
 
   public void setPipeline(String pipelineName) {
-     SmartDashboard.putString(TARGET_PIPELINE_NAME_KEY, pipelineName);
+    SmartDashboard.putString(TARGET_PIPELINE_NAME_KEY, pipelineName);
   }
 
   public void initPipeline() {
