@@ -205,6 +205,7 @@ public class SwerveDrive extends SubsystemBase {
 
   public static final double MAX_SPEED = 3.0; // 3 meters per second
   public static final double MAX_ANGULAR_SPEED = Math.PI; // 1/2 rotation per second
+  public static final double MAX_ACCELERATION = 1.0; // TODO: find Max acceleration in meters per second squared
 
   public static double currentMaxSpeed = MAX_SPEED;
   public static double currentMaxAngularSpeed = MAX_ANGULAR_SPEED;
@@ -222,7 +223,7 @@ public class SwerveDrive extends SubsystemBase {
 
   private final AHRS m_ahrs = new AHRS(SerialPort.Port.kMXP);
 
-  private final SwerveDriveKinematics m_kinematics = new SwerveDriveKinematics(
+  public final SwerveDriveKinematics m_kinematics = new SwerveDriveKinematics(
       m_frontLeftLocation, m_frontRightLocation, m_backLeftLocation, m_backRightLocation);
 
   private final SwerveDriveOdometry m_odometry = new SwerveDriveOdometry(m_kinematics, getRotation2d());
@@ -250,11 +251,7 @@ public class SwerveDrive extends SubsystemBase {
         fieldRelative
             ? ChassisSpeeds.fromFieldRelativeSpeeds(xSpeed, ySpeed, rot, getRotation2d())
             : new ChassisSpeeds(xSpeed, ySpeed, rot));
-    SwerveDriveKinematics.desaturateWheelSpeeds(swerveModuleStates, MAX_SPEED);
-    m_frontLeft.setDesiredState(swerveModuleStates[0]);
-    m_frontRight.setDesiredState(swerveModuleStates[1]);
-    m_backLeft.setDesiredState(swerveModuleStates[2]);
-    m_backRight.setDesiredState(swerveModuleStates[3]);
+    setModuleStates(swerveModuleStates);
   }
 
   public void setMaxSpeed(double speed) {
@@ -274,6 +271,15 @@ public class SwerveDrive extends SubsystemBase {
         m_frontRight.getState(),
         m_backLeft.getState(),
         m_backRight.getState());
+  }
+
+/**
+   * Resets the odometry to the specified pose.
+   *
+   * @param pose The pose to which to set the odometry.
+   */
+  public void resetOdometry(Pose2d pose) {
+    m_odometry.resetPosition(pose, getRotation2d());
   }
 
   @Override
@@ -342,6 +348,15 @@ public class SwerveDrive extends SubsystemBase {
         break;
     }
 
+  }
+ 
+  public void setModuleStates(SwerveModuleState[] desiredStates) {
+    SwerveDriveKinematics.desaturateWheelSpeeds(
+        desiredStates, MAX_SPEED);
+    m_frontLeft.setDesiredState(desiredStates[0]);
+    m_frontRight.setDesiredState(desiredStates[1]);
+    m_backLeft.setDesiredState(desiredStates[2]);
+    m_backRight.setDesiredState(desiredStates[3]);
   }
 
   // Stops all Swerve Drive Motors
