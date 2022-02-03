@@ -117,6 +117,11 @@ public class SwerveDrive extends SubsystemBase {
 
     }
 
+    public void reset() {
+      stopMotor();
+      m_turningPIDController.reset(Math.toRadians(m_turningEncoder.getAbsolutePosition()));
+    }
+
     /**
      * Returns the current state of the module.
      *
@@ -230,6 +235,15 @@ public class SwerveDrive extends SubsystemBase {
 
   public SwerveDrive() {
     m_ahrs.reset();
+  }
+
+  public void reset() {
+    m_ahrs.reset();
+    m_frontLeft.reset();
+    m_frontRight.reset();
+    m_backLeft.reset();
+    m_backRight.reset();
+    m_odometry.resetPosition(new Pose2d(), getRotation2d());
   }
 
   /**
