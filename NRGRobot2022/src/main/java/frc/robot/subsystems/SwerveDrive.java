@@ -128,15 +128,16 @@ public class SwerveDrive extends SubsystemBase {
      * @return The current state of the module.
      */
     public SwerveModuleState getState() {
-      return new SwerveModuleState(getDriveMotorVelocity(),
+      return new SwerveModuleState(getWheelVelocity(),
           Rotation2d.fromDegrees(m_turningEncoder.getAbsolutePosition()));
     }
 
-    public double getDriveMotorVelocity() {
-      return m_driveMotor.getSelectedSensorVelocity() / DRIVE_PULSES_PER_METER;
-
+    /** Returns wheel velocity in meters per second */
+    public double getWheelVelocity() {
+      //talonFX reports velocity in pulses per 100ms; multiply by 10 to convert to seconds
+      return (m_driveMotor.getSelectedSensorVelocity() * 10) / DRIVE_PULSES_PER_METER; 
     }
-
+    
     public double getDriveMotorPosition() {
       return m_driveMotor.getSelectedSensorPosition() / DRIVE_PULSES_PER_METER;
     }
@@ -158,7 +159,7 @@ public class SwerveDrive extends SubsystemBase {
       SwerveModuleState state = SwerveModuleState.optimize(desiredState, currentAngle);
 
       // Calculate the drive output from the drive PID controller.
-      final double driveOutput = m_drivePIDController.calculate(getDriveMotorVelocity(), state.speedMetersPerSecond);
+      final double driveOutput = m_drivePIDController.calculate(getWheelVelocity(), state.speedMetersPerSecond);
 
       final double driveFeedforward = m_driveFeedforward.calculate(state.speedMetersPerSecond);
 
