@@ -71,7 +71,7 @@ public class SwerveDrive extends SubsystemBase {
     // private final Encoder m_driveEncoder;
     private final CANCoder m_turningEncoder;
 
-    /* TODO: Tune P ID for drive and turning PID controllers */
+    /* TODO: Tune PID for drive and turning PID controllers */
     // Gains are for example purposes only - must be determined for your own robot!
     private final PIDController m_drivePIDController = new PIDController(1, 0, 0);
 
@@ -100,9 +100,7 @@ public class SwerveDrive extends SubsystemBase {
      * @param turningMotorChannel  CAN ID of the turning motor.
      * @param turningEncodeChannel CAN ID of the turning encoder
      */
-    public Module(int driveMotorChannel, int turningMotorChannel, int turningEncodeChannel
-
-    ) {
+    public Module(int driveMotorChannel, int turningMotorChannel, int turningEncodeChannel) {
       m_driveMotor = new TalonFX(driveMotorChannel);
       m_turningMotor = new TalonFX(turningMotorChannel);
 
@@ -117,31 +115,30 @@ public class SwerveDrive extends SubsystemBase {
 
     }
 
+    /** Resets the module. */
     public void reset() {
       stopMotor();
       m_turningPIDController.reset(Math.toRadians(m_turningEncoder.getAbsolutePosition()));
     }
 
-    /**
-     * Returns the current state of the module.
-     *
-     * @return The current state of the module.
-     */
+    /** Returns the current state of the module. */
     public SwerveModuleState getState() {
       return new SwerveModuleState(getWheelVelocity(),
           Rotation2d.fromDegrees(m_turningEncoder.getAbsolutePosition()));
     }
 
-    /** Returns wheel velocity in meters per second */
+    /** Returns wheel velocity in meters per second. */
     public double getWheelVelocity() {
       //talonFX reports velocity in pulses per 100ms; multiply by 10 to convert to seconds
       return (m_driveMotor.getSelectedSensorVelocity() * 10) / DRIVE_PULSES_PER_METER; 
     }
     
-    public double getDriveMotorPosition() {
+    /** Returns the distance the wheel has travelled in meters. */
+    public double getWheelDistance() {
       return m_driveMotor.getSelectedSensorPosition() / DRIVE_PULSES_PER_METER;
     }
 
+    /** Returns the module state set by the last call to setDesiredState. */
     public SwerveModuleState getDesiredState() {
       return desiredState;
     }
@@ -176,7 +173,7 @@ public class SwerveDrive extends SubsystemBase {
       m_turningMotor.set(ControlMode.PercentOutput, (turnOutput + turnFeedforward) / batteryVolatage);
     }
 
-    // Stops the Driving and Turning Motors
+    /** Stops the drive and turn motors */
     public void stopMotors() {
       m_driveMotor.set(ControlMode.PercentOutput, 0);
       m_turningMotor.set(ControlMode.PercentOutput, 0);
@@ -391,10 +388,10 @@ public class SwerveDrive extends SubsystemBase {
     swerveOdometry.addNumber("Gyro", () -> getRotation2d().getDegrees());
     swerveOdometry.addNumber("X", () -> getPose2d().getX());
     swerveOdometry.addNumber("Y", () -> getPose2d().getY());
-    swerveOdometry.addNumber("FR Encoder", () -> m_frontRight.getDriveMotorPosition());
-    swerveOdometry.addNumber("FL Encoder", () -> m_frontLeft.getDriveMotorPosition());
-    swerveOdometry.addNumber("BR Encoder", () -> m_backRight.getDriveMotorPosition());
-    swerveOdometry.addNumber("BL Encoder", () -> m_backLeft.getDriveMotorPosition());
+    swerveOdometry.addNumber("FR Encoder", () -> m_frontRight.getWheelDistance());
+    swerveOdometry.addNumber("FL Encoder", () -> m_frontLeft.getWheelDistance());
+    swerveOdometry.addNumber("BR Encoder", () -> m_backRight.getWheelDistance());
+    swerveOdometry.addNumber("BL Encoder", () -> m_backLeft.getWheelDistance());
 
     ShuffleboardLayout virtualGearBox = swerveDriveTab.getLayout("Swerve Speed Controller", BuiltInLayouts.kGrid)
         .withPosition(0, 2)
