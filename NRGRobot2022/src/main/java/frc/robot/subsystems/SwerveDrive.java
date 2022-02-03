@@ -211,7 +211,7 @@ public class SwerveDrive extends SubsystemBase {
 
   public static final double MAX_SPEED = 3.0; // 3 meters per second
   public static final double MAX_ANGULAR_SPEED = Math.PI; // 1/2 rotation per second
-  public static final double MAX_ACCELERATION = 1.0; // TODO: find Max acceleration in meters per second squared
+  public static final double MAX_ACCELERATION = 2.0; // TODO: find Max acceleration in meters per second squared
 
   public static double currentMaxSpeed = MAX_SPEED;
   public static double currentMaxAngularSpeed = MAX_ANGULAR_SPEED;
