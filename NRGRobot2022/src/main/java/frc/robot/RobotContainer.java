@@ -93,7 +93,8 @@ public class RobotContainer {
             // Pass through these two interior waypoints, making an 's' curve path
             List.of(new Translation2d(-1, -0.25)),
             // End 3 meters straight ahead of where we started, facing forward
-            new Pose2d(-2, 0, Rotation2d.fromDegrees(-180))),
+            new Pose2d(-2, 0, Rotation2d.fromDegrees(-180)),
+            true),
         new InstantCommand(() -> swerveDrive.stopMotor()));
   }
 

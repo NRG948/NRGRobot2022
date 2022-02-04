@@ -18,49 +18,45 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
 import frc.robot.subsystems.SwerveDrive;
 
-public final class CommandUtils{
+public final class CommandUtils {
   public static final double kPXController = 1;
   public static final double kPYController = 1;
   public static final double kPThetaController = 1;
-  public static final TrapezoidProfile.Constraints kThetaControllerConstraints =
-        new TrapezoidProfile.Constraints(
-            SwerveDrive.MAX_SPEED, SwerveDrive.MAX_ACCELERATION);
+  public static final TrapezoidProfile.Constraints kThetaControllerConstraints = new TrapezoidProfile.Constraints(
+      SwerveDrive.MAX_SPEED, SwerveDrive.MAX_ACCELERATION);
 
-  public static Command newFollowWaypointsCommand(SwerveDrive swerve, Pose2d initialPose2d, List<Translation2d> waypoints, Pose2d finalPose2d) {
+  public static Command newFollowWaypointsCommand(SwerveDrive swerve, Pose2d initialPose2d,
+      List<Translation2d> waypoints, Pose2d finalPose2d, boolean reversed) {
     // Create config for trajectory
-    TrajectoryConfig config =
-        new TrajectoryConfig(
-                SwerveDrive.MAX_SPEED,
-                SwerveDrive.MAX_ACCELERATION
-                )
+    TrajectoryConfig config = new TrajectoryConfig(
+        SwerveDrive.MAX_SPEED,
+        SwerveDrive.MAX_ACCELERATION)
             // Add kinematics to ensure max speed is actually obeyed
-            .setKinematics(swerve.m_kinematics);
+            .setKinematics(swerve.m_kinematics)
+            .setReversed(reversed);
 
-    // An example trajectory to follow.  All units in meters.
-    Trajectory exampleTrajectory =
-        TrajectoryGenerator.generateTrajectory(
-            initialPose2d,
-            waypoints,
-            finalPose2d,
-            config);
+    // An example trajectory to follow. All units in meters.
+    Trajectory exampleTrajectory = TrajectoryGenerator.generateTrajectory(
+        initialPose2d,
+        waypoints,
+        finalPose2d,
+        config);
 
-    var thetaController =
-        new ProfiledPIDController(
-            kPThetaController, 0, 0, kThetaControllerConstraints);
+    var thetaController = new ProfiledPIDController(
+        kPThetaController, 0, 0, kThetaControllerConstraints);
     thetaController.enableContinuousInput(-Math.PI, Math.PI);
 
-    SwerveControllerCommand swerveControllerCommand =
-        new SwerveControllerCommand(
-            exampleTrajectory,
-            swerve::getPose2d, // Functional interface to feed supplier
-            swerve.m_kinematics,
+    SwerveControllerCommand swerveControllerCommand = new SwerveControllerCommand(
+        exampleTrajectory,
+        swerve::getPose2d, // Functional interface to feed supplier
+        swerve.m_kinematics,
 
-            // Position controllers
-            new PIDController(kPXController, 0, 0),
-            new PIDController(kPYController, 0, 0),
-            thetaController,
-            swerve::setModuleStates,
-            swerve);
+        // Position controllers
+        new PIDController(kPXController, 0, 0),
+        new PIDController(kPYController, 0, 0),
+        thetaController,
+        swerve::setModuleStates,
+        swerve);
 
     // Reset odometry to the starting pose of the trajectory.
     swerve.resetOdometry(exampleTrajectory.getInitialPose());
@@ -69,4 +65,3 @@ public final class CommandUtils{
     return swerveControllerCommand.andThen(() -> swerve.drive(0, 0, 0, false));
   }
 }
-
