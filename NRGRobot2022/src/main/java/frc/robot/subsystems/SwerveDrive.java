@@ -26,8 +26,11 @@ import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.networktables.EntryListenerFlags;
+import edu.wpi.first.util.sendable.Sendable;
+import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.SerialPort;
+import edu.wpi.first.wpilibj.interfaces.Gyro;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
@@ -92,6 +95,8 @@ public class SwerveDrive extends SubsystemBase {
     private double turnPIDOutput = 0;
     private double turnFeedForwardOutput = 0;
 
+    private String moduleName;
+
     /**
      * Constructs a SwerveModule with a drive motor, turning motor, drive encoder
      * and turning encoder.
@@ -100,11 +105,13 @@ public class SwerveDrive extends SubsystemBase {
      * @param turningMotorChannel  CAN ID of the turning motor.
      * @param turningEncodeChannel CAN ID of the turning encoder
      */
-    public Module(int driveMotorChannel, int turningMotorChannel, int turningEncodeChannel) {
+    public Module(int driveMotorChannel, int turningMotorChannel, int turningEncodeChannel, String moduleName) {
       m_driveMotor = new TalonFX(driveMotorChannel);
       m_turningMotor = new TalonFX(turningMotorChannel);
 
       m_turningEncoder = new CANCoder(turningEncodeChannel);
+
+      this.moduleName = moduleName;
 
       m_turningEncoder.configAbsoluteSensorRange(AbsoluteSensorRange.Signed_PlusMinus180);
       // m_turningEncoder.config
@@ -129,10 +136,11 @@ public class SwerveDrive extends SubsystemBase {
 
     /** Returns wheel velocity in meters per second. */
     public double getWheelVelocity() {
-      //talonFX reports velocity in pulses per 100ms; multiply by 10 to convert to seconds
-      return (m_driveMotor.getSelectedSensorVelocity() * 10) / DRIVE_PULSES_PER_METER; 
+      // talonFX reports velocity in pulses per 100ms; multiply by 10 to convert to
+      // seconds
+      return (m_driveMotor.getSelectedSensorVelocity() * 10) / DRIVE_PULSES_PER_METER;
     }
-    
+
     /** Returns the distance the wheel has travelled in meters. */
     public double getWheelDistance() {
       return m_driveMotor.getSelectedSensorPosition() / DRIVE_PULSES_PER_METER;
@@ -188,7 +196,7 @@ public class SwerveDrive extends SubsystemBase {
       return turnPIDOutput;
     }
 
-    public double getAbsolutePosition() {
+    public double getWheelAngle() {
       return m_turningEncoder.getAbsolutePosition();
     }
 
@@ -203,6 +211,36 @@ public class SwerveDrive extends SubsystemBase {
     public void setTurnMotorPower(double power) {
       m_turningMotor.set(ControlMode.PercentOutput, power);
 
+    }
+
+    public ShuffleboardLayout addShuffleBoardLayout(ShuffleboardTab tab) {
+      ShuffleboardLayout layout = tab.getLayout(moduleName, BuiltInLayouts.kList);
+
+      layout.add("Drive Motor", 0)
+          .withWidget(BuiltInWidgets.kNumberSlider)
+          .getEntry()
+          .addListener(
+              (event) -> this.setDriveMotorPower(event.getEntry().getDouble(0)),
+              EntryListenerFlags.kNew | EntryListenerFlags.kUpdate);
+
+      layout.add("Turn Motor", 0)
+          .withWidget(BuiltInWidgets.kNumberSlider)
+          .getEntry()
+          .addListener(
+              (event) -> this.setTurnMotorPower(event.getEntry().getDouble(0)),
+              EntryListenerFlags.kNew | EntryListenerFlags.kUpdate);
+
+      layout.add("Rotation", new Sendable() {
+
+        @Override
+        public void initSendable(SendableBuilder builder) {
+          builder.setSmartDashboardType("Gyro");
+          builder.addDoubleProperty("Value", () -> getWheelAngle(), null);     
+        }
+        
+      }).withWidget(BuiltInWidgets.kGyro).withPosition(0, 0);
+
+      return layout;
     }
   }
 
@@ -219,10 +257,10 @@ public class SwerveDrive extends SubsystemBase {
   private final Translation2d m_backLeftLocation = new Translation2d(-0.34925, 0.24765);
   private final Translation2d m_backRightLocation = new Translation2d(-0.34925, -0.24765);
 
-  private final Module m_frontLeft = new Module(1, 2, 9);
-  private final Module m_frontRight = new Module(3, 4, 10);
-  private final Module m_backLeft = new Module(7, 8, 12);
-  private final Module m_backRight = new Module(5, 6, 11);
+  private final Module m_frontLeft = new Module(1, 2, 9, "Front Left");
+  private final Module m_frontRight = new Module(3, 4, 10, "Front Right");
+  private final Module m_backLeft = new Module(7, 8, 12, "Back Left");
+  private final Module m_backRight = new Module(5, 6, 11, "Back Right");
 
   private final AHRS m_ahrs = new AHRS(SerialPort.Port.kMXP);
 
@@ -313,13 +351,13 @@ public class SwerveDrive extends SubsystemBase {
   public double getAbsoluteTurningEncoderPosition(int index) {
     switch (index) {
       case 0:
-        return m_frontLeft.getAbsolutePosition();
+        return m_frontLeft.getWheelAngle();
       case 1:
-        return m_frontRight.getAbsolutePosition();
+        return m_frontRight.getWheelAngle();
       case 2:
-        return m_backLeft.getAbsolutePosition();
+        return m_backLeft.getWheelAngle();
       case 3:
-        return m_backRight.getAbsolutePosition();
+        return m_backRight.getWheelAngle();
     }
     return 0;
   }
@@ -393,8 +431,24 @@ public class SwerveDrive extends SubsystemBase {
     swerveOdometry.addNumber("BR Encoder", () -> m_backRight.getWheelDistance());
     swerveOdometry.addNumber("BL Encoder", () -> m_backLeft.getWheelDistance());
 
+    m_frontLeft.addShuffleBoardLayout(swerveDriveTab)
+        .withPosition(2, 0)
+        .withSize(2, 3);
+
+    m_frontRight.addShuffleBoardLayout(swerveDriveTab)
+        .withPosition(4, 0)
+        .withSize(2, 3);
+
+    m_backLeft.addShuffleBoardLayout(swerveDriveTab)
+        .withPosition(2, 3)
+        .withSize(2, 3);
+
+    m_backRight.addShuffleBoardLayout(swerveDriveTab)
+        .withPosition(4, 3)
+        .withSize(2, 3);
+
     ShuffleboardLayout virtualGearBox = swerveDriveTab.getLayout("Swerve Speed Controller", BuiltInLayouts.kGrid)
-        .withPosition(0, 2)
+        .withPosition(0, 3)
         .withSize(2, 2);
 
     Map<String, Object> maxSpeedSliderProperties = new HashMap<>();
@@ -423,114 +477,5 @@ public class SwerveDrive extends SubsystemBase {
             (event) -> setMaxAngularSpeed(event.getEntry().getDouble(MAX_ANGULAR_SPEED)),
             EntryListenerFlags.kNew | EntryListenerFlags.kUpdate);
 
-    ShuffleboardLayout swerveDriveTester = swerveDriveTab.getLayout("Drive Tester", BuiltInLayouts.kGrid)
-        .withPosition(2, 0)
-        .withSize(2, 2);
-
-    swerveDriveTester.add("Left Front", 0)
-        .withWidget(BuiltInWidgets.kNumberSlider)
-        .withPosition(0, 0)
-        .getEntry()
-        .addListener(
-            (event) -> m_frontLeft.setDriveMotorPower(event.getEntry().getDouble(0)),
-            EntryListenerFlags.kNew | EntryListenerFlags.kUpdate);
-
-    swerveDriveTester.add("Front Right", 0)
-        .withWidget(BuiltInWidgets.kNumberSlider)
-        .withPosition(1, 0)
-        .getEntry()
-        .addListener(
-            (event) -> m_frontRight.setDriveMotorPower(event.getEntry().getDouble(0)),
-            EntryListenerFlags.kNew | EntryListenerFlags.kUpdate);
-
-    swerveDriveTester.add("Back Left", 0)
-        .withWidget(BuiltInWidgets.kNumberSlider)
-        .withPosition(0, 1)
-        .getEntry()
-        .addListener(
-            (event) -> m_backLeft.setDriveMotorPower(event.getEntry().getDouble(0)),
-            EntryListenerFlags.kNew | EntryListenerFlags.kUpdate);
-
-    swerveDriveTester.add("Back Right", 0)
-        .withWidget(BuiltInWidgets.kNumberSlider)
-        .withPosition(1, 1)
-        .getEntry()
-        .addListener(
-            (event) -> m_backRight.setDriveMotorPower(event.getEntry().getDouble(0)),
-            EntryListenerFlags.kNew | EntryListenerFlags.kUpdate);
-
-    ShuffleboardLayout swerveTurnTester = swerveDriveTab.getLayout("Turn Tester", BuiltInLayouts.kGrid)
-        .withPosition(4, 0)
-        .withSize(2, 2);
-
-    swerveTurnTester.add("Left Front", 0)
-        .withWidget(BuiltInWidgets.kNumberSlider)
-        .withPosition(0, 0)
-        .getEntry()
-        .addListener(
-            (event) -> m_frontLeft.setTurnMotorPower(event.getEntry().getDouble(0)),
-            EntryListenerFlags.kNew | EntryListenerFlags.kUpdate);
-
-    swerveTurnTester.add("Front Right", 0)
-        .withWidget(BuiltInWidgets.kNumberSlider)
-        .withPosition(1, 0)
-        .getEntry()
-        .addListener(
-            (event) -> m_frontRight.setTurnMotorPower(event.getEntry().getDouble(0)),
-            EntryListenerFlags.kNew | EntryListenerFlags.kUpdate);
-
-    swerveTurnTester.add("Back Left", 0)
-        .withWidget(BuiltInWidgets.kNumberSlider)
-        .withPosition(0, 1)
-        .getEntry()
-        .addListener(
-            (event) -> m_backLeft.setTurnMotorPower(event.getEntry().getDouble(0)),
-            EntryListenerFlags.kNew | EntryListenerFlags.kUpdate);
-
-    swerveTurnTester.add("Back Right", 0)
-        .withWidget(BuiltInWidgets.kNumberSlider)
-        .withPosition(1, 1)
-        .getEntry()
-        .addListener(
-            (event) -> m_backRight.setTurnMotorPower(event.getEntry().getDouble(0)),
-            EntryListenerFlags.kNew | EntryListenerFlags.kUpdate);
-
-    ShuffleboardTab swerveModuleTesting = Shuffleboard.getTab("Swerve Module Testing");
-
-    ShuffleboardLayout frontLeftModuleState = swerveModuleTesting
-        .getLayout("Left Front Swerve Module States", BuiltInLayouts.kGrid)
-        .withPosition(0, 0)
-        .withSize(1, 2);
-    frontLeftModuleState.addNumber("LF Desired Rotation", () -> m_frontLeft.getDesiredState().angle.getDegrees());
-    frontLeftModuleState.addNumber("LF Desired Speed", () -> m_frontLeft.getDesiredState().speedMetersPerSecond);
-
-    ShuffleboardLayout frontRightModuleState = swerveModuleTesting
-        .getLayout("right Front Swerve Module States", BuiltInLayouts.kGrid)
-        .withPosition(1, 0)
-        .withSize(1, 2);
-    frontRightModuleState.addNumber("RF Desired Rotation", () -> m_frontRight.getDesiredState().angle.getDegrees());
-    frontRightModuleState.addNumber("RF Desired Speed", () -> m_frontRight.getDesiredState().speedMetersPerSecond);
-
-    ShuffleboardLayout backLeftModuleState = swerveModuleTesting
-        .getLayout("Left Back Swerve Module States", BuiltInLayouts.kGrid)
-        .withPosition(2, 0)
-        .withSize(1, 2);
-    backLeftModuleState.addNumber("LB Desired Rotation", () -> m_backLeft.getDesiredState().angle.getDegrees());
-    backLeftModuleState.addNumber("LB Desired Speed", () -> m_backLeft.getDesiredState().speedMetersPerSecond);
-
-    ShuffleboardLayout backRightModuleState = swerveModuleTesting
-        .getLayout("Right Back Swerve Module States", BuiltInLayouts.kGrid)
-        .withPosition(3, 0)
-        .withSize(1, 2);
-    backRightModuleState.addNumber("RB Desired Rotation", () -> m_backRight.getDesiredState().angle.getDegrees());
-    backRightModuleState.addNumber("RB Desired Speed", () -> m_backRight.getDesiredState().speedMetersPerSecond);
-
-    ShuffleboardLayout absoluteEncoderValues = swerveDriveTab.getLayout("Encoders", BuiltInLayouts.kList)
-        .withPosition(2, 0)
-        .withSize(2, 3);
-    absoluteEncoderValues.addNumber("Front Left", () -> m_frontLeft.getAbsolutePosition());
-    absoluteEncoderValues.addNumber("Front Right", () -> m_frontRight.getAbsolutePosition());
-    absoluteEncoderValues.addNumber("Back Left", () -> m_backLeft.getAbsolutePosition());
-    absoluteEncoderValues.addNumber("Back Right", () -> m_backRight.getAbsolutePosition());
   }
 }
