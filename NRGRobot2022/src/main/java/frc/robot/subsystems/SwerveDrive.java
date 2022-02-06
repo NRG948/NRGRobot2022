@@ -61,8 +61,7 @@ public class SwerveDrive extends SubsystemBase {
     private static final int ENCODER_RESOLUTION = 2048; // Steps per Rev
     private static final double DRIVE_GEAR_RATIO = 8.14; // Gear ratio
     private static final double DRIVE_PULSES_PER_METER = (ENCODER_RESOLUTION * DRIVE_GEAR_RATIO)
-        / (2 * WHEEL_RADIUS * Math.PI); // pulses per
-    // meter
+        / (2 * WHEEL_RADIUS * Math.PI); // pulses per meter
 
     private static final double MODULE_MAX_ANGULAR_VELOCITY = SwerveDrive.MAX_ANGULAR_SPEED;
     private static final double MODULE_MAX_ANGULAR_ACCELERATION = 2 * Math.PI; // radians per second squared
@@ -90,9 +89,6 @@ public class SwerveDrive extends SubsystemBase {
     private final SimpleMotorFeedforward turnFeedforward = new SimpleMotorFeedforward(1, 0.5);
 
     private SwerveModuleState desiredState = new SwerveModuleState(0, new Rotation2d(0));
-
-    private double turnPIDOutput = 0;
-    private double turnFeedForwardOutput = 0;
 
     private String moduleName;
 
@@ -129,8 +125,7 @@ public class SwerveDrive extends SubsystemBase {
 
     /** Returns the current state of the module. */
     public SwerveModuleState getState() {
-      return new SwerveModuleState(getWheelVelocity(),
-          Rotation2d.fromDegrees(turningEncoder.getAbsolutePosition()));
+      return new SwerveModuleState(getWheelVelocity(), getWheelRotation2d());
     }
 
     /** Returns wheel velocity in meters per second. */
@@ -159,7 +154,7 @@ public class SwerveDrive extends SubsystemBase {
       // Optimize the reference state to avoid spinning further than 90 degrees
 
       this.desiredState = desiredState;
-      Rotation2d currentAngle = Rotation2d.fromDegrees(turningEncoder.getAbsolutePosition());
+      Rotation2d currentAngle = getWheelRotation2d();
       SwerveModuleState state = SwerveModuleState.optimize(desiredState, currentAngle);
 
       // Calculate the drive output from the drive PID controller.
@@ -173,9 +168,6 @@ public class SwerveDrive extends SubsystemBase {
       final double turnFeedforward = this.turnFeedforward.calculate(turningPIDController.getSetpoint().velocity);
       final double batteryVolatage = RobotController.getBatteryVoltage();
 
-      turnFeedForwardOutput = turnFeedforward;
-      turnPIDOutput = turnOutput;
-
       driveMotor.set(ControlMode.PercentOutput, (driveOutput + driveFeedforward) / batteryVolatage);
       turningMotor.set(ControlMode.PercentOutput, (turnOutput + turnFeedforward) / batteryVolatage);
     }
@@ -187,31 +179,27 @@ public class SwerveDrive extends SubsystemBase {
 
     }
 
-    public double getFeedForwardOutput() {
-      return turnFeedForwardOutput;
-    }
-
-    public double getTurnPIDOutput() {
-      return turnPIDOutput;
-    }
-
+    /** Returns the current wheel angle in degrees. The range of values is [-180..180]. */
     public double getWheelAngle() {
       return turningEncoder.getAbsolutePosition();
     }
 
-    public double getRelativePosition() {
-      return turningEncoder.getPosition();
+    /** Returns the current whell angle as a Rotation2d object. */
+    public Rotation2d getWheelRotation2d() {
+      return Rotation2d.fromDegrees(getWheelAngle());
     }
 
-    public void setDriveMotorPower(double power) {
+    /** Sets the driver motor power. */
+    private void setDriveMotorPower(double power) {
       driveMotor.set(ControlMode.PercentOutput, power);
     }
 
-    public void setTurnMotorPower(double power) {
+    /** Sets the turn motor power. */
+    private void setTurnMotorPower(double power) {
       turningMotor.set(ControlMode.PercentOutput, power);
-
     }
 
+    /** Adds module widgets to the specified Shuffleboard tab. */
     public ShuffleboardLayout addShuffleBoardLayout(ShuffleboardTab tab) {
       ShuffleboardLayout layout = tab.getLayout(moduleName, BuiltInLayouts.kList);
 
@@ -303,11 +291,12 @@ public class SwerveDrive extends SubsystemBase {
     setModuleStates(swerveModuleStates);
   }
 
+  /** Sets the maximum drive speed. This value is clamped to the range [0..MAX_SPEED]. */
   public void setMaxSpeed(double speed) {
     currentMaxSpeed = MathUtil.clamp(speed, 0, MAX_SPEED);
-
   }
 
+  /** Sets the maximum angular rotation speed. This value is clamped to the range [0..MAX_ANGULAR_SPEED]. */
   public void setMaxAngularSpeed(double angularSpeed) {
     currentMaxAngularSpeed = MathUtil.clamp(angularSpeed, 0, MAX_ANGULAR_SPEED);
   }
@@ -346,37 +335,8 @@ public class SwerveDrive extends SubsystemBase {
     return m_odometry.getPoseMeters();
   }
 
-  // Get the Absolute Turning Encoder Position of a Swerve Module
-  public double getAbsoluteTurningEncoderPosition(int index) {
-    switch (index) {
-      case 0:
-        return m_frontLeft.getWheelAngle();
-      case 1:
-        return m_frontRight.getWheelAngle();
-      case 2:
-        return m_backLeft.getWheelAngle();
-      case 3:
-        return m_backRight.getWheelAngle();
-    }
-    return 0;
-  }
-
-  // Get the Relative Turning Encoder Position of a Swerve Module
-  public double getRelativeTurningEncoderPosition(int index) {
-    switch (index) {
-      case 0:
-        return m_frontLeft.getRelativePosition();
-      case 1:
-        return m_frontRight.getRelativePosition();
-      case 2:
-        return m_backLeft.getRelativePosition();
-      case 3:
-        return m_backRight.getRelativePosition();
-    }
-    return 0;
-  }
-
-  // Sets the Swerve Module State of a Swerve Module
+  /** Sets the desired state of a swerve module. */
+  @Deprecated(forRemoval = true)
   public void setModuleState(int index, double speed, double angle) {
     Rotation2d rotation = Rotation2d.fromDegrees(angle);
     SwerveModuleState state = new SwerveModuleState(speed, rotation);
@@ -397,6 +357,7 @@ public class SwerveDrive extends SubsystemBase {
 
   }
 
+  /** Sets the desired module states. */
   public void setModuleStates(SwerveModuleState[] desiredStates) {
     SwerveDriveKinematics.desaturateWheelSpeeds(
         desiredStates, MAX_SPEED);
@@ -406,7 +367,7 @@ public class SwerveDrive extends SubsystemBase {
     m_backRight.setDesiredState(desiredStates[3]);
   }
 
-  // Stops all Swerve Drive Motors
+  /** Stops all of the swerve drive motors. */
   public void stopMotor() {
     m_frontLeft.stopMotors();
     m_frontRight.stopMotors();
@@ -415,6 +376,7 @@ public class SwerveDrive extends SubsystemBase {
 
   }
 
+  /** Adds and initializes a Shufflboard tab for this subsystem. */
   public void initShuffleboardTab() {
     ShuffleboardTab swerveDriveTab = Shuffleboard.getTab("Swerve Drive");
 
@@ -475,6 +437,5 @@ public class SwerveDrive extends SubsystemBase {
         .addListener(
             (event) -> setMaxAngularSpeed(event.getEntry().getDouble(MAX_ANGULAR_SPEED)),
             EntryListenerFlags.kNew | EntryListenerFlags.kUpdate);
-
   }
 }
