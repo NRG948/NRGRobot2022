@@ -30,7 +30,6 @@ import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.SerialPort;
-import edu.wpi.first.wpilibj.interfaces.Gyro;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
@@ -68,18 +67,18 @@ public class SwerveDrive extends SubsystemBase {
     private static final double MODULE_MAX_ANGULAR_VELOCITY = SwerveDrive.MAX_ANGULAR_SPEED;
     private static final double MODULE_MAX_ANGULAR_ACCELERATION = 2 * Math.PI; // radians per second squared
 
-    private final TalonFX m_driveMotor;
-    private final TalonFX m_turningMotor;
+    private final TalonFX driveMotor;
+    private final TalonFX turningMotor;
 
     // private final Encoder m_driveEncoder;
-    private final CANCoder m_turningEncoder;
+    private final CANCoder turningEncoder;
 
     /* TODO: Tune PID for drive and turning PID controllers */
     // Gains are for example purposes only - must be determined for your own robot!
-    private final PIDController m_drivePIDController = new PIDController(1, 0, 0);
+    private final PIDController drivePIDController = new PIDController(1, 0, 0);
 
     // Gains are for example purposes only - must be determined for your own robot!
-    private final ProfiledPIDController m_turningPIDController = new ProfiledPIDController(
+    private final ProfiledPIDController turningPIDController = new ProfiledPIDController(
         7,
         0,
         0,
@@ -87,8 +86,8 @@ public class SwerveDrive extends SubsystemBase {
             MODULE_MAX_ANGULAR_VELOCITY, MODULE_MAX_ANGULAR_ACCELERATION));
 
     // Gains are for example purposes only - must be determined for your own robot!
-    private final SimpleMotorFeedforward m_driveFeedforward = new SimpleMotorFeedforward(1, 3);
-    private final SimpleMotorFeedforward m_turnFeedforward = new SimpleMotorFeedforward(1, 0.5);
+    private final SimpleMotorFeedforward driveFeedforward = new SimpleMotorFeedforward(1, 3);
+    private final SimpleMotorFeedforward turnFeedforward = new SimpleMotorFeedforward(1, 0.5);
 
     private SwerveModuleState desiredState = new SwerveModuleState(0, new Rotation2d(0));
 
@@ -106,44 +105,44 @@ public class SwerveDrive extends SubsystemBase {
      * @param turningEncodeChannel CAN ID of the turning encoder
      */
     public Module(int driveMotorChannel, int turningMotorChannel, int turningEncodeChannel, String moduleName) {
-      m_driveMotor = new TalonFX(driveMotorChannel);
-      m_turningMotor = new TalonFX(turningMotorChannel);
+      driveMotor = new TalonFX(driveMotorChannel);
+      turningMotor = new TalonFX(turningMotorChannel);
 
-      m_turningEncoder = new CANCoder(turningEncodeChannel);
+      turningEncoder = new CANCoder(turningEncodeChannel);
 
       this.moduleName = moduleName;
 
-      m_turningEncoder.configAbsoluteSensorRange(AbsoluteSensorRange.Signed_PlusMinus180);
+      turningEncoder.configAbsoluteSensorRange(AbsoluteSensorRange.Signed_PlusMinus180);
       // m_turningEncoder.config
       // Limit the PID Controller's input range between -pi and pi and set the input
       // to be continuous.
-      m_turningPIDController.enableContinuousInput(-Math.PI, Math.PI);
-      m_turningPIDController.reset(Math.toRadians(m_turningEncoder.getAbsolutePosition()));
+      turningPIDController.enableContinuousInput(-Math.PI, Math.PI);
+      turningPIDController.reset(Math.toRadians(turningEncoder.getAbsolutePosition()));
 
     }
 
     /** Resets the module. */
     public void reset() {
       stopMotor();
-      m_turningPIDController.reset(Math.toRadians(m_turningEncoder.getAbsolutePosition()));
+      turningPIDController.reset(Math.toRadians(turningEncoder.getAbsolutePosition()));
     }
 
     /** Returns the current state of the module. */
     public SwerveModuleState getState() {
       return new SwerveModuleState(getWheelVelocity(),
-          Rotation2d.fromDegrees(m_turningEncoder.getAbsolutePosition()));
+          Rotation2d.fromDegrees(turningEncoder.getAbsolutePosition()));
     }
 
     /** Returns wheel velocity in meters per second. */
     public double getWheelVelocity() {
       // talonFX reports velocity in pulses per 100ms; multiply by 10 to convert to
       // seconds
-      return (m_driveMotor.getSelectedSensorVelocity() * 10) / DRIVE_PULSES_PER_METER;
+      return (driveMotor.getSelectedSensorVelocity() * 10) / DRIVE_PULSES_PER_METER;
     }
 
     /** Returns the distance the wheel has travelled in meters. */
     public double getWheelDistance() {
-      return m_driveMotor.getSelectedSensorPosition() / DRIVE_PULSES_PER_METER;
+      return driveMotor.getSelectedSensorPosition() / DRIVE_PULSES_PER_METER;
     }
 
     /** Returns the module state set by the last call to setDesiredState. */
@@ -160,31 +159,31 @@ public class SwerveDrive extends SubsystemBase {
       // Optimize the reference state to avoid spinning further than 90 degrees
 
       this.desiredState = desiredState;
-      Rotation2d currentAngle = Rotation2d.fromDegrees(m_turningEncoder.getAbsolutePosition());
+      Rotation2d currentAngle = Rotation2d.fromDegrees(turningEncoder.getAbsolutePosition());
       SwerveModuleState state = SwerveModuleState.optimize(desiredState, currentAngle);
 
       // Calculate the drive output from the drive PID controller.
-      final double driveOutput = m_drivePIDController.calculate(getWheelVelocity(), state.speedMetersPerSecond);
+      final double driveOutput = drivePIDController.calculate(getWheelVelocity(), state.speedMetersPerSecond);
 
-      final double driveFeedforward = m_driveFeedforward.calculate(state.speedMetersPerSecond);
+      final double driveFeedforward = this.driveFeedforward.calculate(state.speedMetersPerSecond);
 
       // Calculate the turning motor output from the turning PID controller.
-      final double turnOutput = m_turningPIDController.calculate(currentAngle.getRadians(), state.angle.getRadians());
+      final double turnOutput = turningPIDController.calculate(currentAngle.getRadians(), state.angle.getRadians());
 
-      final double turnFeedforward = m_turnFeedforward.calculate(m_turningPIDController.getSetpoint().velocity);
+      final double turnFeedforward = this.turnFeedforward.calculate(turningPIDController.getSetpoint().velocity);
       final double batteryVolatage = RobotController.getBatteryVoltage();
 
       turnFeedForwardOutput = turnFeedforward;
       turnPIDOutput = turnOutput;
 
-      m_driveMotor.set(ControlMode.PercentOutput, (driveOutput + driveFeedforward) / batteryVolatage);
-      m_turningMotor.set(ControlMode.PercentOutput, (turnOutput + turnFeedforward) / batteryVolatage);
+      driveMotor.set(ControlMode.PercentOutput, (driveOutput + driveFeedforward) / batteryVolatage);
+      turningMotor.set(ControlMode.PercentOutput, (turnOutput + turnFeedforward) / batteryVolatage);
     }
 
     /** Stops the drive and turn motors */
     public void stopMotors() {
-      m_driveMotor.set(ControlMode.PercentOutput, 0);
-      m_turningMotor.set(ControlMode.PercentOutput, 0);
+      driveMotor.set(ControlMode.PercentOutput, 0);
+      turningMotor.set(ControlMode.PercentOutput, 0);
 
     }
 
@@ -197,19 +196,19 @@ public class SwerveDrive extends SubsystemBase {
     }
 
     public double getWheelAngle() {
-      return m_turningEncoder.getAbsolutePosition();
+      return turningEncoder.getAbsolutePosition();
     }
 
     public double getRelativePosition() {
-      return m_turningEncoder.getPosition();
+      return turningEncoder.getPosition();
     }
 
     public void setDriveMotorPower(double power) {
-      m_driveMotor.set(ControlMode.PercentOutput, power);
+      driveMotor.set(ControlMode.PercentOutput, power);
     }
 
     public void setTurnMotorPower(double power) {
-      m_turningMotor.set(ControlMode.PercentOutput, power);
+      turningMotor.set(ControlMode.PercentOutput, power);
 
     }
 
