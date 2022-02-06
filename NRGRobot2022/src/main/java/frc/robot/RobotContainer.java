@@ -12,6 +12,12 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
@@ -52,6 +58,21 @@ public class RobotContainer {
   private final SetModuleState setModuleState_0 = new SetModuleState(swerveDrive, driveController, 0);
   private final SetModuleState setModuleState_90 = new SetModuleState(swerveDrive, driveController, 90);
 
+  private SendableChooser<ChooseAutoPath> chooseAutoPath;
+  private SendableChooser<DelayEx> delayEx;
+
+  private enum ChooseAutoPath {
+    bottom, 
+    bottomLeft, 
+    topLeft, 
+  }
+
+  private enum DelayEx {
+    OPTION1, 
+    OPTION2, 
+    OPTION3
+  }
+
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
@@ -62,7 +83,7 @@ public class RobotContainer {
 
     // Init Shuffleboard
     swerveDrive.initShuffleboardTab();
-
+    this.addAutonomousShuffleboardTab();
   }
 
   /**
@@ -100,5 +121,25 @@ public class RobotContainer {
 
   public void initSubsystems() {
     raspberryPiVision.initPipeline();
+  }
+
+  private void addAutonomousShuffleboardTab() {
+    ShuffleboardTab autoTab = Shuffleboard.getTab("Autonomous");
+
+    ShuffleboardLayout autoLayout = autoTab.getLayout("Autonomous", BuiltInLayouts.kList)
+    .withPosition(0, 0)
+    .withSize(6, 4);
+
+    chooseAutoPath = new SendableChooser<ChooseAutoPath>();
+    chooseAutoPath.addOption("Bottom", ChooseAutoPath.bottom);
+    chooseAutoPath.addOption("Bottom Left", ChooseAutoPath.bottomLeft);
+    chooseAutoPath.addOption("Bottom Right", ChooseAutoPath.topLeft);
+    autoLayout.add("AutoPath", chooseAutoPath).withWidget(BuiltInWidgets.kComboBoxChooser);
+
+    delayEx = new SendableChooser<DelayEx>();
+    delayEx.addOption("0 sec", DelayEx.OPTION1);
+    delayEx.addOption("2 sec", DelayEx.OPTION2);
+    delayEx.addOption("5 sec", DelayEx.OPTION3);
+    autoLayout.add("Delay", delayEx).withWidget(BuiltInWidgets.kComboBoxChooser);
   }
 }
