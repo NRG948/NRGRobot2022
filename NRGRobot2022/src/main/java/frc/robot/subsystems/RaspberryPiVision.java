@@ -69,7 +69,7 @@ public class RaspberryPiVision extends SubsystemBase {
     targetLayout.addNumber("Distance", () -> getDistanceToTarget());
     targetLayout.addNumber("Angle", () -> getAngleToTarget());
     
-    VideoSource processedVideo = new HttpCamera("Processed", "http://frcvision.local:1182/stream.mjpg");
+    VideoSource processedVideo = new HttpCamera("Processed", "http://wpilibpi.local:1182/stream.mjpg");
     piTab.add("Processed Video", processedVideo)
       .withWidget(BuiltInWidgets.kCameraStream)
       .withPosition(2, 0)
