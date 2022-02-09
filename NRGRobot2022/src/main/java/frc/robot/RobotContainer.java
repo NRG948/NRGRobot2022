@@ -19,10 +19,12 @@ import frc.robot.commands.CommandUtils;
 import frc.robot.commands.DriveForward;
 import frc.robot.commands.DriveWithController;
 import frc.robot.commands.Interrupt;
+import frc.robot.commands.ManualClaw;
 import frc.robot.commands.ResetSubsystems;
 import frc.robot.commands.SetModuleState;
 import frc.robot.subsystems.RaspberryPiVision;
 import frc.robot.subsystems.SwerveDrive;
+import frc.robot.subsystems.Claw;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -44,6 +46,7 @@ public class RobotContainer {
   // Subsystems
   private final SwerveDrive swerveDrive = new SwerveDrive();
   private final RaspberryPiVision raspberryPiVision = new RaspberryPiVision();
+  private final Claw claw = new Claw(1); // Port 1
 
   // Commands
   private final DriveWithController driveWithController = new DriveWithController(swerveDrive, driveController);
@@ -51,6 +54,7 @@ public class RobotContainer {
   private final DriveForward driveForward = new DriveForward(swerveDrive);
   private final SetModuleState setModuleState_0 = new SetModuleState(swerveDrive, driveController, 0);
   private final SetModuleState setModuleState_90 = new SetModuleState(swerveDrive, driveController, 90);
+  private final ManualClaw manualClaw = new ManualClaw(claw, driveController);
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -62,7 +66,8 @@ public class RobotContainer {
 
     // Init Shuffleboard
     swerveDrive.initShuffleboardTab();
-
+    
+    claw.setDefaultCommand(manualClaw);
   }
 
   /**
