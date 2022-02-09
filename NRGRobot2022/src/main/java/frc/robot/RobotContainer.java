@@ -83,6 +83,7 @@ public class RobotContainer {
 
     // Init Shuffleboard
     swerveDrive.initShuffleboardTab();
+    raspberryPiVision.addShuffleboardTab();
     this.addAutonomousShuffleboardTab();
   }
 
