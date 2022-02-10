@@ -5,7 +5,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Claw extends SubsystemBase {
 
-    private PWMVictorSPX clawMotor;
+    private final PWMVictorSPX clawMotor;
 
     public Claw(int clawChannel) {
         clawMotor = new PWMVictorSPX(clawChannel);

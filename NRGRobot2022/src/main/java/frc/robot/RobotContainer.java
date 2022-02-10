@@ -27,9 +27,12 @@ import frc.robot.commands.DriveWithController;
 import frc.robot.commands.Interrupt;
 import frc.robot.commands.ManualClaw;
 import frc.robot.commands.ResetSubsystems;
+import frc.robot.commands.RotateArmToResting;
+import frc.robot.commands.RotateArmToScoring;
 import frc.robot.commands.SetModuleState;
 import frc.robot.subsystems.RaspberryPiVision;
 import frc.robot.subsystems.SwerveDrive;
+import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.Claw;
 
 /**
@@ -48,11 +51,14 @@ public class RobotContainer {
   private JoystickButton xboxButtonB = new JoystickButton(driveController, 2); // B Button
   private JoystickButton xboxButtonx = new JoystickButton(driveController, 3); // x Button
   private JoystickButton xboxButtonY = new JoystickButton(driveController, 4); // y Button
+  private JoystickButton xboxLeftBumper = new JoystickButton(driveController, 5);
+  private JoystickButton xboxRightBumper = new JoystickButton(driveController, 6);
 
   // Subsystems
   private final SwerveDrive swerveDrive = new SwerveDrive();
   private final RaspberryPiVision raspberryPiVision = new RaspberryPiVision();
   private final Claw claw = new Claw(1); // Port 1
+  private final Arm arm = new Arm(2,3); //limit switch channels to be updated
 
   // Commands
   private final DriveWithController driveWithController = new DriveWithController(swerveDrive, driveController);
@@ -61,6 +67,9 @@ public class RobotContainer {
   private final SetModuleState setModuleState_0 = new SetModuleState(swerveDrive, driveController, 0);
   private final SetModuleState setModuleState_90 = new SetModuleState(swerveDrive, driveController, 90);
   private final ManualClaw manualClaw = new ManualClaw(claw, driveController);
+  private final RotateArmToResting armToResting = new RotateArmToResting(arm);
+  private final RotateArmToScoring armToScoring = new RotateArmToScoring(arm);
+
 
   private SendableChooser<ChooseAutoPath> chooseAutoPath;
   private SendableChooser<DelayEx> delayEx;
@@ -87,13 +96,10 @@ public class RobotContainer {
 
     // Init Shuffleboard
     swerveDrive.initShuffleboardTab();
-<<<<<<< HEAD
     
     claw.setDefaultCommand(manualClaw);
-=======
     raspberryPiVision.addShuffleboardTab();
     this.addAutonomousShuffleboardTab();
->>>>>>> 713a1830b13c5fdd4eb2cb7f2e402ba219d08df8
   }
 
   /**
@@ -109,6 +115,8 @@ public class RobotContainer {
     xboxButtonA.whenPressed(interrupt);
     xboxButtonB.whenPressed(setModuleState_0);
     xboxButtonY.whenPressed(setModuleState_90);
+    xboxLeftBumper.whenPressed(armToResting);
+    xboxRightBumper.whenPressed(armToScoring);
   }
 
   /**

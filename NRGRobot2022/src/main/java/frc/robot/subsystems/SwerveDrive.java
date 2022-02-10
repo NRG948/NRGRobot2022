@@ -166,10 +166,10 @@ public class SwerveDrive extends SubsystemBase {
       final double turnOutput = turningPIDController.calculate(currentAngle.getRadians(), state.angle.getRadians());
 
       final double turnFeedforward = this.turnFeedforward.calculate(turningPIDController.getSetpoint().velocity);
-      final double batteryVolatage = RobotController.getBatteryVoltage();
+      final double batteryVoltage = RobotController.getBatteryVoltage();
 
-      driveMotor.set(ControlMode.PercentOutput, (driveOutput + driveFeedforward) / batteryVolatage);
-      turningMotor.set(ControlMode.PercentOutput, (turnOutput + turnFeedforward) / batteryVolatage);
+      driveMotor.set(ControlMode.PercentOutput, (driveOutput + driveFeedforward) / batteryVoltage);
+      turningMotor.set(ControlMode.PercentOutput, (turnOutput + turnFeedforward) / batteryVoltage);
     }
 
     /** Stops the drive and turn motors */
