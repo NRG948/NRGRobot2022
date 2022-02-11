@@ -95,7 +95,7 @@ public class RobotContainer {
             // End 3 meters straight ahead of where we started, facing forward
             new Pose2d(-2, 0, Rotation2d.fromDegrees(-180)),
             true),
-        new InstantCommand(() -> swerveDrive.stopMotor()));
+        new InstantCommand(() -> swerveDrive.stopMotors()));
   }
 
   public void initSubsystems() {

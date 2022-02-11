@@ -124,7 +124,7 @@ public class SwerveDrive extends SubsystemBase {
 
     /** Resets the module. */
     public void reset() {
-      stopMotor();
+      stopMotors();
       m_turningPIDController.reset(Math.toRadians(m_turningEncoder.getAbsolutePosition()));
     }
 
@@ -292,7 +292,13 @@ public class SwerveDrive extends SubsystemBase {
    *                      field.
    */
   @SuppressWarnings("ParameterName")
-  public void drive(double xSpeed, double ySpeed, double rot, boolean fieldRelative) {
+  public void drive(double xSpeed, double ySpeed, double rot, boolean fieldRelative, boolean squareInputs) {
+    if(squareInputs){
+      xSpeed *= Math.abs(xSpeed);
+      ySpeed *= Math.abs(ySpeed);
+      rot *= Math.abs(rot);
+    }
+
     xSpeed = MathUtil.applyDeadband(xSpeed, 0.02) * currentMaxSpeed;
     ySpeed = MathUtil.applyDeadband(ySpeed, 0.02) * currentMaxSpeed;
     rot = MathUtil.applyDeadband(rot, 0.02) * currentMaxAngularSpeed;
@@ -408,7 +414,7 @@ public class SwerveDrive extends SubsystemBase {
   }
 
   // Stops all Swerve Drive Motors
-  public void stopMotor() {
+  public void stopMotors() {
     m_frontLeft.stopMotors();
     m_frontRight.stopMotors();
     m_backLeft.stopMotors();

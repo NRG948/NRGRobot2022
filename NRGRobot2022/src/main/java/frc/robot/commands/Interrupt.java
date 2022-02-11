@@ -21,7 +21,7 @@ public class Interrupt extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    swerveDrive.stopMotor();
+    swerveDrive.stopMotors();
   }
 
   // Called every time the scheduler runs while the command is scheduled.
