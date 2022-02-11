@@ -239,10 +239,10 @@ public class SwerveDrive extends SubsystemBase {
   public static double currentMaxAngularSpeed = MAX_ANGULAR_SPEED;
 
   // X and Y swaped
-  private final Translation2d m_frontLeftLocation = new Translation2d(0.34925, 0.24765);
-  private final Translation2d m_frontRightLocation = new Translation2d(0.34925, -0.24765);
-  private final Translation2d m_backLeftLocation = new Translation2d(-0.34925, 0.24765);
-  private final Translation2d m_backRightLocation = new Translation2d(-0.34925, -0.24765);
+  private final Translation2d m_frontLeftLocation = new Translation2d(0.3302, 0.2413);
+  private final Translation2d m_frontRightLocation = new Translation2d(0.3302, -0.2413);
+  private final Translation2d m_backLeftLocation = new Translation2d(-0.3302, 0.2413);
+  private final Translation2d m_backRightLocation = new Translation2d(-0.3302, -0.2413);
 
   private final Module m_frontLeft = new Module(1, 2, 9, "Front Left");
   private final Module m_frontRight = new Module(3, 4, 10, "Front Right");

@@ -18,7 +18,7 @@ package frc.robot;
  */
 public final class Constants {
     public static final class ArmConstants {
-        public static final int kMotorPort = 4;
+        public static final int kMotorPort = 0;
     
         public static final double kP = 1;
     
