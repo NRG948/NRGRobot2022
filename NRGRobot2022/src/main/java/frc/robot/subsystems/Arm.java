@@ -9,6 +9,7 @@ import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.motorcontrol.PWMVictorSPX;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
@@ -77,7 +78,7 @@ public class Arm extends ProfiledPIDSubsystem {
         ShuffleboardTab armTab = Shuffleboard.getTab("Arm");
         ShuffleboardLayout layout = armTab.getLayout("Arm", BuiltInLayouts.kList).withPosition(0,0).withSize(2, 3);
         layout.addNumber("Angle", ()-> Math.toDegrees(m_encoder.getPositionOffset()));
-        layout.addBoolean("Resting", ()-> restingPositionLimitSwitch.get());
-        layout.addBoolean("Scoring", ()-> scoringPositionLimitSwitch.get());
+        layout.addBoolean("Resting", ()-> restingPositionLimitSwitch.get()).withWidget(BuiltInWidgets.kBooleanBox);
+        layout.addBoolean("Scoring", ()-> scoringPositionLimitSwitch.get()).withWidget(BuiltInWidgets.kBooleanBox);
     }
 }
