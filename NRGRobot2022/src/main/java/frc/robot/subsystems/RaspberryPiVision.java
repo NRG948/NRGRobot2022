@@ -4,6 +4,8 @@
 
 package frc.robot.subsystems;
 
+import java.util.Map;
+
 import edu.wpi.first.cscore.HttpCamera;
 import edu.wpi.first.cscore.VideoSource;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -31,6 +33,10 @@ public class RaspberryPiVision extends SubsystemBase {
 
   public void setPipeline(String pipelineName) {
     SmartDashboard.putString(TARGET_PIPELINE_NAME_KEY, pipelineName);
+  }
+
+  public String getPipeline() {
+    return SmartDashboard.getString(TARGET_PIPELINE_NAME_KEY, BLUE_CARGO_PIPELINE);
   }
 
   public void initPipeline() {
@@ -65,6 +71,10 @@ public class RaspberryPiVision extends SubsystemBase {
     ShuffleboardLayout targetLayout = piTab.getLayout("Target Info", BuiltInLayouts.kList)
       .withPosition(0, 0)
       .withSize(2, 3);
+    
+    targetLayout.addBoolean("Pipeline", () -> getPipeline().compareTo(BLUE_CARGO_PIPELINE) == 0)
+      .withWidget(BuiltInWidgets.kBooleanBox)
+      .withProperties(Map.of("Color when true", "#0000FF", "Color when false", "#FF0000"));
     targetLayout.addBoolean("Has Target", () -> hasTarget()).withWidget(BuiltInWidgets.kBooleanBox);
     targetLayout.addNumber("Distance", () -> getDistanceToTarget());
     targetLayout.addNumber("Angle", () -> getAngleToTarget());
