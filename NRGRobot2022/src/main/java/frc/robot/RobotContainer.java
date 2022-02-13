@@ -94,11 +94,12 @@ public class RobotContainer {
     // Configure the button bindings
     configureButtonBindings();
 
+    claw.setDefaultCommand(manualClaw);
+
     // Init Shuffleboard
     swerveDrive.initShuffleboardTab();
-    
-    claw.setDefaultCommand(manualClaw);
     raspberryPiVision.addShuffleboardTab();
+    arm.addShuffleboardTab();
     this.addAutonomousShuffleboardTab();
   }
 
