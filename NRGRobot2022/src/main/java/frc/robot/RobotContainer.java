@@ -58,7 +58,7 @@ public class RobotContainer {
   private final SwerveDrive swerveDrive = new SwerveDrive();
   private final RaspberryPiVision raspberryPiVision = new RaspberryPiVision();
   private final Claw claw = new Claw(1); // Port 1
-  private final Arm arm = new Arm(2,3); //limit switch channels to be updated
+  private final Arm arm = new Arm(); //limit switch channels to be updated
 
   // Commands
   private final DriveWithController driveWithController = new DriveWithController(swerveDrive, driveController);

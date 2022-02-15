@@ -17,16 +17,16 @@ import edu.wpi.first.wpilibj2.command.ProfiledPIDSubsystem;
 import frc.robot.Constants.ArmConstants;
 
 public class Arm extends ProfiledPIDSubsystem {
-    private final DigitalInput restingPositionLimitSwitch;
-    private final DigitalInput scoringPositionLimitSwitch;
+    private final DigitalInput restingPositionLimitSwitch = new DigitalInput(ArmConstants.kRestingPosChannel);
+    private final DigitalInput scoringPositionLimitSwitch = new DigitalInput(ArmConstants.kScoringPosChannel);
     private final PWMVictorSPX m_motor = new PWMVictorSPX(ArmConstants.kMotorPort);
-    private final DutyCycleEncoder m_encoder = new DutyCycleEncoder(ArmConstants.kEncoderPorts);
+    private final DutyCycleEncoder m_encoder = new DutyCycleEncoder(ArmConstants.kEncoderChannel);
     private final ArmFeedforward m_feedforward = new ArmFeedforward(
             ArmConstants.kSVolts, ArmConstants.kCosVolts,
             ArmConstants.kVVoltSecondPerRad, ArmConstants.kAVoltSecondSquaredPerRad);
 
     /** Create a new ArmSubsystem. */
-    public Arm(int restingPosChannel, int scoringPosChannel) {
+    public Arm() {
         super(
                 new ProfiledPIDController(
                         ArmConstants.kP,
@@ -38,8 +38,6 @@ public class Arm extends ProfiledPIDSubsystem {
                 0);
         m_encoder.setDutyCycleRange(ArmConstants.kEncoderMinimumDutyCycle, ArmConstants.kEncoderMaximumDutyCycle);
         m_encoder.setDistancePerRotation(ArmConstants.kEncoderDistancePerRotation);
-        restingPositionLimitSwitch = new DigitalInput(restingPosChannel);
-        scoringPositionLimitSwitch = new DigitalInput(scoringPosChannel);
         // Start arm at rest in neutral position
         setGoal(ArmConstants.kArmOffsetRads);
     }
@@ -55,7 +53,7 @@ public class Arm extends ProfiledPIDSubsystem {
 
     @Override
     public double getMeasurement() {
-        return m_encoder.getPositionOffset();
+        return m_encoder.get();
     }
 
     public void rawMotor(double speed) {
@@ -70,14 +68,10 @@ public class Arm extends ProfiledPIDSubsystem {
         return restingPositionLimitSwitch.get();
     }
 
-    public void resetEncoder() {
-        m_encoder.reset();
-    }
-
     public void addShuffleboardTab() {
         ShuffleboardTab armTab = Shuffleboard.getTab("Arm");
         ShuffleboardLayout layout = armTab.getLayout("Arm", BuiltInLayouts.kList).withPosition(0,0).withSize(2, 3);
-        layout.addNumber("Angle", ()-> Math.toDegrees(m_encoder.getPositionOffset()));
+        layout.addNumber("Angle", ()-> Math.toDegrees(getMeasurement()));
         layout.addBoolean("Resting", ()-> restingPositionLimitSwitch.get()).withWidget(BuiltInWidgets.kBooleanBox);
         layout.addBoolean("Scoring", ()-> scoringPositionLimitSwitch.get()).withWidget(BuiltInWidgets.kBooleanBox);
     }

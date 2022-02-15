@@ -23,7 +23,6 @@ public class RotateArmToResting extends CommandBase {
         arm.enable();
         if (arm.getLimitSwitchResting()){
             arm.disable();
-            arm.resetEncoder();
         } 
     }
 
