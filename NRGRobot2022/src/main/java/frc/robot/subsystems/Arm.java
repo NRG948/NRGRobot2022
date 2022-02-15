@@ -50,7 +50,7 @@ public class Arm extends ProfiledPIDSubsystem {
     }
 
     @Override
-    public void useOutput(double output, TrapezoidProfile.State setpoint) {
+    protected void useOutput(double output, TrapezoidProfile.State setpoint) {
         // Calculate the feedforward from the sepoint
         double feedforward = m_feedforward.calculate(setpoint.position, setpoint.velocity);
         // Add the feedforward to the PID output to get the motor output
@@ -60,7 +60,7 @@ public class Arm extends ProfiledPIDSubsystem {
     }
 
     @Override
-    public double getMeasurement() {
+    protected double getMeasurement() {
         return getRadians();
     }
 
