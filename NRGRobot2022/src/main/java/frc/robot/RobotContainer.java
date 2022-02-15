@@ -79,7 +79,7 @@ public class RobotContainer {
   private final SetModuleState setModuleState_90 = new SetModuleState(swerveDrive, driveController, 90);
   private final ManualClaw manualClaw = new ManualClaw(claw, driveController);
   private final RotateArmToResting armToResting = new RotateArmToResting(arm);
-  private final RotateArmToStowed armToScoring = new RotateArmToStowed(arm);
+  private final RotateArmToStowed armToStowed = new RotateArmToStowed(arm);
 
 
   private SendableChooser<ChooseAutoPath> chooseAutoPath;
@@ -134,7 +134,7 @@ public class RobotContainer {
     xboxDpadLeft.whenPressed(new TurnToAngle(swerveDrive, 45));
 
     xboxLeftBumper.whenPressed(armToResting);
-    xboxRightBumper.whenPressed(armToScoring);
+    xboxRightBumper.whenPressed(armToStowed);
   }
 
   /**
