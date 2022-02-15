@@ -35,6 +35,7 @@ import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import edu.wpi.first.wpilibj2.command.ProfiledPIDSubsystem;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class SwerveDrive extends SubsystemBase {
@@ -238,6 +239,9 @@ public class SwerveDrive extends SubsystemBase {
   public static double currentMaxSpeed = MAX_SPEED;
   public static double currentMaxAngularSpeed = MAX_ANGULAR_SPEED;
 
+  public static boolean turnToAngle = false;
+  public static Rotation2d targetAngle = Rotation2d.fromDegrees(0);
+
   // X and Y swaped
   private final Translation2d m_frontLeftLocation = new Translation2d(0.3302, 0.2413);
   private final Translation2d m_frontRightLocation = new Translation2d(0.3302, -0.2413);
@@ -256,8 +260,17 @@ public class SwerveDrive extends SubsystemBase {
 
   private final SwerveDriveOdometry m_odometry = new SwerveDriveOdometry(m_kinematics, getRotation2d());
 
+  
+  public static final TrapezoidProfile.Constraints kThetaControllerConstraints = new TrapezoidProfile.Constraints(
+      SwerveDrive.MAX_SPEED, SwerveDrive.MAX_ACCELERATION);
+  private final ProfiledPIDController thetaController = new ProfiledPIDController(
+    1, 0, 0, kThetaControllerConstraints);
+
+
   public SwerveDrive() {
     m_ahrs.reset();
+    thetaController.enableContinuousInput(-Math.PI, Math.PI);
+    thetaController.setTolerance(Math.PI/36); // 5 degree tolerance
   }
 
   public void reset() {
@@ -286,6 +299,10 @@ public class SwerveDrive extends SubsystemBase {
       rot *= Math.abs(rot);
     }
 
+    if(turnToAngle){
+      rot = calculateRotSpeed();
+    }
+
     xSpeed = MathUtil.applyDeadband(xSpeed, 0.02) * currentMaxSpeed;
     ySpeed = MathUtil.applyDeadband(ySpeed, 0.02) * currentMaxSpeed;
     rot = MathUtil.applyDeadband(rot, 0.02) * currentMaxAngularSpeed;
@@ -295,6 +312,21 @@ public class SwerveDrive extends SubsystemBase {
             ? ChassisSpeeds.fromFieldRelativeSpeeds(xSpeed, ySpeed, rot, getRotation2d())
             : new ChassisSpeeds(xSpeed, ySpeed, rot));
     setModuleStates(swerveModuleStates);
+  }
+
+  public double calculateRotSpeed(){
+    if(thetaController.atGoal()){
+      disableTurnToAngle();
+    }
+    return thetaController.calculate(getRotation2d().getRadians(), targetAngle.getRadians());
+  }
+
+  public void enableTurnToAngle(double angle){
+    turnToAngle = true;
+    targetAngle = Rotation2d.fromDegrees(angle);
+  }
+  public void disableTurnToAngle(){
+    turnToAngle = false;
   }
 
   /** Sets the maximum drive speed. This value is clamped to the range [0..MAX_SPEED]. */
@@ -378,12 +410,7 @@ public class SwerveDrive extends SubsystemBase {
     m_frontRight.stopMotors();
     m_backLeft.stopMotors();
     m_backRight.stopMotors();
-
-    /*
-    nate doesnt know how to do 33-3.5
-    nate also doesnt know how to do 26/2
-    nate also doesnt know how to divide by 2
-    */
+    turnToAngle = false;
 
   }
 

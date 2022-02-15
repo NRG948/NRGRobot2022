@@ -14,12 +14,14 @@ public class RotateArmToScoring extends CommandBase {
     
     // Called when the command is initially scheduled.
     @Override
-    public void initialize() {}
+    public void initialize() {
+        System.out.println("\nScoring Arm\n");
+    }
 
     // Called every time the scheduler runs while the command is scheduled.
     @Override
     public void execute() {
-        arm.setGoal(Math.PI/2);
+        arm.setGoal(2*Math.PI/3);
         if (!arm.getEnabledState()) {
             arm.enable();
         }
