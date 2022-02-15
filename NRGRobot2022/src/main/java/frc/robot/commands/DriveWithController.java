@@ -31,7 +31,7 @@ public class DriveWithController extends CommandBase {
   // TODO? : add tolerance value to execute() so it does not 
   @Override
   public void execute() {
-    swerveDrive.drive(-driveController.getLeftY(), -driveController.getLeftX(), -driveController.getRightX(), true);
+    swerveDrive.drive(-driveController.getLeftY(), -driveController.getLeftX(), -driveController.getRightX(), true, false);
   }
 
   // Called once the command ends or is interrupted.

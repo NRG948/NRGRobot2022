@@ -27,7 +27,7 @@ public class DriveForward extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    swerveDrive.drive(1.0, 0, 0, true);
+    swerveDrive.drive(1.0, 0, 0, true, false);
 
   }
 

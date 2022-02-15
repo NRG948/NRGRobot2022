@@ -18,7 +18,7 @@ package frc.robot;
  */
 public final class Constants {
     public static final class ArmConstants {
-        public static final int kMotorPort = 4;
+        public static final int kMotorPort = 0;
     
         public static final double kP = 1;
     
@@ -31,9 +31,10 @@ public final class Constants {
         public static final double kMaxVelocityRadPerSecond = 3;
         public static final double kMaxAccelerationRadPerSecSquared = 10;
     
-        public static final int[] kEncoderPorts = new int[] {4, 5};
-        public static final int kEncoderPPR = 256;
-        public static final double kEncoderDistancePerPulse = 2.0 * Math.PI / kEncoderPPR;
+        public static final int kEncoderPorts = 4;
+        public static final double kEncoderMinimumDutyCycle = 1.0 / 1025.0;
+        public static final double kEncoderMaximumDutyCycle = 1024.0 / 1025.0;
+        public static final double kEncoderDistancePerRotation = 2.0 * Math.PI;
     
         // The offset of the arm from the horizontal in its neutral position,
         // measured from the horizontal

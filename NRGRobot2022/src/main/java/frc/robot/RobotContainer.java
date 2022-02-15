@@ -94,11 +94,12 @@ public class RobotContainer {
     // Configure the button bindings
     configureButtonBindings();
 
+    claw.setDefaultCommand(manualClaw);
+
     // Init Shuffleboard
     swerveDrive.initShuffleboardTab();
-    
-    claw.setDefaultCommand(manualClaw);
     raspberryPiVision.addShuffleboardTab();
+    arm.addShuffleboardTab();
     this.addAutonomousShuffleboardTab();
   }
 
@@ -134,7 +135,7 @@ public class RobotContainer {
             // End 3 meters straight ahead of where we started, facing forward
             new Pose2d(-2, 0, Rotation2d.fromDegrees(-180)),
             true),
-        new InstantCommand(() -> swerveDrive.stopMotor()));
+        new InstantCommand(() -> swerveDrive.stopMotors()));
   }
 
   public void initSubsystems() {

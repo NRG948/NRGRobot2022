@@ -119,7 +119,7 @@ public class SwerveDrive extends SubsystemBase {
 
     /** Resets the module. */
     public void reset() {
-      stopMotor();
+      stopMotors();
       turningPIDController.reset(Math.toRadians(turningEncoder.getAbsolutePosition()));
     }
 
@@ -239,10 +239,10 @@ public class SwerveDrive extends SubsystemBase {
   public static double currentMaxAngularSpeed = MAX_ANGULAR_SPEED;
 
   // X and Y swaped
-  private final Translation2d m_frontLeftLocation = new Translation2d(0.34925, 0.24765);
-  private final Translation2d m_frontRightLocation = new Translation2d(0.34925, -0.24765);
-  private final Translation2d m_backLeftLocation = new Translation2d(-0.34925, 0.24765);
-  private final Translation2d m_backRightLocation = new Translation2d(-0.34925, -0.24765);
+  private final Translation2d m_frontLeftLocation = new Translation2d(0.3302, 0.2413);
+  private final Translation2d m_frontRightLocation = new Translation2d(0.3302, -0.2413);
+  private final Translation2d m_backLeftLocation = new Translation2d(-0.3302, 0.2413);
+  private final Translation2d m_backRightLocation = new Translation2d(-0.3302, -0.2413);
 
   private final Module m_frontLeft = new Module(1, 2, 9, "Front Left");
   private final Module m_frontRight = new Module(3, 4, 10, "Front Right");
@@ -279,7 +279,13 @@ public class SwerveDrive extends SubsystemBase {
    *                      field.
    */
   @SuppressWarnings("ParameterName")
-  public void drive(double xSpeed, double ySpeed, double rot, boolean fieldRelative) {
+  public void drive(double xSpeed, double ySpeed, double rot, boolean fieldRelative, boolean squareInputs) {
+    if(squareInputs){
+      xSpeed *= Math.abs(xSpeed);
+      ySpeed *= Math.abs(ySpeed);
+      rot *= Math.abs(rot);
+    }
+
     xSpeed = MathUtil.applyDeadband(xSpeed, 0.02) * currentMaxSpeed;
     ySpeed = MathUtil.applyDeadband(ySpeed, 0.02) * currentMaxSpeed;
     rot = MathUtil.applyDeadband(rot, 0.02) * currentMaxAngularSpeed;
@@ -354,7 +360,6 @@ public class SwerveDrive extends SubsystemBase {
         m_backRight.setDesiredState(state);
         break;
     }
-
   }
 
   /** Sets the desired module states. */
@@ -367,12 +372,18 @@ public class SwerveDrive extends SubsystemBase {
     m_backRight.setDesiredState(desiredStates[3]);
   }
 
-  /** Stops all of the swerve drive motors. */
-  public void stopMotor() {
+  // Stops all Swerve Drive Motors
+  public void stopMotors() {
     m_frontLeft.stopMotors();
     m_frontRight.stopMotors();
     m_backLeft.stopMotors();
     m_backRight.stopMotors();
+
+    /*
+    nate doesnt know how to do 33-3.5
+    nate also doesnt know how to do 26/2
+    nate also doesnt know how to divide by 2
+    */
 
   }
 
@@ -439,3 +450,4 @@ public class SwerveDrive extends SubsystemBase {
             EntryListenerFlags.kNew | EntryListenerFlags.kUpdate);
   }
 }
+
