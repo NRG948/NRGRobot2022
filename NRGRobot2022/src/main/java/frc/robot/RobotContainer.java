@@ -29,7 +29,7 @@ import frc.robot.commands.Interrupt;
 import frc.robot.commands.ManualClaw;
 import frc.robot.commands.ResetSubsystems;
 import frc.robot.commands.RotateArmToResting;
-import frc.robot.commands.RotateArmToScoring;
+import frc.robot.commands.RotateArmToStowed;
 import frc.robot.commands.SetModuleState;
 import frc.robot.commands.TurnToAngle;
 import frc.robot.subsystems.RaspberryPiVision;
@@ -79,7 +79,7 @@ public class RobotContainer {
   private final SetModuleState setModuleState_90 = new SetModuleState(swerveDrive, driveController, 90);
   private final ManualClaw manualClaw = new ManualClaw(claw, driveController);
   private final RotateArmToResting armToResting = new RotateArmToResting(arm);
-  private final RotateArmToScoring armToScoring = new RotateArmToScoring(arm);
+  private final RotateArmToStowed armToScoring = new RotateArmToStowed(arm);
 
 
   private SendableChooser<ChooseAutoPath> chooseAutoPath;

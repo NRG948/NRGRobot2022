@@ -24,9 +24,9 @@ public class Arm extends ProfiledPIDSubsystem {
     private final ArmFeedforward m_feedforward = new ArmFeedforward(
             ArmConstants.kSVolts, ArmConstants.kCosVolts,
             ArmConstants.kVVoltSecondPerRad, ArmConstants.kAVoltSecondSquaredPerRad);   
-    private final double PRACTICE_BOT_HORIZONTAL_OFFSET = Math.toRadians(85.88);
-    private final double PRACTICE_BOT_STOWED_ANGLE = Math.toRadians(100);
-    private final double PRACTICE_BOT_RESTING_ANGLE = Math.toRadians(-20);
+    private static final double PRACTICE_BOT_HORIZONTAL_OFFSET = Math.toRadians(85.88);
+    public static final double PRACTICE_BOT_STOWED_ANGLE = Math.toRadians(100);
+    public static final double PRACTICE_BOT_RESTING_ANGLE = Math.toRadians(-20);
     /** Create a new ArmSubsystem. */
     public Arm() {
         super(

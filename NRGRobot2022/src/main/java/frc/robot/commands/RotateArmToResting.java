@@ -16,25 +16,24 @@ public class RotateArmToResting extends CommandBase {
     @Override
     public void initialize() {
         System.out.println("\nResting Arm\n");
+        arm.setGoal(Arm.PRACTICE_BOT_RESTING_ANGLE);
+        arm.enable();
     }
 
     // Called every time the scheduler runs while the command is scheduled.
     @Override
     public void execute() {
-        arm.setGoal(0);
-        arm.enable();
-        if (arm.isAtRestingPosition()){
-            arm.disable();
-        } 
     }
 
     // Called once the command ends or is interrupted.
     @Override
-    public void end(boolean interrupted) {}
+    public void end(boolean interrupted) {
+        arm.disable();
+    }
 
     // Returns true when the command should end.
     @Override
     public boolean isFinished() {
-        return false;
+        return arm.isAtRestingPosition();
     }
 }

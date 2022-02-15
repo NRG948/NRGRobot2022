@@ -3,11 +3,11 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Arm;
 
-public class RotateArmToScoring extends CommandBase {
+public class RotateArmToStowed extends CommandBase {
     
     private Arm arm;
 
-    public RotateArmToScoring(Arm arm) {
+    public RotateArmToStowed(Arm arm) {
         this.arm = arm;
         addRequirements(arm);
     }
@@ -15,25 +15,25 @@ public class RotateArmToScoring extends CommandBase {
     // Called when the command is initially scheduled.
     @Override
     public void initialize() {
-        System.out.println("\nScoring Arm\n");
+        System.out.println("\nStowing Arm\n");
+        arm.setGoal(Arm.PRACTICE_BOT_STOWED_ANGLE);
+        arm.enable();
     }
 
     // Called every time the scheduler runs while the command is scheduled.
     @Override
     public void execute() {
-        arm.setGoal(2*Math.PI/3);
-        if (!arm.getEnabledState()) {
-            arm.enable();
-        }
     }
 
     // Called once the command ends or is interrupted.
     @Override
-    public void end(boolean interrupted) {}
+    public void end(boolean interrupted) {
+        arm.disable();
+    }
 
     // Returns true when the command should end.
     @Override
     public boolean isFinished() {
-        return false;
+        return arm.isAtStowedPosition();
     }
 }
