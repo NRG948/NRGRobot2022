@@ -77,7 +77,7 @@ public class Arm extends ProfiledPIDSubsystem {
     public void addShuffleboardTab() {
         ShuffleboardTab armTab = Shuffleboard.getTab("Arm");
         ShuffleboardLayout layout = armTab.getLayout("Arm", BuiltInLayouts.kList).withPosition(0,0).withSize(2, 3);
-        layout.addNumber("Angle", ()-> Math.toDegrees(m_encoder.getPositionOffset()));
+        layout.addNumber("Angle", () -> Math.toDegrees(m_encoder.getPositionOffset()));
         layout.addBoolean("Resting", ()-> restingPositionLimitSwitch.get()).withWidget(BuiltInWidgets.kBooleanBox);
         layout.addBoolean("Scoring", ()-> scoringPositionLimitSwitch.get()).withWidget(BuiltInWidgets.kBooleanBox);
     }

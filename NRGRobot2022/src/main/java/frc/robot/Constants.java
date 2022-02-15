@@ -31,7 +31,7 @@ public final class Constants {
         public static final double kMaxVelocityRadPerSecond = 3;
         public static final double kMaxAccelerationRadPerSecSquared = 10;
     
-        public static final int kEncoderPorts = 4;
+        public static final int kEncoderPorts = 0;
         public static final double kEncoderMinimumDutyCycle = 1.0 / 1025.0;
         public static final double kEncoderMaximumDutyCycle = 1024.0 / 1025.0;
         public static final double kEncoderDistancePerRotation = 2.0 * Math.PI;

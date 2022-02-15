@@ -21,6 +21,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import edu.wpi.first.wpilibj2.command.button.POVButton;
 import frc.robot.commands.CommandUtils;
 import frc.robot.commands.DriveForward;
 import frc.robot.commands.DriveWithController;
@@ -30,6 +31,7 @@ import frc.robot.commands.ResetSubsystems;
 import frc.robot.commands.RotateArmToResting;
 import frc.robot.commands.RotateArmToScoring;
 import frc.robot.commands.SetModuleState;
+import frc.robot.commands.TurnToAngle;
 import frc.robot.subsystems.RaspberryPiVision;
 import frc.robot.subsystems.SwerveDrive;
 import frc.robot.subsystems.Arm;
@@ -44,6 +46,9 @@ import frc.robot.subsystems.Claw;
  * the robot (including
  * subsystems, commands, and button mappings) should be declared here.
  */
+// Nate is not good at math
+// Imagine having cool headphones
+//   
 public class RobotContainer {
   // Operator interface (e.g. Joysticks)
   private final XboxController driveController = new XboxController(2);
@@ -53,6 +58,12 @@ public class RobotContainer {
   private JoystickButton xboxButtonY = new JoystickButton(driveController, 4); // y Button
   private JoystickButton xboxLeftBumper = new JoystickButton(driveController, 5);
   private JoystickButton xboxRightBumper = new JoystickButton(driveController, 6);
+
+  private POVButton xboxDpadUp = new POVButton(driveController, 0);
+  private POVButton xboxDpadRight = new POVButton(driveController, 90);
+  private POVButton xboxDpadDown = new POVButton(driveController, 180);
+  private POVButton xboxDpadLeft = new POVButton(driveController, 270);
+
 
   // Subsystems
   private final SwerveDrive swerveDrive = new SwerveDrive();
@@ -116,6 +127,12 @@ public class RobotContainer {
     xboxButtonA.whenPressed(interrupt);
     xboxButtonB.whenPressed(setModuleState_0);
     xboxButtonY.whenPressed(setModuleState_90);
+
+    xboxDpadUp.whenPressed(new TurnToAngle(swerveDrive, 135));
+    xboxDpadRight.whenPressed(new TurnToAngle(swerveDrive, -135)); 
+    xboxDpadDown.whenPressed(new TurnToAngle(swerveDrive, -45));
+    xboxDpadLeft.whenPressed(new TurnToAngle(swerveDrive, 45));
+
     xboxLeftBumper.whenPressed(armToResting);
     xboxRightBumper.whenPressed(armToScoring);
   }
