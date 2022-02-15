@@ -25,7 +25,8 @@ public class Arm extends ProfiledPIDSubsystem {
             ArmConstants.kSVolts, ArmConstants.kCosVolts,
             ArmConstants.kVVoltSecondPerRad, ArmConstants.kAVoltSecondSquaredPerRad);   
     private final double PRACTICE_BOT_HORIZONTAL_OFFSET = Math.toRadians(85.88);
-
+    private final double PRACTICE_BOT_STOWED_ANGLE = Math.toRadians(100);
+    private final double PRACTICE_BOT_RESTING_ANGLE = Math.toRadians(-23);
     /** Create a new ArmSubsystem. */
     public Arm() {
         super(
@@ -65,8 +66,12 @@ public class Arm extends ProfiledPIDSubsystem {
         return m_enabled;
     }
 
-    public boolean getLimitSwitchResting() {
-        return restingPositionLimitSwitch.get();
+    public boolean isAtRestingPosition() {
+        return !restingPositionLimitSwitch.get() || getMeasurement() < PRACTICE_BOT_RESTING_ANGLE;
+    }
+
+    public boolean isAtStowedPosition() {
+        return !scoringPositionLimitSwitch.get() || getMeasurement() > PRACTICE_BOT_STOWED_ANGLE;
     }
 
     public void addShuffleboardTab() {

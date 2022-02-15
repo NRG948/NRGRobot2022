@@ -23,7 +23,7 @@ public class RotateArmToResting extends CommandBase {
     public void execute() {
         arm.setGoal(0);
         arm.enable();
-        if (arm.getLimitSwitchResting()){
+        if (arm.isAtRestingPosition()){
             arm.disable();
         } 
     }
