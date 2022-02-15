@@ -23,7 +23,8 @@ public class Arm extends ProfiledPIDSubsystem {
     private final DutyCycleEncoder m_encoder = new DutyCycleEncoder(ArmConstants.kEncoderChannel);
     private final ArmFeedforward m_feedforward = new ArmFeedforward(
             ArmConstants.kSVolts, ArmConstants.kCosVolts,
-            ArmConstants.kVVoltSecondPerRad, ArmConstants.kAVoltSecondSquaredPerRad);
+            ArmConstants.kVVoltSecondPerRad, ArmConstants.kAVoltSecondSquaredPerRad);   
+    private final double PRACTICE_BOT_HORIZONTAL_OFFSET = Math.toRadians(85.88);
 
     /** Create a new ArmSubsystem. */
     public Arm() {
@@ -53,7 +54,7 @@ public class Arm extends ProfiledPIDSubsystem {
 
     @Override
     public double getMeasurement() {
-        return m_encoder.get();
+        return PRACTICE_BOT_HORIZONTAL_OFFSET - (2 * Math.PI * m_encoder.get());
     }
 
     public void rawMotor(double speed) {
