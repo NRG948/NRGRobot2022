@@ -306,7 +306,12 @@ public class SwerveDrive extends SubsystemBase {
     }
 
     if(turnToAngle){
-      rot = calculateRotSpeed();
+      if(thetaController.atGoal()){
+        disableTurnToAngle();
+      }
+      else{
+        rot = calculateRotSpeed();
+      }
     }
 
     xSpeed = MathUtil.applyDeadband(xSpeed, 0.02) * currentMaxSpeed;
@@ -321,9 +326,7 @@ public class SwerveDrive extends SubsystemBase {
   }
 
   public double calculateRotSpeed(){
-    if(thetaController.atGoal()){
-      disableTurnToAngle();
-    }
+
     return thetaController.calculate(getRotation2d().getRadians(), targetAngle.getRadians());
   }
 
