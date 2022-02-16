@@ -313,6 +313,7 @@ public class SwerveDrive extends SubsystemBase {
     }
 
     if(turnToAngle){
+      
       if(thetaController.atGoal()){
         disableTurnToAngle();
       }
@@ -340,6 +341,7 @@ public class SwerveDrive extends SubsystemBase {
   public void enableTurnToAngle(double angle){
     turnToAngle = true;
     targetAngle = Rotation2d.fromDegrees(angle);
+    thetaController.setGoal(targetAngle.getRadians());
   }
   public void disableTurnToAngle(){
     turnToAngle = false;

@@ -9,15 +9,21 @@ import frc.robot.subsystems.SwerveDrive;
 
 public class TurnToAngle extends CommandBase {
 
+  private SwerveDrive swerveDrive;
+  private double angle;
   
   /** Creates a new turnToAngle. */
   public TurnToAngle(SwerveDrive swerveDrive, double angle) {
-    swerveDrive.enableTurnToAngle(angle);
+    this.swerveDrive = swerveDrive;
+    this.angle = angle;
   }
 
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {}
+  public void initialize() {
+
+    swerveDrive.enableTurnToAngle(angle);
+  }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
