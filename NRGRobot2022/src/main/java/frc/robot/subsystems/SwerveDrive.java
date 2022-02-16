@@ -37,9 +37,11 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.ProfiledPIDSubsystem;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.preferences.RobotPreferencesLayout;
 import frc.robot.preferences.RobotPreferencesValue;
 import frc.robot.preferences.RobotPreferences.DoubleValue;
 
+@RobotPreferencesLayout(groupName = "SwerveDrive", column = 0, row = 0, width = 2, height = 4)
 public class SwerveDrive extends SubsystemBase {
 
   /*
@@ -50,6 +52,7 @@ public class SwerveDrive extends SubsystemBase {
    */
 
   /* Swerve Module helper class */
+  @RobotPreferencesLayout(groupName = "SwerveModule", column = 2, row = 0, width = 2, height = 4)
   public static class Module {
     @RobotPreferencesValue
     public static DoubleValue driveP = new DoubleValue("SwerveModule", "driveP", 1.0);
