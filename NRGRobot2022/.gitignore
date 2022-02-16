@@ -160,3 +160,7 @@ bin/
 
 # Simulation GUI and other tools window save file
 *-window.json
+
+# Exclude WPILib network tables persistent storage.
+networktables.ini
+networktables.ini.bak
