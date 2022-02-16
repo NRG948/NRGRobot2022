@@ -32,6 +32,7 @@ import frc.robot.commands.RotateArmToResting;
 import frc.robot.commands.RotateArmToStowed;
 import frc.robot.commands.SetModuleState;
 import frc.robot.commands.TurnToAngle;
+import frc.robot.preferences.RobotPreferences;
 import frc.robot.subsystems.RaspberryPiVision;
 import frc.robot.subsystems.SwerveDrive;
 import frc.robot.subsystems.Arm;
@@ -101,10 +102,10 @@ public class RobotContainer {
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
   public RobotContainer() {
-    // swerveDrive.setDefaultCommand(driveWithController);
+    RobotPreferences.init();
+    
     // Configure the button bindings
     configureButtonBindings();
-
     claw.setDefaultCommand(manualClaw);
 
     // Init Shuffleboard
