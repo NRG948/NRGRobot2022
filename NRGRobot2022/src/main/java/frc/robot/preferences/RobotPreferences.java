@@ -17,41 +17,45 @@ import org.reflections.scanners.Scanners;
 import org.reflections.util.ConfigurationBuilder;
 
 import edu.wpi.first.wpilibj.Preferences;
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 
 public class RobotPreferences {
 
-    public interface IValueVisitor{
+    public interface IValueVisitor {
         void visit(StringValue value);
+
         void visit(BooleanValue value);
+
         void visit(DoubleValue value);
     }
-    
-    public static abstract class Value{
-        
+
+    public static abstract class Value {
+
         protected final String group;
         protected final String name;
         protected final String key;
 
-        public Value(String group, String name){
+        public Value(String group, String name) {
             this.group = group;
             this.name = name;
             this.key = group + "/" + name;
         }
 
-        public String getGroup(){
-           return group; 
+        public String getGroup() {
+            return group;
         }
-        
-        public String getName(){
-            return name; 
+
+        public String getName() {
+            return name;
         }
-         
-        public String getKey(){
-            return key; 
-        } 
 
+        public String getKey() {
+            return key;
+        }
 
-        public boolean exists(){
+        public boolean exists() {
             return Preferences.containsKey(key);
         }
 
@@ -62,26 +66,26 @@ public class RobotPreferences {
 
         private final String defaultValue;
 
-        public StringValue(String group, String name, String defaultValue){
+        public StringValue(String group, String name, String defaultValue) {
             super(group, name);
             this.defaultValue = defaultValue;
         }
-        
+
         public String getDefaultValue() {
             return defaultValue;
         }
 
-        public String getValue(){
+        public String getValue() {
             return Preferences.getString(key, defaultValue);
         }
 
-        public void setValue(String value){
+        public void setValue(String value) {
             Preferences.setString(key, value);
         }
 
         @Override
         public void accept(IValueVisitor visitor) {
-            visitor.visit(this);            
+            visitor.visit(this);
         }
     }
 
@@ -89,26 +93,26 @@ public class RobotPreferences {
 
         private final boolean defaultValue;
 
-        public BooleanValue(String group, String name, boolean defaultValue){
+        public BooleanValue(String group, String name, boolean defaultValue) {
             super(group, name);
             this.defaultValue = defaultValue;
         }
-        
+
         public boolean getDefaultValue() {
             return defaultValue;
         }
 
-        public boolean getValue(){
+        public boolean getValue() {
             return Preferences.getBoolean(key, defaultValue);
         }
 
-        public void setValue(Boolean value){
+        public void setValue(Boolean value) {
             Preferences.setBoolean(key, value);
         }
 
         @Override
         public void accept(IValueVisitor visitor) {
-            visitor.visit(this);            
+            visitor.visit(this);
         }
     }
 
@@ -116,82 +120,99 @@ public class RobotPreferences {
 
         private final double defaultValue;
 
-        public DoubleValue(String group, String name, double defaultValue){
+        public DoubleValue(String group, String name, double defaultValue) {
             super(group, name);
             this.defaultValue = defaultValue;
         }
-        
+
         public double getDefaultValue() {
             return defaultValue;
         }
 
-        public double getValue(){
+        public double getValue() {
             return Preferences.getDouble(key, defaultValue);
         }
 
-        public void setValue(double value){
+        public void setValue(double value) {
             Preferences.setDouble(key, value);
         }
-    
+
         @Override
         public void accept(IValueVisitor visitor) {
-            visitor.visit(this);            
+            visitor.visit(this);
         }
     }
-    
-    private static class DefaultValueWriter implements IValueVisitor{
+
+    private static class DefaultValueWriter implements IValueVisitor {
 
         @Override
         public void visit(StringValue value) {
-            value.setValue(value.getDefaultValue());            
+            value.setValue(value.getDefaultValue());
         }
 
         @Override
         public void visit(BooleanValue value) {
-            value.setValue(value.getDefaultValue());            
+            value.setValue(value.getDefaultValue());
         }
 
         @Override
         public void visit(DoubleValue value) {
-            value.setValue(value.getDefaultValue());            
+            value.setValue(value.getDefaultValue());
         }
 
     }
 
-    public static void init(){
+    public static void init() {
         DefaultValueWriter writeDefaultValue = new DefaultValueWriter();
         getAllValues().filter(v -> !v.exists()).forEach(v -> v.accept(writeDefaultValue));
 
     }
 
-    private static Stream<Field> getFields(){
+    public static void addShuffleBoardTab() {
+        ShuffleboardTab prefsTab = Shuffleboard.getTab("Preferences");
+
         ConfigurationBuilder config = new ConfigurationBuilder()
-            .forPackage("frc.robot")
-            .setScanners(Scanners.FieldsAnnotated);
-        
+                .forPackage("frc.robot")
+                .setScanners(Scanners.TypesAnnotated);
+
+        Set<Class<?>> classes = new Reflections(config)
+                .get(Scanners.TypesAnnotated
+                        .with(RobotPreferencesLayout.class)
+                        .asClass());
+        classes.stream().map(c -> c.getAnnotation(RobotPreferencesLayout.class)).forEach(layout -> {
+            prefsTab.getLayout(layout.groupName(), BuiltInLayouts.kList)
+                    .withPosition(layout.column(), layout.row())
+                    .withSize(layout.width(), layout.height());
+        });
+        ;
+    }
+
+    private static Stream<Field> getFields() {
+        ConfigurationBuilder config = new ConfigurationBuilder()
+                .forPackage("frc.robot")
+                .setScanners(Scanners.FieldsAnnotated);
+
         Set<Field> fields = new Reflections(config)
-            .get(Scanners.FieldsAnnotated
-                .with(RobotPreferencesValue.class)
-                .as(Field.class));
+                .get(Scanners.FieldsAnnotated
+                        .with(RobotPreferencesValue.class)
+                        .as(Field.class));
         return fields.stream().filter(f -> Modifier.isStatic(f.getModifiers()));
     }
 
-    private static Value mapToValue(Field field){
-        try{
+    private static Value mapToValue(Field field) {
+        try {
             return (Value) field.get(null);
-        } catch(IllegalArgumentException e){
+        } catch (IllegalArgumentException e) {
             e.printStackTrace();
-        } catch(IllegalAccessException e){
+        } catch (IllegalAccessException e) {
             e.printStackTrace();
         }
 
         return null;
-    }  
+    }
 
-    private static Stream<Value> getAllValues(){
+    private static Stream<Value> getAllValues() {
         return getFields().map(RobotPreferences::mapToValue).filter(v -> v != null);
     }
 
 }
-
-
