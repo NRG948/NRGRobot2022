@@ -16,7 +16,7 @@ public class RotateArmToStowed extends CommandBase {
     @Override
     public void initialize() {
         System.out.println("\nStowing Arm\n");
-        arm.setGoal(Arm.PRACTICE_BOT_STOWED_ANGLE);
+        arm.setGoal(Math.toRadians(Arm.stowedAngle.getValue()));
         arm.enable();
     }
 

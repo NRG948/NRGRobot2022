@@ -15,11 +15,16 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.ProfiledPIDSubsystem;
 import frc.robot.Constants.ArmConstants;
+import frc.robot.preferences.RobotPreferencesValue;
+import frc.robot.preferences.RobotPreferences.DoubleValue;
 
 public class Arm extends ProfiledPIDSubsystem {
-    private static final double PRACTICE_BOT_HORIZONTAL_OFFSET = Math.toRadians(85.88);
-    public static final double PRACTICE_BOT_STOWED_ANGLE = Math.toRadians(100);
-    public static final double PRACTICE_BOT_RESTING_ANGLE = Math.toRadians(-20);
+    @RobotPreferencesValue
+    private static final DoubleValue levelAngleOffset = new DoubleValue("Arm", "levelAngleOffset", 85.88);
+    @RobotPreferencesValue
+    public static final DoubleValue stowedAngle = new DoubleValue("Arm", "stowedAngle", 100);
+    @RobotPreferencesValue
+    public static final DoubleValue restingAngle = new DoubleValue("Arm", "restingAngle", -20);
 
     private final DigitalInput restingPositionLimitSwitch = new DigitalInput(ArmConstants.kRestingPosChannel);
     private final DigitalInput scoringPositionLimitSwitch = new DigitalInput(ArmConstants.kScoringPosChannel);
@@ -66,17 +71,17 @@ public class Arm extends ProfiledPIDSubsystem {
 
     /** Returns the arm's current angle in radians. */
     private double getRadians() {
-        return PRACTICE_BOT_HORIZONTAL_OFFSET - m_encoder.getDistance();
+        return Math.toRadians(levelAngleOffset.getValue()) - m_encoder.getDistance();
     }
 
     /** Returns whether the arm is at its resting/acquiring position. */
     public boolean isAtRestingPosition() {
-        return !restingPositionLimitSwitch.get() || getRadians() < PRACTICE_BOT_RESTING_ANGLE;
+        return !restingPositionLimitSwitch.get() || getRadians() < Math.toRadians(restingAngle.getValue());
     }
 
     /** Returns whether the arm is at its stowed position. */
     public boolean isAtStowedPosition() {
-        return !scoringPositionLimitSwitch.get() || getRadians() > PRACTICE_BOT_STOWED_ANGLE;
+        return !scoringPositionLimitSwitch.get() || getRadians() > Math.toRadians(stowedAngle.getValue());
     }
 
     /** Adds a tab to the Shuffleboard for Arm subsystem debugging. */

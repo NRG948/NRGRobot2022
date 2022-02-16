@@ -1,5 +1,8 @@
 [NetworkTables Storage 3.0]
 string "/Preferences/.type"="RobotPreferences"
+double "/Preferences/SwerveDrive/turnD"=0
+double "/Preferences/SwerveDrive/turnI"=0
+double "/Preferences/SwerveDrive/turnP"=1
 double "/Preferences/SwerveModule/driveFeedForwardS"=1
 double "/Preferences/SwerveModule/driveFeedForwardV"=3
 double "/Preferences/SwerveModule/driveP"=1
