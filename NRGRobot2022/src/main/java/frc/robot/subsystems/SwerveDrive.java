@@ -37,6 +37,8 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.ProfiledPIDSubsystem;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.preferences.RobotPreferencesValue;
+import frc.robot.preferences.RobotPreferences.DoubleValue;
 
 public class SwerveDrive extends SubsystemBase {
 
@@ -48,15 +50,19 @@ public class SwerveDrive extends SubsystemBase {
    */
 
   /* Swerve Module helper class */
-
-  // Absolute position of encoders when the module wheel is pointed in the +X
-  // direction
-  double zeroFrontLeft = -2.197;
-  double zeroFrontRight = 129.990;
-  double zeroBackLeft = 88.066;
-  double zeroBackRight = -70.048;
-
-  private class Module {
+  public static class Module {
+    @RobotPreferencesValue
+    public static DoubleValue driveP = new DoubleValue("SwerveModule", "driveP", 1.0);
+    @RobotPreferencesValue
+    public static DoubleValue driveFeedForwardS = new DoubleValue("SwerveModule", "driveFeedForwardS", 1.0);
+    @RobotPreferencesValue
+    public static DoubleValue driveFeedForwardV = new DoubleValue("SwerveModule", "driveFeedForwardV", 3.0);
+    @RobotPreferencesValue
+    public static DoubleValue turnP = new DoubleValue("SwerveModule", "turnP", 7.0);
+    @RobotPreferencesValue
+    public static DoubleValue turnFeedForwardS = new DoubleValue("SwerveModule", "turnFeedForwardS", 1.0);
+    @RobotPreferencesValue
+    public static DoubleValue turnFeedForwardV = new DoubleValue("SwerveModule", "turnFeedForwardV", 0.5);
 
     private static final double WHEEL_RADIUS = 0.047625; // Meters
     private static final int ENCODER_RESOLUTION = 2048; // Steps per Rev
@@ -75,19 +81,19 @@ public class SwerveDrive extends SubsystemBase {
 
     /* TODO: Tune PID for drive and turning PID controllers */
     // Gains are for example purposes only - must be determined for your own robot!
-    private final PIDController drivePIDController = new PIDController(1, 0, 0);
+    private final PIDController drivePIDController = new PIDController(driveP.getValue(), 0, 0);
 
     // Gains are for example purposes only - must be determined for your own robot!
     private final ProfiledPIDController turningPIDController = new ProfiledPIDController(
-        7,
+        turnP.getValue(),
         0,
         0,
         new TrapezoidProfile.Constraints(
             MODULE_MAX_ANGULAR_VELOCITY, MODULE_MAX_ANGULAR_ACCELERATION));
 
     // Gains are for example purposes only - must be determined for your own robot!
-    private final SimpleMotorFeedforward driveFeedforward = new SimpleMotorFeedforward(1, 3);
-    private final SimpleMotorFeedforward turnFeedforward = new SimpleMotorFeedforward(1, 0.5);
+    private final SimpleMotorFeedforward driveFeedforward = new SimpleMotorFeedforward(driveFeedForwardS.getValue(), driveFeedForwardV.getValue());
+    private final SimpleMotorFeedforward turnFeedforward = new SimpleMotorFeedforward(turnFeedForwardS.getValue(), turnFeedForwardV.getValue());
 
     private SwerveModuleState desiredState = new SwerveModuleState(0, new Rotation2d(0));
 
