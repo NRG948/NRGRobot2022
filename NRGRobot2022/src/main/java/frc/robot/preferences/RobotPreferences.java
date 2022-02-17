@@ -242,8 +242,8 @@ public class RobotPreferences {
     /** Initializes the robot preferences. */
     public static void init() {
         DefaultValueWriter writeDefaultValue = new DefaultValueWriter();
-        getAllValues().filter(v -> !v.exists()).forEach(v -> v.accept(writeDefaultValue));
 
+        getAllValues().filter(v -> !v.exists()).forEach(v -> v.accept(writeDefaultValue));
     }
 
     /**
@@ -272,11 +272,11 @@ public class RobotPreferences {
         ConfigurationBuilder config = new ConfigurationBuilder()
                 .forPackage("frc.robot")
                 .setScanners(Scanners.FieldsAnnotated);
-
         Set<Field> fields = new Reflections(config)
                 .get(Scanners.FieldsAnnotated
                         .with(RobotPreferencesValue.class)
                         .as(Field.class));
+
         return fields.stream().filter(f -> Modifier.isStatic(f.getModifiers()));
     }
 
