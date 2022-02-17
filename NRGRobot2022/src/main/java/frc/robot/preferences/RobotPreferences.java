@@ -13,9 +13,12 @@ import org.reflections.Reflections;
 import org.reflections.scanners.Scanners;
 import org.reflections.util.ConfigurationBuilder;
 
+import edu.wpi.first.networktables.EntryListenerFlags;
 import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 
 /** A class to manage robot preferences. */
@@ -239,6 +242,48 @@ public class RobotPreferences {
 
     }
 
+    /** A Visitor that adds widgets to the Shuffleboard preferences layout. */
+    private static class ShuffleboardWidgetBuilder implements IValueVisitor {
+
+        private ShuffleboardLayout layout;
+
+        public ShuffleboardWidgetBuilder(ShuffleboardLayout layout) {
+            this.layout = layout;
+        }
+
+        @Override
+        public void visit(StringValue value) {
+            layout.add(value.getName(), value.getValue())
+                    .withWidget(BuiltInWidgets.kTextView)
+                    .getEntry()
+                    .addListener(
+                            (event) -> value.setValue(event.getEntry().getString(value.getDefaultValue())),
+                            EntryListenerFlags.kNew | EntryListenerFlags.kUpdate);
+
+        }
+
+        @Override
+        public void visit(BooleanValue value) {
+            layout.add(value.getName(), value.getValue())
+                    .withWidget(BuiltInWidgets.kToggleSwitch)
+                    .getEntry()
+                    .addListener(
+                            (event) -> value.setValue(event.getEntry().getBoolean(value.getDefaultValue())),
+                            EntryListenerFlags.kNew | EntryListenerFlags.kUpdate);
+        }
+
+        @Override
+        public void visit(DoubleValue value) {
+            layout.add(value.getName(), value.getValue())
+                    .withWidget(BuiltInWidgets.kTextView)
+                    .getEntry()
+                    .addListener(
+                            (event) -> value.setValue(event.getEntry().getDouble(value.getDefaultValue())),
+                            EntryListenerFlags.kNew | EntryListenerFlags.kUpdate);
+        }
+
+    }
+
     /** Initializes the robot preferences. */
     public static void init() {
         DefaultValueWriter writeDefaultValue = new DefaultValueWriter();
@@ -264,6 +309,12 @@ public class RobotPreferences {
             prefsTab.getLayout(layout.groupName(), BuiltInLayouts.kList)
                     .withPosition(layout.column(), layout.row())
                     .withSize(layout.width(), layout.height());
+        });
+
+        getAllValues().forEach((value) -> {
+            ShuffleboardLayout layout = prefsTab.getLayout(value.getGroup());
+            ShuffleboardWidgetBuilder builder = new ShuffleboardWidgetBuilder(layout);
+            value.accept(builder);
         });
     }
 

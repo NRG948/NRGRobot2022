@@ -15,12 +15,14 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.ProfiledPIDSubsystem;
 import frc.robot.Constants.ArmConstants;
+import frc.robot.preferences.RobotPreferencesLayout;
 import frc.robot.preferences.RobotPreferencesValue;
 import frc.robot.preferences.RobotPreferences.DoubleValue;
 
+@RobotPreferencesLayout(groupName = "Arm", column = 3, row = 0, width = 1, height = 2)
 public class Arm extends ProfiledPIDSubsystem {
     @RobotPreferencesValue
-    private static final DoubleValue levelAngleOffset = new DoubleValue("Arm", "levelAngleOffset", 85.88);
+    public static final DoubleValue levelAngleOffset = new DoubleValue("Arm", "levelAngleOffset", 85.88);
     @RobotPreferencesValue
     public static final DoubleValue stowedAngle = new DoubleValue("Arm", "stowedAngle", 100);
     @RobotPreferencesValue
