@@ -7,7 +7,6 @@ package frc.robot.preferences;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.Set;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
