@@ -42,7 +42,7 @@ import frc.robot.preferences.RobotPreferencesValue;
 import frc.robot.preferences.RobotPreferences.BooleanValue;
 import frc.robot.preferences.RobotPreferences.DoubleValue;
 
-@RobotPreferencesLayout(groupName = "SwerveDrive", column = 0, row = 0, width = 1, height = 2)
+@RobotPreferencesLayout(groupName = "SwerveDrive", column = 0, row = 0, width = 1, height = 3)
 public class SwerveDrive extends SubsystemBase {
 
   /*
