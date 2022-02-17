@@ -303,7 +303,8 @@ public class RobotPreferences {
 
         @Override
         public void visit(BooleanValue value) {
-            SimpleWidget widget = layout.add(value.getName(), value.getValue()).withWidget(BuiltInWidgets.kToggleSwitch);
+            SimpleWidget widget = layout.add(value.getName(), value.getValue())
+                    .withWidget(BuiltInWidgets.kToggleSwitch);
             NetworkTableEntry entry = widget.getEntry();
 
             entry.setBoolean(value.getValue());
@@ -328,6 +329,11 @@ public class RobotPreferences {
     @RobotPreferencesValue
     public static BooleanValue writeDefault = new BooleanValue("Preferences", "WriteDefault", true);
 
+    private static Reflections reflections = new Reflections(
+            new ConfigurationBuilder()
+                    .forPackage("frc.robot")
+                    .setScanners(Scanners.TypesAnnotated, Scanners.FieldsAnnotated));
+
     /** Initializes the robot preferences. */
     public static void init() {
         DefaultValueWriter writeDefaultValue = new DefaultValueWriter();
@@ -351,11 +357,8 @@ public class RobotPreferences {
     public static void addShuffleBoardTab() {
         ShuffleboardTab prefsTab = Shuffleboard.getTab("Preferences");
 
-        ConfigurationBuilder config = new ConfigurationBuilder()
-                .forPackage("frc.robot")
-                .setScanners(Scanners.TypesAnnotated);
-        Set<Class<?>> classes = new Reflections(config)
-                .get(Scanners.TypesAnnotated
+        Set<Class<?>> classes = reflections.get(
+                Scanners.TypesAnnotated
                         .with(RobotPreferencesLayout.class)
                         .asClass());
 
@@ -374,11 +377,8 @@ public class RobotPreferences {
 
     /** Returns a stream of fields containing preferences values. */
     private static Stream<Field> getFields() {
-        ConfigurationBuilder config = new ConfigurationBuilder()
-                .forPackage("frc.robot")
-                .setScanners(Scanners.FieldsAnnotated);
-        Set<Field> fields = new Reflections(config)
-                .get(Scanners.FieldsAnnotated
+        Set<Field> fields = reflections.get(
+                Scanners.FieldsAnnotated
                         .with(RobotPreferencesValue.class)
                         .as(Field.class));
 
