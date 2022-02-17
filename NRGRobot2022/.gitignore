@@ -164,3 +164,7 @@ bin/
 # Exclude WPILib network tables persistent storage.
 networktables.ini
 networktables.ini.bak
+
+# Exclude simulation configuration files
+simgui-ds.json
+simgui.json
