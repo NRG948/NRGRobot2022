@@ -24,6 +24,7 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 
 /** A class to manage robot preferences. */
+@RobotPreferencesLayout(groupName = "Preferences", column = 0, row = 3, width = 1, height = 1)
 public class RobotPreferences {
 
     /** An interface to support the Visitor pattern on preferences values. */
@@ -227,19 +228,26 @@ public class RobotPreferences {
     /** A Visitor that writes the default preferences value to the store. */
     private static class DefaultValueWriter implements IValueVisitor {
 
+        private static void printMessage(String group, String name, String value) {
+            System.out.println("WRITING DEFAULT VALUE: " + group + "/" + name + " = " + value);
+        }
+
         @Override
         public void visit(StringValue value) {
             value.setValue(value.getDefaultValue());
+            printMessage(value.getGroup(), value.getName(), value.getValue());
         }
 
         @Override
         public void visit(BooleanValue value) {
             value.setValue(value.getDefaultValue());
+            printMessage(value.getGroup(), value.getName(), Boolean.toString(value.getValue()));
         }
 
         @Override
         public void visit(DoubleValue value) {
             value.setValue(value.getDefaultValue());
+            printMessage(value.getGroup(), value.getName(), Double.toString(value.getValue()));
         }
     }
     
@@ -313,15 +321,24 @@ public class RobotPreferences {
 
     }
 
+    @RobotPreferencesValue
+    public static BooleanValue writeDefault = new BooleanValue("Preferences", "WriteDefault", true);
+
     /** Initializes the robot preferences. */
     public static void init() {
         DefaultValueWriter writeDefaultValue = new DefaultValueWriter();
 
-        getAllValues().filter(v -> !v.exists()).forEach(v -> v.accept(writeDefaultValue));
+        if (writeDefault.getValue()) {
+            Preferences.removeAll();
+            getAllValues().forEach(v -> v.accept(writeDefaultValue));
+            writeDefault.setValue(false);
+        } else {
+            getAllValues().filter(v -> !v.exists()).forEach(v -> v.accept(writeDefaultValue));
         
-        NonDefaultValuePrinter printer = new NonDefaultValuePrinter();
-
-        getAllValues().forEach((v) -> v.accept(printer));
+            NonDefaultValuePrinter printer = new NonDefaultValuePrinter();
+    
+            getAllValues().forEach((v) -> v.accept(printer));
+        }
     }
 
     /**
