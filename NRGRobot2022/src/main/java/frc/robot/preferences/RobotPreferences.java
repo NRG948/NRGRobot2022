@@ -241,7 +241,34 @@ public class RobotPreferences {
         public void visit(DoubleValue value) {
             value.setValue(value.getDefaultValue());
         }
+    }
+    
+    /** A Visitor to print non default Values to the console. */
+    private static class NonDefaultValuePrinter implements IValueVisitor {
+        private static void printMessage(String group, String name, String value) {
+            System.out.println("NON-DEFAULT VALUE: " + group + "/" + name + " = " + value);
+        }
 
+        @Override
+        public void visit(StringValue value) {
+            if (!value.getValue().equals(value.getDefaultValue())) {
+                printMessage(value.getGroup(), value.getName(), value.getValue());
+            }
+        }
+
+        @Override
+        public void visit(BooleanValue value) {
+            if (value.getValue() != value.getDefaultValue()) {
+                printMessage(value.getGroup(), value.getName(), Boolean.toString(value.getValue()));
+            }
+        }
+
+        @Override
+        public void visit(DoubleValue value) {
+            if (value.getValue() != value.getDefaultValue()) {
+                printMessage(value.getGroup(), value.getName(), Double.toString(value.getValue()));
+            }
+        }
     }
 
     /** A Visitor that adds widgets to the Shuffleboard preferences layout. */
@@ -291,6 +318,10 @@ public class RobotPreferences {
         DefaultValueWriter writeDefaultValue = new DefaultValueWriter();
 
         getAllValues().filter(v -> !v.exists()).forEach(v -> v.accept(writeDefaultValue));
+        
+        NonDefaultValuePrinter printer = new NonDefaultValuePrinter();
+
+        getAllValues().forEach((v) -> v.accept(printer));
     }
 
     /**
