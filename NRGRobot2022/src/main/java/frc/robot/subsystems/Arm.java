@@ -17,6 +17,7 @@ import edu.wpi.first.wpilibj2.command.ProfiledPIDSubsystem;
 import frc.robot.Constants.ArmConstants;
 import frc.robot.preferences.RobotPreferencesLayout;
 import frc.robot.preferences.RobotPreferencesValue;
+import frc.robot.preferences.RobotPreferences.BooleanValue;
 import frc.robot.preferences.RobotPreferences.DoubleValue;
 
 @RobotPreferencesLayout(groupName = "Arm", column = 3, row = 0, width = 1, height = 2)
@@ -27,6 +28,8 @@ public class Arm extends ProfiledPIDSubsystem {
     public static final DoubleValue stowedAngle = new DoubleValue("Arm", "stowedAngle", 100);
     @RobotPreferencesValue
     public static final DoubleValue restingAngle = new DoubleValue("Arm", "restingAngle", -20);
+    @RobotPreferencesValue
+    public static final BooleanValue enableTab = new BooleanValue("Arm", "enableTab", false);
 
     private final DigitalInput restingPositionLimitSwitch = new DigitalInput(ArmConstants.kRestingPosChannel);
     private final DigitalInput scoringPositionLimitSwitch = new DigitalInput(ArmConstants.kScoringPosChannel);
@@ -88,6 +91,10 @@ public class Arm extends ProfiledPIDSubsystem {
 
     /** Adds a tab to the Shuffleboard for Arm subsystem debugging. */
     public void addShuffleboardTab() {
+        if (!enableTab.getValue()) {
+            return;
+        }
+
         ShuffleboardTab armTab = Shuffleboard.getTab("Arm");
         ShuffleboardLayout layout = armTab.getLayout("Arm", BuiltInLayouts.kList).withPosition(0, 0).withSize(2, 3);
         layout.addNumber("Angle", () -> Math.toDegrees(getRadians()));

@@ -39,6 +39,7 @@ import edu.wpi.first.wpilibj2.command.ProfiledPIDSubsystem;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.preferences.RobotPreferencesLayout;
 import frc.robot.preferences.RobotPreferencesValue;
+import frc.robot.preferences.RobotPreferences.BooleanValue;
 import frc.robot.preferences.RobotPreferences.DoubleValue;
 
 @RobotPreferencesLayout(groupName = "SwerveDrive", column = 0, row = 0, width = 1, height = 2)
@@ -95,8 +96,10 @@ public class SwerveDrive extends SubsystemBase {
             MODULE_MAX_ANGULAR_VELOCITY, MODULE_MAX_ANGULAR_ACCELERATION));
 
     // Gains are for example purposes only - must be determined for your own robot!
-    private final SimpleMotorFeedforward driveFeedforward = new SimpleMotorFeedforward(driveFeedForwardS.getValue(), driveFeedForwardV.getValue());
-    private final SimpleMotorFeedforward turnFeedforward = new SimpleMotorFeedforward(turnFeedForwardS.getValue(), turnFeedForwardV.getValue());
+    private final SimpleMotorFeedforward driveFeedforward = new SimpleMotorFeedforward(driveFeedForwardS.getValue(),
+        driveFeedForwardV.getValue());
+    private final SimpleMotorFeedforward turnFeedforward = new SimpleMotorFeedforward(turnFeedForwardS.getValue(),
+        turnFeedForwardV.getValue());
 
     private SwerveModuleState desiredState = new SwerveModuleState(0, new Rotation2d(0));
 
@@ -189,7 +192,10 @@ public class SwerveDrive extends SubsystemBase {
 
     }
 
-    /** Returns the current wheel angle in degrees. The range of values is [-180..180]. */
+    /**
+     * Returns the current wheel angle in degrees. The range of values is
+     * [-180..180].
+     */
     public double getWheelAngle() {
       return turningEncoder.getAbsolutePosition();
     }
@@ -232,9 +238,9 @@ public class SwerveDrive extends SubsystemBase {
         @Override
         public void initSendable(SendableBuilder builder) {
           builder.setSmartDashboardType("Gyro");
-          builder.addDoubleProperty("Value", () -> getWheelAngle(), null);     
+          builder.addDoubleProperty("Value", () -> getWheelAngle(), null);
         }
-        
+
       }).withWidget(BuiltInWidgets.kGyro).withPosition(0, 0);
 
       return layout;
@@ -251,6 +257,8 @@ public class SwerveDrive extends SubsystemBase {
   public static final DoubleValue turnI = new DoubleValue("SwerveDrive", "turnI", 0);
   @RobotPreferencesValue
   public static final DoubleValue turnD = new DoubleValue("SwerveDrive", "turnD", 0);
+  @RobotPreferencesValue
+  public static BooleanValue enableTab = new BooleanValue("SwerveDrive", "enableTab", false);
 
   public static double currentMaxSpeed = MAX_SPEED;
   public static double currentMaxAngularSpeed = MAX_ANGULAR_SPEED;
@@ -276,17 +284,15 @@ public class SwerveDrive extends SubsystemBase {
 
   private final SwerveDriveOdometry m_odometry = new SwerveDriveOdometry(m_kinematics, getRotation2d());
 
-  
   public static final TrapezoidProfile.Constraints kThetaControllerConstraints = new TrapezoidProfile.Constraints(
       SwerveDrive.MAX_SPEED, SwerveDrive.MAX_ACCELERATION);
   private final ProfiledPIDController thetaController = new ProfiledPIDController(
-    turnP.getValue(), turnI.getValue(), turnD.getValue(), kThetaControllerConstraints);
-
+      turnP.getValue(), turnI.getValue(), turnD.getValue(), kThetaControllerConstraints);
 
   public SwerveDrive() {
     m_ahrs.reset();
     thetaController.enableContinuousInput(-Math.PI, Math.PI);
-    thetaController.setTolerance(Math.PI/36); // 5 degree tolerance
+    thetaController.setTolerance(Math.PI / 36); // 5 degree tolerance
   }
 
   public void reset() {
@@ -309,18 +315,17 @@ public class SwerveDrive extends SubsystemBase {
    */
   @SuppressWarnings("ParameterName")
   public void drive(double xSpeed, double ySpeed, double rot, boolean fieldRelative, boolean squareInputs) {
-    if(squareInputs){
+    if (squareInputs) {
       xSpeed *= Math.abs(xSpeed);
       ySpeed *= Math.abs(ySpeed);
       rot *= Math.abs(rot);
     }
 
-    if(turnToAngle){
-      
-      if(thetaController.atGoal()){
+    if (turnToAngle) {
+
+      if (thetaController.atGoal()) {
         disableTurnToAngle();
-      }
-      else{
+      } else {
         rot = calculateRotSpeed();
       }
     }
@@ -336,26 +341,33 @@ public class SwerveDrive extends SubsystemBase {
     setModuleStates(swerveModuleStates);
   }
 
-  public double calculateRotSpeed(){
+  public double calculateRotSpeed() {
 
     return thetaController.calculate(getRotation2d().getRadians(), targetAngle.getRadians());
   }
 
-  public void enableTurnToAngle(double angle){
+  public void enableTurnToAngle(double angle) {
     turnToAngle = true;
     targetAngle = Rotation2d.fromDegrees(angle);
     thetaController.setGoal(targetAngle.getRadians());
   }
-  public void disableTurnToAngle(){
+
+  public void disableTurnToAngle() {
     turnToAngle = false;
   }
 
-  /** Sets the maximum drive speed. This value is clamped to the range [0..MAX_SPEED]. */
+  /**
+   * Sets the maximum drive speed. This value is clamped to the range
+   * [0..MAX_SPEED].
+   */
   public void setMaxSpeed(double speed) {
     currentMaxSpeed = MathUtil.clamp(speed, 0, MAX_SPEED);
   }
 
-  /** Sets the maximum angular rotation speed. This value is clamped to the range [0..MAX_ANGULAR_SPEED]. */
+  /**
+   * Sets the maximum angular rotation speed. This value is clamped to the range
+   * [0..MAX_ANGULAR_SPEED].
+   */
   public void setMaxAngularSpeed(double angularSpeed) {
     currentMaxAngularSpeed = MathUtil.clamp(angularSpeed, 0, MAX_ANGULAR_SPEED);
   }
@@ -437,6 +449,10 @@ public class SwerveDrive extends SubsystemBase {
 
   /** Adds and initializes a Shufflboard tab for this subsystem. */
   public void initShuffleboardTab() {
+    if (!enableTab.getValue()) {
+      return;
+    }
+
     ShuffleboardTab swerveDriveTab = Shuffleboard.getTab("Swerve Drive");
 
     ShuffleboardLayout swerveOdometry = swerveDriveTab.getLayout("Odometry", BuiltInLayouts.kGrid)
@@ -498,4 +514,3 @@ public class SwerveDrive extends SubsystemBase {
             EntryListenerFlags.kNew | EntryListenerFlags.kUpdate);
   }
 }
-
