@@ -7,6 +7,8 @@ package frc.robot.preferences;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.Set;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.reflections.Reflections;
@@ -311,10 +313,10 @@ public class RobotPreferences {
                     .withSize(layout.width(), layout.height());
         });
 
-        getAllValues().forEach((value) -> {
-            ShuffleboardLayout layout = prefsTab.getLayout(value.getGroup());
+        getAllValues().collect(Collectors.groupingBy(Value::getGroup)).forEach((group, values) -> {
+            ShuffleboardLayout layout = prefsTab.getLayout(group);
             ShuffleboardWidgetBuilder builder = new ShuffleboardWidgetBuilder(layout);
-            value.accept(builder);
+            values.stream().forEach((value) -> value.accept(builder));
         });
     }
 
