@@ -16,12 +16,14 @@ import org.reflections.scanners.Scanners;
 import org.reflections.util.ConfigurationBuilder;
 
 import edu.wpi.first.networktables.EntryListenerFlags;
+import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import edu.wpi.first.wpilibj.shuffleboard.SimpleWidget;
 
 /** A class to manage robot preferences. */
 @RobotPreferencesLayout(groupName = "Preferences", column = 0, row = 3, width = 1, height = 1)
@@ -250,7 +252,7 @@ public class RobotPreferences {
             printMessage(value.getGroup(), value.getName(), Double.toString(value.getValue()));
         }
     }
-    
+
     /** A Visitor to print non default Values to the console. */
     private static class NonDefaultValuePrinter implements IValueVisitor {
         private static void printMessage(String group, String name, String value) {
@@ -290,33 +292,35 @@ public class RobotPreferences {
 
         @Override
         public void visit(StringValue value) {
-            layout.add(value.getName(), value.getValue())
-                    .withWidget(BuiltInWidgets.kTextView)
-                    .getEntry()
-                    .addListener(
-                            (event) -> value.setValue(event.getEntry().getString(value.getDefaultValue())),
-                            EntryListenerFlags.kNew | EntryListenerFlags.kUpdate);
+            SimpleWidget widget = layout.add(value.getName(), value.getValue()).withWidget(BuiltInWidgets.kTextView);
+            NetworkTableEntry entry = widget.getEntry();
 
+            entry.setString(value.getValue());
+            entry.addListener(
+                    (event) -> value.setValue(event.getEntry().getString(value.getDefaultValue())),
+                    EntryListenerFlags.kUpdate);
         }
 
         @Override
         public void visit(BooleanValue value) {
-            layout.add(value.getName(), value.getValue())
-                    .withWidget(BuiltInWidgets.kToggleSwitch)
-                    .getEntry()
-                    .addListener(
-                            (event) -> value.setValue(event.getEntry().getBoolean(value.getDefaultValue())),
-                            EntryListenerFlags.kNew | EntryListenerFlags.kUpdate);
+            SimpleWidget widget = layout.add(value.getName(), value.getValue()).withWidget(BuiltInWidgets.kToggleSwitch);
+            NetworkTableEntry entry = widget.getEntry();
+
+            entry.setBoolean(value.getValue());
+            entry.addListener(
+                    (event) -> value.setValue(event.getEntry().getBoolean(value.getDefaultValue())),
+                    EntryListenerFlags.kUpdate);
         }
 
         @Override
         public void visit(DoubleValue value) {
-            layout.add(value.getName(), value.getValue())
-                    .withWidget(BuiltInWidgets.kTextView)
-                    .getEntry()
-                    .addListener(
-                            (event) -> value.setValue(event.getEntry().getDouble(value.getDefaultValue())),
-                            EntryListenerFlags.kNew | EntryListenerFlags.kUpdate);
+            SimpleWidget widget = layout.add(value.getName(), value.getValue()).withWidget(BuiltInWidgets.kTextView);
+            NetworkTableEntry entry = widget.getEntry();
+
+            entry.setDouble(value.getValue());
+            entry.addListener(
+                    (event) -> value.setValue(event.getEntry().getDouble(value.getDefaultValue())),
+                    EntryListenerFlags.kUpdate);
         }
 
     }
@@ -334,9 +338,9 @@ public class RobotPreferences {
             writeDefault.setValue(false);
         } else {
             getAllValues().filter(v -> !v.exists()).forEach(v -> v.accept(writeDefaultValue));
-        
+
             NonDefaultValuePrinter printer = new NonDefaultValuePrinter();
-    
+
             getAllValues().forEach((v) -> v.accept(printer));
         }
     }
