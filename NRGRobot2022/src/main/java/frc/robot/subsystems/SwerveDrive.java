@@ -381,6 +381,10 @@ public class SwerveDrive extends SubsystemBase {
         m_backRight.getState());
   }
 
+  public ChassisSpeeds getChassisSpeeds(){
+    return m_kinematics.toChassisSpeeds(m_frontLeft.getState(), m_frontRight.getState(), m_backLeft.getState(), m_backRight.getState());
+  }
+
   /**
    * Resets the odometry to the specified pose.
    *
