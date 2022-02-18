@@ -38,6 +38,7 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.preferences.RobotPreferences.BooleanValue;
 import frc.robot.preferences.RobotPreferences.DoubleValue;
+import frc.robot.commands.CharacterizeSwerveDrive;
 import frc.robot.preferences.RobotPreferencesLayout;
 import frc.robot.preferences.RobotPreferencesValue;
 
@@ -515,5 +516,11 @@ public class SwerveDrive extends SubsystemBase {
         .addListener(
             (event) -> setMaxAngularSpeed(event.getEntry().getDouble(MAX_ANGULAR_SPEED)),
             EntryListenerFlags.kNew | EntryListenerFlags.kUpdate);
+    
+    ShuffleboardLayout commandLayout = swerveDriveTab.getLayout("Commands", BuiltInLayouts.kList)
+      .withPosition(6, 0)
+      .withSize(2, 2);
+    commandLayout.add(new CharacterizeSwerveDrive(this));
+
   }
 }
