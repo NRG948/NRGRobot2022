@@ -20,14 +20,6 @@ public final class Constants {
     public static final class ArmConstants {
         public static final int kMotorPort = 0;
     
-        public static final double kP = 1;
-    
-        // These are fake gains; in actuality these must be determined individually for each robot
-        public static final double kSVolts = 1;
-        public static final double kCosVolts = 1;
-        public static final double kVVoltSecondPerRad = 0.5;
-        public static final double kAVoltSecondSquaredPerRad = 0.1;
-    
         public static final double kMaxVelocityRadPerSecond = 3;
         public static final double kMaxAccelerationRadPerSecSquared = 10;
     
@@ -37,10 +29,6 @@ public final class Constants {
         public static final double kEncoderMinimumDutyCycle = 1.0 / 1025.0;
         public static final double kEncoderMaximumDutyCycle = 1024.0 / 1025.0;
         public static final double kEncoderDistancePerRotation = 2.0 * Math.PI;
-    
-        // The offset of the arm from the horizontal in its neutral position,
-        // measured from the horizontal
-        public static final double kArmOffsetRads = 0.5;
       }
 
 }

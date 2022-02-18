@@ -51,7 +51,7 @@ public class Arm extends ProfiledPIDSubsystem {
     /** Create a new ArmSubsystem. */
     public Arm() {
         super(new ProfiledPIDController(
-                ArmConstants.kP,
+                kP.getValue(),
                 0,
                 0,
                 new TrapezoidProfile.Constraints(
