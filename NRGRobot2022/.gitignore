@@ -168,3 +168,6 @@ networktables.ini.bak
 # Exclude simulation configuration files
 simgui-ds.json
 simgui.json
+
+# Exclude SysID configuration files
+.SysID/
