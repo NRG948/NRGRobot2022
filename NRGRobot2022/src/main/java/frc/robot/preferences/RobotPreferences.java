@@ -362,7 +362,7 @@ public class RobotPreferences {
                         .asClass());
 
         classes.stream().map(c -> c.getAnnotation(RobotPreferencesLayout.class)).forEach(layout -> {
-            prefsTab.getLayout(layout.groupName(), BuiltInLayouts.kList)
+            prefsTab.getLayout(layout.groupName(), layout.type())
                     .withPosition(layout.column(), layout.row())
                     .withSize(layout.width(), layout.height());
         });

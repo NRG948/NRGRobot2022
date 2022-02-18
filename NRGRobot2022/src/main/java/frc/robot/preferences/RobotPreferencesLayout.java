@@ -31,4 +31,6 @@ public @interface RobotPreferencesLayout {
 
     /** The height of the Shuffleboard layout. */
     int height();
+
+    String type() default "List Layout";
 }
