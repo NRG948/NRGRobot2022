@@ -71,6 +71,14 @@ public class Arm extends ProfiledPIDSubsystem {
         setGoal(getRadians());
     }
 
+    public void setMotorVoltage(double motorVoltage) {
+        m_motor.setVoltage(motorVoltage);
+    }
+
+    public void stopMotor () {
+        m_motor.stopMotor();
+    }
+    
     @Override
     protected void useOutput(double output, TrapezoidProfile.State setpoint) {
         // Calculate the feedforward from the sepoint
@@ -87,7 +95,7 @@ public class Arm extends ProfiledPIDSubsystem {
     }
 
     /** Returns the arm's current angle in radians. */
-    private double getRadians() {
+    public double getRadians() {
         return Math.toRadians(levelAngleOffset.getValue()) - m_encoder.getDistance();
     }
 
