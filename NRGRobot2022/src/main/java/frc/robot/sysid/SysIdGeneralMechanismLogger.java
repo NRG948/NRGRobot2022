@@ -16,6 +16,7 @@ public class SysIdGeneralMechanismLogger extends SysIdLogger{
     }
 
     public void log(double measuredPosition, double measuredVelocity) {
+        updateData();
         addData(getTimestamp());
         addData(motorVoltage);
         addData(measuredPosition);
