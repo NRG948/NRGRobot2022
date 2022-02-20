@@ -46,6 +46,10 @@ public abstract class SysIdLogger {
         data.clear();
     }
 
+    public String getMechanism() {
+        return mechanism;
+    }
+
     /** Returns the motor voltage */
     public double getMotorVoltage() {
         return motorVoltage;
