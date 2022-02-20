@@ -50,9 +50,17 @@ public abstract class SysIdLogger {
         return mechanism;
     }
 
+    protected double getTimestamp() {
+        return timestamp;
+    }
+
     /** Returns the motor voltage */
     public double getMotorVoltage() {
         return motorVoltage;
+    }
+
+    public void setMotorVoltage(double motorVoltage) {
+        this.motorVoltage = motorVoltage;
     }
 
     /** Updates the logger data from the current SysId values. */
@@ -86,6 +94,10 @@ public abstract class SysIdLogger {
         SmartDashboard.putString("SysIdTelemetry", b.toString());
 
         reset();
+    }
+
+    protected void addData(double dataValue) {
+        data.add(dataValue);
     }
 
     /** Resets the logger. */
