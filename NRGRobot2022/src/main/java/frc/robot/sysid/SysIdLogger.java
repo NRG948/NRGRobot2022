@@ -63,6 +63,10 @@ public abstract class SysIdLogger {
         this.motorVoltage = motorVoltage;
     }
 
+    public boolean isRotating() {
+        return rotate;
+    }
+
     /** Updates the logger data from the current SysId values. */
     public void updateData() {
         timestamp = Timer.getFPGATimestamp();
