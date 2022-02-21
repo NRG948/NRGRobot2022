@@ -25,7 +25,6 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
-import edu.wpi.first.networktables.EntryListenerFlags;
 import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.RobotController;
@@ -38,6 +37,7 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.preferences.RobotPreferences.BooleanValue;
 import frc.robot.preferences.RobotPreferences.DoubleValue;
+import frc.robot.utilities.ShuffleboardUtils;
 import frc.robot.commands.CharacterizeSwerveDrive;
 import frc.robot.preferences.RobotPreferencesLayout;
 import frc.robot.preferences.RobotPreferencesValue;
@@ -219,19 +219,8 @@ public class SwerveDrive extends SubsystemBase {
     public ShuffleboardLayout addShuffleBoardLayout(ShuffleboardTab tab) {
       ShuffleboardLayout layout = tab.getLayout(moduleName, BuiltInLayouts.kList);
 
-      layout.add("Drive Motor", 0)
-          .withWidget(BuiltInWidgets.kNumberSlider)
-          .getEntry()
-          .addListener(
-              (event) -> this.setDriveMotorPower(event.getEntry().getDouble(0)),
-              EntryListenerFlags.kNew | EntryListenerFlags.kUpdate);
-
-      layout.add("Turn Motor", 0)
-          .withWidget(BuiltInWidgets.kNumberSlider)
-          .getEntry()
-          .addListener(
-              (event) -> this.setTurnMotorPower(event.getEntry().getDouble(0)),
-              EntryListenerFlags.kNew | EntryListenerFlags.kUpdate);
+      ShuffleboardUtils.addNumberSlider(layout, "Drive Motor", 0.0, power -> setDriveMotorPower(power));
+      ShuffleboardUtils.addNumberSlider(layout, "Turn Motor", 0.0, power -> setTurnMotorPower(power));
 
       layout.add("Rotation", new Sendable() {
 
@@ -382,8 +371,9 @@ public class SwerveDrive extends SubsystemBase {
         m_backRight.getState());
   }
 
-  public ChassisSpeeds getChassisSpeeds(){
-    return m_kinematics.toChassisSpeeds(m_frontLeft.getState(), m_frontRight.getState(), m_backLeft.getState(), m_backRight.getState());
+  public ChassisSpeeds getChassisSpeeds() {
+    return m_kinematics.toChassisSpeeds(m_frontLeft.getState(), m_frontRight.getState(), m_backLeft.getState(),
+        m_backRight.getState());
   }
 
   /**
@@ -495,31 +485,22 @@ public class SwerveDrive extends SubsystemBase {
     maxSpeedSliderProperties.put("Min", 0);
     maxSpeedSliderProperties.put("Max", MAX_SPEED);
 
-    virtualGearBox.add("Max Speed", 0)
-        .withWidget(BuiltInWidgets.kNumberSlider)
+    ShuffleboardUtils.addNumberSlider(virtualGearBox, "Max Speed", currentMaxSpeed, (max) -> setMaxSpeed(max))
         .withProperties(maxSpeedSliderProperties)
-        .withPosition(0, 0)
-        .getEntry()
-        .addListener(
-            (event) -> setMaxSpeed(event.getEntry().getDouble(MAX_SPEED)),
-            EntryListenerFlags.kNew | EntryListenerFlags.kUpdate);
+        .withPosition(0, 0);
 
     Map<String, Object> maxAngularSpeedSliderProperties = new HashMap<>();
     maxAngularSpeedSliderProperties.put("Min", 0);
     maxAngularSpeedSliderProperties.put("Max", MAX_ANGULAR_SPEED);
 
-    virtualGearBox.add("Max Angular Speed", 0)
-        .withWidget(BuiltInWidgets.kNumberSlider)
+    ShuffleboardUtils
+        .addNumberSlider(virtualGearBox, "Max Angular Speed", currentMaxAngularSpeed, (max) -> setMaxAngularSpeed(max))
         .withProperties(maxAngularSpeedSliderProperties)
-        .withPosition(1, 0)
-        .getEntry()
-        .addListener(
-            (event) -> setMaxAngularSpeed(event.getEntry().getDouble(MAX_ANGULAR_SPEED)),
-            EntryListenerFlags.kNew | EntryListenerFlags.kUpdate);
-    
+        .withPosition(1, 0);
+
     ShuffleboardLayout commandLayout = swerveDriveTab.getLayout("Commands", BuiltInLayouts.kList)
-      .withPosition(6, 0)
-      .withSize(2, 2);
+        .withPosition(6, 0)
+        .withSize(2, 2);
     commandLayout.add(new CharacterizeSwerveDrive(this));
 
   }
