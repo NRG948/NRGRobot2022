@@ -15,8 +15,8 @@ public class CharacterizedArm extends CommandBase {
   private Arm arm;
   private double previousRadians;
   private double previousTime;
-  
-    /** Creates a new CharacterizedArm. */
+
+  /** Creates a new CharacterizedArm. */
   public CharacterizedArm(Arm arm) {
     // Use addRequirements() here to declare subsystem dependencies.
     this.arm = arm;
@@ -40,14 +40,19 @@ public class CharacterizedArm extends CommandBase {
   @Override
   public void execute() {
     double velocity = 0.0;
-    double interval = Timer.getFPGATimestamp() - previousTime;
-    double radians = arm.getRadians();
+    double currentTime = Timer.getFPGATimestamp();
+    double currentRadians = arm.getRadians();
+    double interval = currentTime - previousTime;
+
     if (interval != 0) {
-      velocity = (radians - previousRadians)/interval;
+      velocity = (currentRadians - previousRadians) / interval;
     }
 
-    logger.log(radians, velocity);
+    logger.log(currentRadians, velocity);
     arm.setMotorVoltage(logger.getMotorVoltage());
+
+    previousTime = currentTime;
+    previousRadians = currentRadians;
   }
 
   // Called once the command ends or is interrupted.
@@ -60,6 +65,7 @@ public class CharacterizedArm extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return DriverStation.isDisabled() || (logger.getMotorVoltage() > 0 ? arm.isAtStowedPosition() : arm.isAtRestingPosition());
+    return DriverStation.isDisabled()
+        || (logger.getMotorVoltage() > 0 ? arm.isAtStowedPosition() : arm.isAtRestingPosition());
   }
 }
