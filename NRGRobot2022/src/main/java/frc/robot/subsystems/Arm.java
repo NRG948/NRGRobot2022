@@ -1,6 +1,8 @@
 
 package frc.robot.subsystems;
 
+import java.util.Map;
+
 import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
@@ -19,6 +21,7 @@ import frc.robot.preferences.RobotPreferencesLayout;
 import frc.robot.preferences.RobotPreferencesValue;
 import frc.robot.preferences.RobotPreferences.BooleanValue;
 import frc.robot.preferences.RobotPreferences.DoubleValue;
+import frc.robot.utilities.ShuffleboardUtils;
 
 @RobotPreferencesLayout(groupName = "Arm", column = 3, row = 0, width = 2, height = 3, type = "Grid Layout")
 public class Arm extends ProfiledPIDSubsystem {
@@ -120,5 +123,9 @@ public class Arm extends ProfiledPIDSubsystem {
         layout.addNumber("Angle", () -> Math.toDegrees(getRadians()));
         layout.addBoolean("Resting", () -> isAtRestingPosition()).withWidget(BuiltInWidgets.kBooleanBox);
         layout.addBoolean("Stowed", () -> isAtStowedPosition()).withWidget(BuiltInWidgets.kBooleanBox);
+
+        ShuffleboardLayout control = armTab.getLayout("Control", BuiltInLayouts.kList).withPosition(2, 0).withSize(2, 2);
+        ShuffleboardUtils.addNumberSlider(control, "Arm Motor", 0.0, voltage -> setMotorVoltage(voltage))
+            .withProperties(Map.of("Min", -12.0, "Max", 12.0, "Block increment", 0.05));
     }
 }

@@ -7,6 +7,7 @@ package frc.robot.utilities;
 import java.util.function.DoubleConsumer;
 
 import edu.wpi.first.networktables.EntryListenerFlags;
+import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
 import edu.wpi.first.wpilibj.shuffleboard.SimpleWidget;
@@ -28,7 +29,9 @@ public class ShuffleboardUtils {
             DoubleConsumer consumer) {
         var sliderWidget = layout.add(title, defaultValue).withWidget(BuiltInWidgets.kNumberSlider);
 
-        sliderWidget.getEntry().addListener(
+        NetworkTableEntry entry = sliderWidget.getEntry();
+        entry.setDouble(defaultValue);
+        entry.addListener(
                 (event) -> consumer.accept(event.getEntry().getDouble(0.0)),
                 EntryListenerFlags.kNew | EntryListenerFlags.kUpdate);
 
