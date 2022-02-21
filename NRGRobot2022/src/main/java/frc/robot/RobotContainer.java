@@ -22,6 +22,8 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.POVButton;
+import frc.robot.commands.CharacterizeSwerveDrive;
+import frc.robot.commands.CharacterizedArm;
 import frc.robot.commands.CommandUtils;
 import frc.robot.commands.DriveForward;
 import frc.robot.commands.DriveWithController;
@@ -33,6 +35,9 @@ import frc.robot.commands.RotateArmToStowed;
 import frc.robot.commands.SetModuleState;
 import frc.robot.commands.TurnToAngle;
 import frc.robot.preferences.RobotPreferences;
+import frc.robot.preferences.RobotPreferencesLayout;
+import frc.robot.preferences.RobotPreferencesValue;
+import frc.robot.preferences.RobotPreferences.BooleanValue;
 import frc.robot.subsystems.RaspberryPiVision;
 import frc.robot.subsystems.SwerveDrive;
 import frc.robot.subsystems.Arm;
@@ -47,10 +52,12 @@ import frc.robot.subsystems.Claw;
  * the robot (including
  * subsystems, commands, and button mappings) should be declared here.
  */
-// Nate is not good at math
-// Imagine having cool headphones
-//   
+@RobotPreferencesLayout(groupName = "Autonomous", column = 3, row = 3, width = 2, height = 1)
 public class RobotContainer {
+
+  @RobotPreferencesValue
+  public static BooleanValue enableTesting = new BooleanValue("Autonomous", "enableTesting", false);
+
   // Operator interface (e.g. Joysticks)
   private final XboxController driveController = new XboxController(2);
   private JoystickButton xboxButtonA = new JoystickButton(driveController, 1); // A Button
@@ -65,12 +72,11 @@ public class RobotContainer {
   private POVButton xboxDpadDown = new POVButton(driveController, 180);
   private POVButton xboxDpadLeft = new POVButton(driveController, 270);
 
-
   // Subsystems
   private final SwerveDrive swerveDrive = new SwerveDrive();
   private final RaspberryPiVision raspberryPiVision = new RaspberryPiVision();
   private final Claw claw = new Claw(1); // Port 1
-  private final Arm arm = new Arm(); //limit switch channels to be updated
+  private final Arm arm = new Arm(); // limit switch channels to be updated
 
   // Commands
   private final DriveWithController driveWithController = new DriveWithController(swerveDrive, driveController);
@@ -82,19 +88,21 @@ public class RobotContainer {
   private final RotateArmToResting armToResting = new RotateArmToResting(arm);
   private final RotateArmToStowed armToStowed = new RotateArmToStowed(arm);
 
-
   private SendableChooser<ChooseAutoPath> chooseAutoPath;
   private SendableChooser<DelayEx> delayEx;
 
   private enum ChooseAutoPath {
-    bottom, 
-    bottomLeft, 
-    topLeft, 
+    PROFILE_DRIVE,
+    PROFILE_ARM,
+    TEST_DRIVE,
+    BOTTOM,
+    BOTTOM_LEFT,
+    TOP_LEFT,
   }
 
   private enum DelayEx {
-    OPTION1, 
-    OPTION2, 
+    OPTION1,
+    OPTION2,
     OPTION3
   }
 
@@ -131,7 +139,7 @@ public class RobotContainer {
     // xboxButtonY.whenPressed(setModuleState_90);
 
     xboxDpadUp.whenPressed(new TurnToAngle(swerveDrive, 135));
-    xboxDpadRight.whenPressed(new TurnToAngle(swerveDrive, -135)); 
+    xboxDpadRight.whenPressed(new TurnToAngle(swerveDrive, -135));
     xboxDpadDown.whenPressed(new TurnToAngle(swerveDrive, -45));
     xboxDpadLeft.whenPressed(new TurnToAngle(swerveDrive, 45));
 
@@ -145,16 +153,28 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    return new ResetSubsystems(swerveDrive).andThen(
-        CommandUtils.newFollowWaypointsCommand(swerveDrive,
-            // Start at the origin facing the +X direction
-            new Pose2d(0, 0, new Rotation2d(0)),
-            // Pass through these two interior waypoints, making an 's' curve path
-            List.of(new Translation2d(-1, -0.25)),
-            // End 3 meters straight ahead of where we started, facing forward
-            new Pose2d(-2, 0, Rotation2d.fromDegrees(-180)),
-            true),
-        new InstantCommand(() -> swerveDrive.stopMotors()));
+    switch (chooseAutoPath.getSelected()) {
+      case PROFILE_DRIVE:
+        return new CharacterizeSwerveDrive(swerveDrive);
+
+      case PROFILE_ARM:
+        return new CharacterizedArm(arm);
+
+      case TEST_DRIVE:
+        return new ResetSubsystems(swerveDrive).andThen(
+            CommandUtils.newFollowWaypointsCommand(swerveDrive,
+                // Start at the origin facing the +X direction
+                new Pose2d(0, 0, new Rotation2d(0)),
+                // Pass through these two interior waypoints, making an 's' curve path
+                List.of(new Translation2d(-1, -0.25)),
+                // End 3 meters straight ahead of where we started, facing forward
+                new Pose2d(-2, 0, Rotation2d.fromDegrees(-180)),
+                true),
+            new InstantCommand(() -> swerveDrive.stopMotors()));
+
+      default:
+        return null;
+    }
   }
 
   public void initSubsystems() {
@@ -165,13 +185,20 @@ public class RobotContainer {
     ShuffleboardTab autoTab = Shuffleboard.getTab("Autonomous");
 
     ShuffleboardLayout autoLayout = autoTab.getLayout("Autonomous", BuiltInLayouts.kList)
-    .withPosition(0, 0)
-    .withSize(6, 4);
+        .withPosition(0, 0)
+        .withSize(6, 4);
 
     chooseAutoPath = new SendableChooser<ChooseAutoPath>();
-    chooseAutoPath.addOption("Bottom", ChooseAutoPath.bottom);
-    chooseAutoPath.addOption("Bottom Left", ChooseAutoPath.bottomLeft);
-    chooseAutoPath.addOption("Bottom Right", ChooseAutoPath.topLeft);
+
+    if (enableTesting.getValue()) {
+      chooseAutoPath.addOption("Profile Drive", ChooseAutoPath.PROFILE_DRIVE);
+      chooseAutoPath.addOption("Profile Arm", ChooseAutoPath.PROFILE_ARM);
+      chooseAutoPath.addOption("Test Drive", ChooseAutoPath.TEST_DRIVE);
+    }
+
+    chooseAutoPath.addOption("Bottom", ChooseAutoPath.BOTTOM);
+    chooseAutoPath.addOption("Bottom Left", ChooseAutoPath.BOTTOM_LEFT);
+    chooseAutoPath.addOption("Bottom Right", ChooseAutoPath.TOP_LEFT);
     autoLayout.add("AutoPath", chooseAutoPath).withWidget(BuiltInWidgets.kComboBoxChooser);
 
     delayEx = new SendableChooser<DelayEx>();
