@@ -24,19 +24,19 @@ public abstract class SysIdLogger {
 
     /** Construct an instance of this class. */
     public SysIdLogger() {
-        SmartDashboard.putNumber("SysIdVoltageCommand", 0.0);
-        SmartDashboard.putString("SysIdTestType", "");
-        SmartDashboard.putString("SysIdTest", "");
-        SmartDashboard.putBoolean("SysIdRotate", false);
-        SmartDashboard.putBoolean("SysIdOverflow", false);
-        SmartDashboard.putBoolean("SysIdWrongMech", false);
+        // SmartDashboard.putNumber("SysIdVoltageCommand", 0.0);
+        // SmartDashboard.putString("SysIdTestType", "");
+        // SmartDashboard.putString("SysIdTest", "");
+        // SmartDashboard.putBoolean("SysIdRotate", false);
+        // SmartDashboard.putBoolean("SysIdOverflow", false);
+        // SmartDashboard.putBoolean("SysIdWrongMech", false);
     }
 
     /** Initializes the logger. */
     public void init() {
         mechanism = SmartDashboard.getString("SysIdTest", "");
 
-        SmartDashboard.putBoolean("SysIdIsWrongMech", isWrongMechanism());
+        SmartDashboard.putBoolean("SysIdWrongMech", isWrongMechanism());
 
         testType = SmartDashboard.getString("SysIdTestType", "");
         rotate = SmartDashboard.getBoolean("SysIdRotate", false);
