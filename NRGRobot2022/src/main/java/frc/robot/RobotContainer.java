@@ -29,6 +29,7 @@ import frc.robot.commands.DriveForward;
 import frc.robot.commands.DriveWithController;
 import frc.robot.commands.Interrupt;
 import frc.robot.commands.ManualClaw;
+import frc.robot.commands.ManualClimber;
 import frc.robot.commands.ResetSubsystems;
 import frc.robot.commands.RotateArmToResting;
 import frc.robot.commands.RotateArmToStowed;
@@ -42,6 +43,7 @@ import frc.robot.subsystems.RaspberryPiVision;
 import frc.robot.subsystems.SwerveDrive;
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.Claw;
+import frc.robot.subsystems.Climber;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -66,6 +68,11 @@ public class RobotContainer {
   private JoystickButton xboxButtonY = new JoystickButton(driveController, 4); // y Button
   private JoystickButton xboxLeftBumper = new JoystickButton(driveController, 5);
   private JoystickButton xboxRightBumper = new JoystickButton(driveController, 6);
+  // Left Middle Button
+  private JoystickButton xboxStartButton = new JoystickButton(driveController, 7);
+  // Right Middle Button
+  private JoystickButton xboxMenuButton = new JoystickButton(driveController, 8);
+
 
   private POVButton xboxDpadUp = new POVButton(driveController, 0);
   private POVButton xboxDpadRight = new POVButton(driveController, 90);
@@ -77,6 +84,7 @@ public class RobotContainer {
   private final RaspberryPiVision raspberryPiVision = new RaspberryPiVision();
   private final Claw claw = new Claw(1); // Port 1
   private final Arm arm = new Arm(); // limit switch channels to be updated
+  private final Climber climber = new Climber();
 
   // Commands
   private final DriveWithController driveWithController = new DriveWithController(swerveDrive, driveController);
@@ -87,6 +95,7 @@ public class RobotContainer {
   private final ManualClaw manualClaw = new ManualClaw(claw, driveController);
   private final RotateArmToResting armToResting = new RotateArmToResting(arm);
   private final RotateArmToStowed armToStowed = new RotateArmToStowed(arm);
+  private final ManualClimber manualClimber = new ManualClimber(climber, driveController);
 
   private SendableChooser<ChooseAutoPath> chooseAutoPath;
   private SendableChooser<DelayEx> delayEx;
@@ -145,6 +154,9 @@ public class RobotContainer {
 
     xboxLeftBumper.whenPressed(armToResting);
     xboxRightBumper.whenPressed(armToStowed);
+
+    xboxMenuButton.whenPressed(interrupt.andThen(manualClimber));
+
   }
 
   /**
