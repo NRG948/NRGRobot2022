@@ -5,6 +5,7 @@
 package frc.robot.sysid;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -100,8 +101,8 @@ public abstract class SysIdLogger {
         reset();
     }
 
-    protected void addData(double dataValue) {
-        data.add(dataValue);
+    protected void addData(Double... dataValue) {
+        data.addAll(Arrays.asList(dataValue));
     }
 
     /** Resets the logger. */

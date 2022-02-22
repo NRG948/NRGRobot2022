@@ -17,10 +17,8 @@ public class SysIdGeneralMechanismLogger extends SysIdLogger{
 
     public void log(double measuredPosition, double measuredVelocity) {
         updateData();
-        addData(getTimestamp());
-        addData(motorVoltage);
-        addData(measuredPosition);
-        addData(measuredVelocity);
+
+        addData(getTimestamp(), motorVoltage, measuredPosition, measuredVelocity);
 
         motorVoltage = getMotorVoltage();
     }
@@ -30,6 +28,4 @@ public class SysIdGeneralMechanismLogger extends SysIdLogger{
         super.reset();
         motorVoltage = 0;
     }    
-    
-
 }

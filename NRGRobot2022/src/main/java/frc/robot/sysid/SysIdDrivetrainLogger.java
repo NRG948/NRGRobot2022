@@ -19,17 +19,18 @@ public class SysIdDrivetrainLogger extends SysIdLogger {
 
     public void log(double position, double velocity, double measuredAngle, double angularRate) {
         updateData();
-        addData(getTimestamp());
-        addData(primaryMotorVoltage);
-        addData(secondaryMotorVoltage);
-        addData(position);
-        addData(position);
-        addData(velocity);
-        addData(velocity);
-        addData(measuredAngle);
-        addData(angularRate);
+
+        addData(getTimestamp(),
+                primaryMotorVoltage,
+                secondaryMotorVoltage,
+                position,
+                position,
+                velocity,
+                velocity,
+                measuredAngle,
+                angularRate);
         double motorVoltage = getMotorVoltage();
-        primaryMotorVoltage = (isRotating() ?-1:1) * motorVoltage;
+        primaryMotorVoltage = (isRotating() ? -1 : 1) * motorVoltage;
         secondaryMotorVoltage = motorVoltage;
     }
 
