@@ -84,10 +84,8 @@ public class SwerveDrive extends SubsystemBase {
     private final TalonFX driveMotor;
     private final TalonFX turningMotor;
 
-    // private final Encoder m_driveEncoder;
     private final CANCoder turningEncoder;
 
-    /* TODO: Tune PID for drive and turning PID controllers */
     // Gains are for example purposes only - must be determined for your own robot!
     private final PIDController drivePIDController = new PIDController(driveP.getValue(), 0, 0);
 
@@ -126,7 +124,6 @@ public class SwerveDrive extends SubsystemBase {
       this.moduleName = moduleName;
 
       turningEncoder.configAbsoluteSensorRange(AbsoluteSensorRange.Signed_PlusMinus180);
-      // m_turningEncoder.config
       // Limit the PID Controller's input range between -pi and pi and set the input
       // to be continuous.
       turningPIDController.enableContinuousInput(-Math.PI, Math.PI);
@@ -253,48 +250,47 @@ public class SwerveDrive extends SubsystemBase {
   @RobotPreferencesValue
   public static final DoubleValue turnD = new DoubleValue("SwerveDrive", "turnD", 0);
   @RobotPreferencesValue
-  public static BooleanValue enableTab = new BooleanValue("SwerveDrive", "enableTab", false);
+  public static final BooleanValue enableTab = new BooleanValue("SwerveDrive", "enableTab", false);
 
-  public static double currentMaxSpeed = MAX_SPEED;
-  public static double currentMaxAngularSpeed = MAX_ANGULAR_SPEED;
+  public double currentMaxSpeed = MAX_SPEED;
+  public double currentMaxAngularSpeed = MAX_ANGULAR_SPEED;
 
-  public static boolean turnToAngle = false;
-  public static Rotation2d targetAngle = Rotation2d.fromDegrees(0);
+  public boolean turnToAngle = false;
+  public Rotation2d targetAngle = Rotation2d.fromDegrees(0);
 
   // X and Y swaped
-  private final Translation2d m_frontLeftLocation = new Translation2d(0.3302, 0.2413);
-  private final Translation2d m_frontRightLocation = new Translation2d(0.3302, -0.2413);
-  private final Translation2d m_backLeftLocation = new Translation2d(-0.3302, 0.2413);
-  private final Translation2d m_backRightLocation = new Translation2d(-0.3302, -0.2413);
+  private final Translation2d frontLeftLocation = new Translation2d(0.3302, 0.2413);
+  private final Translation2d frontRightLocation = new Translation2d(0.3302, -0.2413);
+  private final Translation2d backLeftLocation = new Translation2d(-0.3302, 0.2413);
+  private final Translation2d backRightLocation = new Translation2d(-0.3302, -0.2413);
 
-  private final Module m_frontLeft = new Module(1, 2, 9, "Front Left");
-  private final Module m_frontRight = new Module(3, 4, 10, "Front Right");
-  private final Module m_backLeft = new Module(7, 8, 12, "Back Left");
-  private final Module m_backRight = new Module(5, 6, 11, "Back Right");
+  private final SwerveDriveKinematics kinematics = new SwerveDriveKinematics(
+      frontLeftLocation, frontRightLocation, backLeftLocation, backRightLocation);
+  private final SwerveDriveOdometry odometry = new SwerveDriveOdometry(kinematics, getRotation2d());
 
-  private final AHRS m_ahrs = new AHRS(SerialPort.Port.kMXP);
+  private final Module frontLeft = new Module(1, 2, 9, "Front Left");
+  private final Module frontRight = new Module(3, 4, 10, "Front Right");
+  private final Module backLeft = new Module(7, 8, 12, "Back Left");
+  private final Module backRight = new Module(5, 6, 11, "Back Right");
 
-  public final SwerveDriveKinematics m_kinematics = new SwerveDriveKinematics(
-      m_frontLeftLocation, m_frontRightLocation, m_backLeftLocation, m_backRightLocation);
-
-  private final SwerveDriveOdometry m_odometry = new SwerveDriveOdometry(m_kinematics, getRotation2d());
+  private final AHRS ahrs = new AHRS(SerialPort.Port.kMXP);
 
   private final ProfiledPIDController thetaController = new ProfiledPIDController(
       turnP.getValue(), turnI.getValue(), turnD.getValue(), THETA_CONTROLLER_CONSTRAINTS);
 
   public SwerveDrive() {
-    m_ahrs.reset();
+    ahrs.reset();
     thetaController.enableContinuousInput(-Math.PI, Math.PI);
     thetaController.setTolerance(Math.PI / 36); // 5 degree tolerance
   }
 
   public void reset() {
-    m_ahrs.reset();
-    m_frontLeft.reset();
-    m_frontRight.reset();
-    m_backLeft.reset();
-    m_backRight.reset();
-    m_odometry.resetPosition(new Pose2d(), getRotation2d());
+    ahrs.reset();
+    frontLeft.reset();
+    frontRight.reset();
+    backLeft.reset();
+    backRight.reset();
+    odometry.resetPosition(new Pose2d(), getRotation2d());
   }
 
   /**
@@ -327,7 +323,7 @@ public class SwerveDrive extends SubsystemBase {
     ySpeed = MathUtil.applyDeadband(ySpeed, 0.02) * currentMaxSpeed;
     rot = MathUtil.applyDeadband(rot, 0.02) * currentMaxAngularSpeed;
 
-    var swerveModuleStates = m_kinematics.toSwerveModuleStates(
+    var swerveModuleStates = kinematics.toSwerveModuleStates(
         fieldRelative
             ? ChassisSpeeds.fromFieldRelativeSpeeds(xSpeed, ySpeed, rot, getRotation2d())
             : new ChassisSpeeds(xSpeed, ySpeed, rot));
@@ -367,17 +363,17 @@ public class SwerveDrive extends SubsystemBase {
 
   /** Updates the field relative position of the robot. */
   public void updateOdometry() {
-    m_odometry.update(
+    odometry.update(
         getRotation2d(),
-        m_frontLeft.getState(),
-        m_frontRight.getState(),
-        m_backLeft.getState(),
-        m_backRight.getState());
+        frontLeft.getState(),
+        frontRight.getState(),
+        backLeft.getState(),
+        backRight.getState());
   }
 
   public ChassisSpeeds getChassisSpeeds() {
-    return m_kinematics.toChassisSpeeds(m_frontLeft.getState(), m_frontRight.getState(), m_backLeft.getState(),
-        m_backRight.getState());
+    return kinematics.toChassisSpeeds(frontLeft.getState(), frontRight.getState(), backLeft.getState(),
+        backRight.getState());
   }
 
   /**
@@ -386,7 +382,7 @@ public class SwerveDrive extends SubsystemBase {
    * @param pose The pose to which to set the odometry.
    */
   public void resetOdometry(Pose2d pose) {
-    m_odometry.resetPosition(pose, getRotation2d());
+    odometry.resetPosition(pose, getRotation2d());
   }
 
   @Override
@@ -396,12 +392,12 @@ public class SwerveDrive extends SubsystemBase {
 
   /** Returns the current orientation of the robot as a Rotation2d object */
   public Rotation2d getRotation2d() {
-    return Rotation2d.fromDegrees(-m_ahrs.getAngle());
+    return Rotation2d.fromDegrees(-ahrs.getAngle());
   }
 
   /** Returns the current pose of the robot as a Pose2d object */
   public Pose2d getPose2d() {
-    return m_odometry.getPoseMeters();
+    return odometry.getPoseMeters();
   }
 
   /** Sets the desired state of a swerve module. */
@@ -411,16 +407,16 @@ public class SwerveDrive extends SubsystemBase {
     SwerveModuleState state = new SwerveModuleState(speed, rotation);
     switch (index) {
       case 0:
-        m_frontLeft.setDesiredState(state);
+        frontLeft.setDesiredState(state);
         break;
       case 1:
-        m_frontRight.setDesiredState(state);
+        frontRight.setDesiredState(state);
         break;
       case 2:
-        m_backLeft.setDesiredState(state);
+        backLeft.setDesiredState(state);
         break;
       case 3:
-        m_backRight.setDesiredState(state);
+        backRight.setDesiredState(state);
         break;
     }
   }
@@ -429,18 +425,18 @@ public class SwerveDrive extends SubsystemBase {
   public void setModuleStates(SwerveModuleState[] desiredStates) {
     SwerveDriveKinematics.desaturateWheelSpeeds(
         desiredStates, MAX_SPEED);
-    m_frontLeft.setDesiredState(desiredStates[0]);
-    m_frontRight.setDesiredState(desiredStates[1]);
-    m_backLeft.setDesiredState(desiredStates[2]);
-    m_backRight.setDesiredState(desiredStates[3]);
+    frontLeft.setDesiredState(desiredStates[0]);
+    frontRight.setDesiredState(desiredStates[1]);
+    backLeft.setDesiredState(desiredStates[2]);
+    backRight.setDesiredState(desiredStates[3]);
   }
 
   // Stops all Swerve Drive Motors
   public void stopMotors() {
-    m_frontLeft.stopMotors();
-    m_frontRight.stopMotors();
-    m_backLeft.stopMotors();
-    m_backRight.stopMotors();
+    frontLeft.stopMotors();
+    frontRight.stopMotors();
+    backLeft.stopMotors();
+    backRight.stopMotors();
     turnToAngle = false;
 
   }
@@ -466,7 +462,7 @@ public class SwerveDrive extends SubsystemBase {
       boolean reversed) {
     TrajectoryConfig config = new TrajectoryConfig(MAX_SPEED, MAX_ACCELERATION)
         // Add kinematics to ensure max speed is actually obeyed
-        .setKinematics(m_kinematics)
+        .setKinematics(kinematics)
         .setReversed(reversed);
 
     // An example trajectory to follow. All units in meters.
@@ -494,24 +490,24 @@ public class SwerveDrive extends SubsystemBase {
     swerveOdometry.addNumber("Gyro", () -> getRotation2d().getDegrees());
     swerveOdometry.addNumber("X", () -> getPose2d().getX());
     swerveOdometry.addNumber("Y", () -> getPose2d().getY());
-    swerveOdometry.addNumber("FR Encoder", () -> m_frontRight.getWheelDistance());
-    swerveOdometry.addNumber("FL Encoder", () -> m_frontLeft.getWheelDistance());
-    swerveOdometry.addNumber("BR Encoder", () -> m_backRight.getWheelDistance());
-    swerveOdometry.addNumber("BL Encoder", () -> m_backLeft.getWheelDistance());
+    swerveOdometry.addNumber("FR Encoder", () -> frontRight.getWheelDistance());
+    swerveOdometry.addNumber("FL Encoder", () -> frontLeft.getWheelDistance());
+    swerveOdometry.addNumber("BR Encoder", () -> backRight.getWheelDistance());
+    swerveOdometry.addNumber("BL Encoder", () -> backLeft.getWheelDistance());
 
-    m_frontLeft.addShuffleBoardLayout(swerveDriveTab)
+    frontLeft.addShuffleBoardLayout(swerveDriveTab)
         .withPosition(2, 0)
         .withSize(2, 3);
 
-    m_frontRight.addShuffleBoardLayout(swerveDriveTab)
+    frontRight.addShuffleBoardLayout(swerveDriveTab)
         .withPosition(4, 0)
         .withSize(2, 3);
 
-    m_backLeft.addShuffleBoardLayout(swerveDriveTab)
+    backLeft.addShuffleBoardLayout(swerveDriveTab)
         .withPosition(2, 3)
         .withSize(2, 3);
 
-    m_backRight.addShuffleBoardLayout(swerveDriveTab)
+    backRight.addShuffleBoardLayout(swerveDriveTab)
         .withPosition(4, 3)
         .withSize(2, 3);
 
