@@ -5,6 +5,7 @@
 package frc.robot.subsystems;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
@@ -24,6 +25,9 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.math.trajectory.Trajectory;
+import edu.wpi.first.math.trajectory.TrajectoryConfig;
+import edu.wpi.first.math.trajectory.TrajectoryGenerator;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.util.sendable.SendableBuilder;
@@ -239,6 +243,8 @@ public class SwerveDrive extends SubsystemBase {
   public static final double MAX_SPEED = 3.0; // 3 meters per second
   public static final double MAX_ANGULAR_SPEED = Math.PI; // 1/2 rotation per second
   public static final double MAX_ACCELERATION = 2.0; // TODO: find Max acceleration in meters per second squared
+  public static final TrapezoidProfile.Constraints THETA_CONTROLLER_CONSTRAINTS = new TrapezoidProfile.Constraints(
+      SwerveDrive.MAX_SPEED, SwerveDrive.MAX_ACCELERATION);
 
   @RobotPreferencesValue
   public static final DoubleValue turnP = new DoubleValue("SwerveDrive", "turnP", 1.0);
@@ -273,10 +279,8 @@ public class SwerveDrive extends SubsystemBase {
 
   private final SwerveDriveOdometry m_odometry = new SwerveDriveOdometry(m_kinematics, getRotation2d());
 
-  public static final TrapezoidProfile.Constraints kThetaControllerConstraints = new TrapezoidProfile.Constraints(
-      SwerveDrive.MAX_SPEED, SwerveDrive.MAX_ACCELERATION);
   private final ProfiledPIDController thetaController = new ProfiledPIDController(
-      turnP.getValue(), turnI.getValue(), turnD.getValue(), kThetaControllerConstraints);
+      turnP.getValue(), turnI.getValue(), turnD.getValue(), THETA_CONTROLLER_CONSTRAINTS);
 
   public SwerveDrive() {
     m_ahrs.reset();
@@ -441,6 +445,40 @@ public class SwerveDrive extends SubsystemBase {
 
   }
 
+  /**
+   * Generates a trajectory to be followed using
+   * {@link edu.wpi.first.wpilibj2.command.SwerveControllerCommand}.
+   * 
+   * @param initialPose2d The initial robot pose.
+   * @param waypoints     A list of waypoints through which the robot should
+   *                      traverse.
+   * @param finalPose2d   The final robot pose.
+   * @param reversed      Set to true when the robot must follow the path
+   *                      backwards.
+   * 
+   * @return The trajectory to be followed using
+   *         {@link edu.wpi.first.wpilibj2.command.SwerveControllerCommand}.
+   */
+  public Trajectory generateTrajectory(
+      Pose2d initialPose2d,
+      List<Translation2d> waypoints,
+      Pose2d finalPose2d,
+      boolean reversed) {
+    TrajectoryConfig config = new TrajectoryConfig(MAX_SPEED, MAX_ACCELERATION)
+        // Add kinematics to ensure max speed is actually obeyed
+        .setKinematics(m_kinematics)
+        .setReversed(reversed);
+
+    // An example trajectory to follow. All units in meters.
+    Trajectory trajectory = TrajectoryGenerator.generateTrajectory(
+        initialPose2d,
+        waypoints,
+        finalPose2d,
+        config);
+
+    return trajectory;
+  }
+
   /** Adds and initializes a Shufflboard tab for this subsystem. */
   public void initShuffleboardTab() {
     if (!enableTab.getValue()) {
@@ -502,6 +540,5 @@ public class SwerveDrive extends SubsystemBase {
         .withPosition(6, 0)
         .withSize(2, 2);
     commandLayout.add(new CharacterizeSwerveDrive(this));
-
   }
 }
