@@ -48,8 +48,14 @@ public class CharacterizeSwerveDrive extends CommandBase {
 
     logger.log(position, velocity, measuredAngle, angularRate);
 
-    // TODO: How are we going to set drive the motor based on the voltage given by SysID
-    // swerveDrive.drive(0, 0, 0, true, false);
+    double percentOutput = logger.getMotorVoltage() / battery;
+    if(logger.isRotating()){
+      swerveDrive.drive(0, 0, percentOutput, true, false);
+    }
+    else{
+      swerveDrive.drive(percentOutput, 0, 0, true, false);
+    }
+
   }
 
   // Called once the command ends or is interrupted.
