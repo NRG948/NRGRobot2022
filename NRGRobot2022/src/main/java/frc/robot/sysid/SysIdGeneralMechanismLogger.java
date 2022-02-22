@@ -26,6 +26,11 @@ public class SysIdGeneralMechanismLogger extends SysIdLogger {
     public void log(double measuredPosition, double measuredVelocity) {
         updateData();
 
+        // The data format for a general mechanism is described here in
+        // https://github.com/wpilibsuite/sysid/blob/main/docs/data-collection.md#non-drivetrain-mechanisms
+        //
+        // SysID assumes a differential drivetrain, so left & right side data from the
+        // Swerve drive is duplicated to match the expected data format.
         addData(getTimestamp(), motorVoltage, measuredPosition, measuredVelocity);
 
         motorVoltage = getMotorVoltage();
