@@ -34,6 +34,7 @@ import frc.robot.commands.ResetSubsystems;
 import frc.robot.commands.RotateArmToResting;
 import frc.robot.commands.RotateArmToStowed;
 import frc.robot.commands.SetModuleState;
+import frc.robot.commands.ToggleClimberPistons;
 import frc.robot.commands.TurnToAngle;
 import frc.robot.preferences.RobotPreferences;
 import frc.robot.preferences.RobotPreferencesLayout;
@@ -84,7 +85,7 @@ public class RobotContainer {
   private final RaspberryPiVision raspberryPiVision = new RaspberryPiVision();
   private final Claw claw = new Claw(1); // Port 1
   private final Arm arm = new Arm(); // limit switch channels to be updated
-  // private final Climber climber = new Climber();
+  private final Climber climber = new Climber();
 
   // Commands
   private final DriveWithController driveWithController = new DriveWithController(swerveDrive, driveController);
@@ -95,7 +96,9 @@ public class RobotContainer {
   private final ManualClaw manualClaw = new ManualClaw(claw, driveController);
   private final RotateArmToResting armToResting = new RotateArmToResting(arm);
   private final RotateArmToStowed armToStowed = new RotateArmToStowed(arm);
-  // private final ManualClimber manualClimber = new ManualClimber(climber, driveController);
+  private final ManualClimber manualClimber = new ManualClimber(climber, driveController);
+  private final ToggleClimberPistons toggleClimberPiston1 = new ToggleClimberPistons(climber, 1);
+  private final ToggleClimberPistons toggleClimberPiston2 = new ToggleClimberPistons(climber, 2);
 
   private SendableChooser<ChooseAutoPath> chooseAutoPath;
   private SendableChooser<DelayEx> delayEx;
@@ -155,8 +158,9 @@ public class RobotContainer {
     xboxLeftBumper.whenPressed(armToResting);
     xboxRightBumper.whenPressed(armToStowed);
 
-    // xboxMenuButton.whenPressed(interrupt.andThen(manualClimber));
-
+    xboxMenuButton.whenPressed(interrupt.andThen(manualClimber));
+    xboxButtonB.whenPressed(toggleClimberPiston1);
+    xboxButtonY.whenPressed(toggleClimberPiston2);
   }
 
   /**

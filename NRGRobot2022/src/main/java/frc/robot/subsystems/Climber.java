@@ -14,7 +14,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 public class Climber extends SubsystemBase {
   
   private final PWMVictorSPX climberMotor; 
-  private final DoubleSolenoid piston;
+  private final DoubleSolenoid piston1;
   private final DoubleSolenoid piston2;
   
   public enum State {
@@ -24,7 +24,7 @@ public class Climber extends SubsystemBase {
   /** Creates a new Climber. */
   public Climber() {
     climberMotor = new PWMVictorSPX(0);
-    piston = new DoubleSolenoid(PneumaticsModuleType.CTREPCM, 1, 2);
+    piston1 = new DoubleSolenoid(PneumaticsModuleType.CTREPCM, 1, 2);
     piston2 = new DoubleSolenoid(PneumaticsModuleType.CTREPCM, 3, 4);
   }
 
@@ -33,7 +33,7 @@ public class Climber extends SubsystemBase {
     // This method will be called once per scheduler run
   }
   public DoubleSolenoid getP1() {
-    return piston;
+    return piston1;
   }
 
   public DoubleSolenoid getP2() {
