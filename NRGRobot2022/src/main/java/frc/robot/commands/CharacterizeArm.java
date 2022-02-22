@@ -10,14 +10,14 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Arm;
 import frc.robot.sysid.SysIdGeneralMechanismLogger;
 
-public class CharacterizedArm extends CommandBase {
+public class CharacterizeArm extends CommandBase {
   private SysIdGeneralMechanismLogger logger = new SysIdGeneralMechanismLogger();
   private Arm arm;
   private double previousRadians;
   private double previousTime;
 
   /** Creates a new CharacterizedArm. */
-  public CharacterizedArm(Arm arm) {
+  public CharacterizeArm(Arm arm) {
     // Use addRequirements() here to declare subsystem dependencies.
     this.arm = arm;
     addRequirements(arm);

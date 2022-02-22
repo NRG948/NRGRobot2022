@@ -23,7 +23,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.POVButton;
 import frc.robot.commands.CharacterizeSwerveDrive;
-import frc.robot.commands.CharacterizedArm;
+import frc.robot.commands.CharacterizeArm;
 import frc.robot.commands.CommandUtils;
 import frc.robot.commands.DriveForward;
 import frc.robot.commands.DriveWithController;
@@ -174,7 +174,7 @@ public class RobotContainer {
         return new CharacterizeSwerveDrive(swerveDrive);
 
       case PROFILE_ARM:
-        return new CharacterizedArm(arm);
+        return new CharacterizeArm(arm);
 
       case TEST_DRIVE:
         return new ResetSubsystems(swerveDrive).andThen(
