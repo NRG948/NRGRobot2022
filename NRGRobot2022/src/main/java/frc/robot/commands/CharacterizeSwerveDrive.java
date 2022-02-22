@@ -49,10 +49,9 @@ public class CharacterizeSwerveDrive extends CommandBase {
     logger.log(position, velocity, measuredAngle, angularRate);
 
     double percentOutput = logger.getMotorVoltage() / battery;
-    if(logger.isRotating()){
+    if (logger.isRotating()) {
       swerveDrive.drive(0, 0, percentOutput, true, false);
-    }
-    else{
+    } else {
       swerveDrive.drive(percentOutput, 0, 0, true, false);
     }
 
