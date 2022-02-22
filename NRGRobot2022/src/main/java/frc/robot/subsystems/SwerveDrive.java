@@ -345,6 +345,11 @@ public class SwerveDrive extends SubsystemBase {
     turnToAngle = false;
   }
 
+  /** Returns the drive train kinematics. */
+  public SwerveDriveKinematics getKinematics() {
+    return kinematics;
+  }
+
   /**
    * Sets the maximum drive speed. This value is clamped to the range
    * [0..MAX_SPEED].

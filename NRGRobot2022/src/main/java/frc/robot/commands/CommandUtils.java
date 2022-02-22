@@ -36,7 +36,7 @@ public final class CommandUtils {
         SwerveControllerCommand swerveControllerCommand = new SwerveControllerCommand(
                 trajectory,
                 swerve::getPose2d, // Functional interface to feed supplier
-                swerve.m_kinematics,
+                swerve.getKinematics(),
 
                 // Position controllers
                 new PIDController(kPXController, 0, 0),
