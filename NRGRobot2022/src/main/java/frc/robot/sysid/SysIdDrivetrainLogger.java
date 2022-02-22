@@ -17,19 +17,36 @@ public class SysIdDrivetrainLogger extends SysIdLogger {
         return !mechanism.equals("Drivetrain") && !mechanism.equals("Drivetrain (Angular)");
     }
 
-    public void log(double position, double velocity, double measuredAngle, double angularRate) {
+    /**
+     * Logs data for the SysID tool for a Swerve drivetrain.
+     * 
+     * @param measurePosition     The measured position of the robot in the
+     *                            direction of movement.
+     * @param measuredVelocity    The measured velocity of the robot.
+     * @param measuredAngle       The measured orientation of the robot.
+     * @param measuredAngularRate The measured angular rate of the change of the
+     *                            robot.
+     */
+    public void log(double measurePosition, double measuredVelocity, double measuredAngle, double measuredAngularRate) {
         updateData();
 
+        // The data format for a general drivetrain is described here in
+        // https://github.com/wpilibsuite/sysid/blob/main/docs/data-collection.md#drivetrain
+        //
+        // SysID assumes a differential drivetrain, so left & right side data from the
+        // Swerve drive is duplicated to match the expected data format.
         addData(getTimestamp(),
                 primaryMotorVoltage,
                 secondaryMotorVoltage,
-                position,
-                position,
-                velocity,
-                velocity,
+                measurePosition,
+                measurePosition,
+                measuredVelocity,
+                measuredVelocity,
                 measuredAngle,
-                angularRate);
+                measuredAngularRate);
+
         double motorVoltage = getMotorVoltage();
+
         primaryMotorVoltage = (isRotating() ? -1 : 1) * motorVoltage;
         secondaryMotorVoltage = motorVoltage;
     }
