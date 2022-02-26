@@ -73,19 +73,29 @@ public class RobotContainer {
   private JoystickButton xboxStartButton = new JoystickButton(driveController, 7);
   // Right Middle Button
   private JoystickButton xboxMenuButton = new JoystickButton(driveController, 8);
-
-
+  
   private POVButton xboxDpadUp = new POVButton(driveController, 0);
   private POVButton xboxDpadRight = new POVButton(driveController, 90);
   private POVButton xboxDpadDown = new POVButton(driveController, 180);
   private POVButton xboxDpadLeft = new POVButton(driveController, 270);
+
+  //Manipulate interface
+  private final XboxController manipulatorController = new XboxController(3);
+  private JoystickButton manipulatorButtonA = new JoystickButton(manipulatorController, 1); // A Button
+  private JoystickButton manipulatorButtonB = new JoystickButton(manipulatorController, 2); // B Button
+  private JoystickButton manipulatorButtonx = new JoystickButton(manipulatorController, 3); // x Button
+  private JoystickButton manipulatorButtonY = new JoystickButton(manipulatorController, 4); // y Button
+  private JoystickButton manipulatorLeftBumper = new JoystickButton(manipulatorController, 5);
+  private JoystickButton manipulatorRightBumper = new JoystickButton(manipulatorController, 6);
+
+  
 
   // Subsystems
   private final SwerveDrive swerveDrive = new SwerveDrive();
   private final RaspberryPiVision raspberryPiVision = new RaspberryPiVision();
   private final Claw claw = new Claw(1); // Port 1
   private final Arm arm = new Arm(); // limit switch channels to be updated
-  private final Climber climber = new Climber();
+  //private final Climber climber = new Climber();
 
   // Commands
   private final DriveWithController driveWithController = new DriveWithController(swerveDrive, driveController);
@@ -93,12 +103,12 @@ public class RobotContainer {
   private final DriveForward driveForward = new DriveForward(swerveDrive);
   private final SetModuleState setModuleState_0 = new SetModuleState(swerveDrive, driveController, 0);
   private final SetModuleState setModuleState_90 = new SetModuleState(swerveDrive, driveController, 90);
-  private final ManualClaw manualClaw = new ManualClaw(claw, driveController);
+  private final ManualClaw manualClaw = new ManualClaw(claw, manipulatorController);
   private final RotateArmToResting armToResting = new RotateArmToResting(arm);
   private final RotateArmToStowed armToStowed = new RotateArmToStowed(arm);
-  private final ManualClimber manualClimber = new ManualClimber(climber, driveController);
-  private final ToggleClimberPistons toggleClimberPiston1 = new ToggleClimberPistons(climber, 1);
-  private final ToggleClimberPistons toggleClimberPiston2 = new ToggleClimberPistons(climber, 2);
+  //private final ManualClimber manualClimber = new ManualClimber(climber, driveController);
+  //private final ToggleClimberPistons toggleClimberPiston1 = new ToggleClimberPistons(climber, 1);
+  //private final ToggleClimberPistons toggleClimberPiston2 = new ToggleClimberPistons(climber, 2);
 
   private SendableChooser<ChooseAutoPath> chooseAutoPath;
   private SendableChooser<DelayEx> delayEx;
@@ -155,12 +165,12 @@ public class RobotContainer {
     xboxDpadDown.whenPressed(new TurnToAngle(swerveDrive, -45));
     xboxDpadLeft.whenPressed(new TurnToAngle(swerveDrive, 45));
 
-    xboxLeftBumper.whenPressed(armToResting);
-    xboxRightBumper.whenPressed(armToStowed);
+    manipulatorLeftBumper.whenPressed(armToResting);
+    manipulatorRightBumper.whenPressed(armToStowed);
 
-    xboxMenuButton.whenPressed(interrupt.andThen(manualClimber));
-    xboxButtonB.whenPressed(toggleClimberPiston1);
-    xboxButtonY.whenPressed(toggleClimberPiston2);
+    // xboxMenuButton.whenPressed(interrupt.andThen(manualClimber));
+    // xboxButtonB.whenPressed(toggleClimberPiston1);
+    // xboxButtonY.whenPressed(toggleClimberPiston2);
   }
 
   /**
