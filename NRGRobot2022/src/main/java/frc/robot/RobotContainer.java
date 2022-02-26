@@ -32,7 +32,7 @@ import frc.robot.commands.ManualClaw;
 import frc.robot.commands.ManualClimber;
 import frc.robot.commands.ResetSubsystems;
 import frc.robot.commands.RotateArmToResting;
-import frc.robot.commands.RotateArmToStowed;
+import frc.robot.commands.RotateArmToScoring;
 import frc.robot.commands.SetModuleState;
 import frc.robot.commands.ToggleClimberPistons;
 import frc.robot.commands.TurnToAngle;
@@ -105,7 +105,7 @@ public class RobotContainer {
   private final SetModuleState setModuleState_90 = new SetModuleState(swerveDrive, driveController, 90);
   private final ManualClaw manualClaw = new ManualClaw(claw, manipulatorController);
   private final RotateArmToResting armToResting = new RotateArmToResting(arm);
-  private final RotateArmToStowed armToStowed = new RotateArmToStowed(arm);
+  private final RotateArmToScoring armToScoring = new RotateArmToScoring(arm);
   //private final ManualClimber manualClimber = new ManualClimber(climber, driveController);
   //private final ToggleClimberPistons toggleClimberPiston1 = new ToggleClimberPistons(climber, 1);
   //private final ToggleClimberPistons toggleClimberPiston2 = new ToggleClimberPistons(climber, 2);
@@ -166,7 +166,7 @@ public class RobotContainer {
     xboxDpadLeft.whenPressed(new TurnToAngle(swerveDrive, 45));
 
     manipulatorLeftBumper.whenPressed(armToResting);
-    manipulatorRightBumper.whenPressed(armToStowed);
+    manipulatorRightBumper.whenPressed(armToScoring);
 
     // xboxMenuButton.whenPressed(interrupt.andThen(manualClimber));
     // xboxButtonB.whenPressed(toggleClimberPiston1);
