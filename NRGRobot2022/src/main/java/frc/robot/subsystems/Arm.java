@@ -34,7 +34,12 @@ public class Arm extends ProfiledPIDSubsystem {
     @RobotPreferencesValue
     public static final BooleanValue enableTab = new BooleanValue("Arm", "enableTab", false);
     @RobotPreferencesValue
-    public static final DoubleValue kP = new DoubleValue("Arm", "kP", 1.0);
+    public static final DoubleValue kP = new DoubleValue("Arm", "kP", 10);
+    @RobotPreferencesValue
+    public static final DoubleValue kI = new DoubleValue("Arm", "kI", 0);
+    @RobotPreferencesValue
+    public static final DoubleValue kD = new DoubleValue("Arm", "kD", 1);
+
 
     // The default values for the feed forward gain were estimated using http://reca.lc.
     // (https://www.reca.lc/arm?armMass=%7B%22s%22%3A15%2C%22u%22%3A%22lbs%22%7D&comLength=%7B%22s%22%3A21.5%2C%22u%22%3A%22in%22%7D&currentLimit=%7B%22s%22%3A40%2C%22u%22%3A%22A%22%7D&efficiency=100&endAngle=%7B%22s%22%3A45%2C%22u%22%3A%22deg%22%7D&iterationLimit=10000&motor=%7B%22quantity%22%3A1%2C%22name%22%3A%22MiniCIM%22%7D&ratio=%7B%22magnitude%22%3A100%2C%22ratioType%22%3A%22Reduction%22%7D&startAngle=%7B%22s%22%3A-23%2C%22u%22%3A%22deg%22%7D)
@@ -58,8 +63,8 @@ public class Arm extends ProfiledPIDSubsystem {
     public Arm() {
         super(new ProfiledPIDController(
                 kP.getValue(),
-                0,
-                0,
+                kI.getValue(),
+                kD.getValue(),
                 new TrapezoidProfile.Constraints(
                         ArmConstants.kMaxVelocityRadPerSecond,
                         ArmConstants.kMaxAccelerationRadPerSecSquared)),
