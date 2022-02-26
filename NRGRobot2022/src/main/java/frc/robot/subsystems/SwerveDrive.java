@@ -264,6 +264,8 @@ public class SwerveDrive extends SubsystemBase {
   private final Translation2d backLeftLocation = new Translation2d(-0.3302, 0.2413);
   private final Translation2d backRightLocation = new Translation2d(-0.3302, -0.2413);
 
+  private final AHRS ahrs = new AHRS(SerialPort.Port.kMXP);
+
   private final SwerveDriveKinematics kinematics = new SwerveDriveKinematics(
       frontLeftLocation, frontRightLocation, backLeftLocation, backRightLocation);
   private final SwerveDriveOdometry odometry = new SwerveDriveOdometry(kinematics, getRotation2d());
@@ -273,7 +275,6 @@ public class SwerveDrive extends SubsystemBase {
   private final Module backLeft = new Module(7, 8, 12, "Back Left");
   private final Module backRight = new Module(5, 6, 11, "Back Right");
 
-  private final AHRS ahrs = new AHRS(SerialPort.Port.kMXP);
 
   private final ProfiledPIDController thetaController = new ProfiledPIDController(
       turnP.getValue(), turnI.getValue(), turnD.getValue(), THETA_CONTROLLER_CONSTRAINTS);
