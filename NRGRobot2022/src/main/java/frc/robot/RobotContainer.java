@@ -21,6 +21,7 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.POVButton;
 import frc.robot.commands.CharacterizeSwerveDrive;
@@ -74,13 +75,13 @@ public class RobotContainer {
   private JoystickButton xboxStartButton = new JoystickButton(driveController, 7);
   // Right Middle Button
   private JoystickButton xboxMenuButton = new JoystickButton(driveController, 8);
-  
+
   private POVButton xboxDpadUp = new POVButton(driveController, 0);
   private POVButton xboxDpadRight = new POVButton(driveController, 90);
   private POVButton xboxDpadDown = new POVButton(driveController, 180);
   private POVButton xboxDpadLeft = new POVButton(driveController, 270);
 
-  //Manipulate interface
+  // Manipulate interface
   private final XboxController manipulatorController = new XboxController(3);
   private JoystickButton manipulatorButtonA = new JoystickButton(manipulatorController, 1); // A Button
   private JoystickButton manipulatorButtonB = new JoystickButton(manipulatorController, 2); // B Button
@@ -89,14 +90,12 @@ public class RobotContainer {
   private JoystickButton manipulatorLeftBumper = new JoystickButton(manipulatorController, 5);
   private JoystickButton manipulatorRightBumper = new JoystickButton(manipulatorController, 6);
 
-  
-
   // Subsystems
   private final SwerveDrive swerveDrive = new SwerveDrive();
   private final RaspberryPiVision raspberryPiVision = new RaspberryPiVision();
   private final Claw claw = new Claw(1); // Port 1
   private final Arm arm = new Arm(); // limit switch channels to be updated
-  //private final Climber climber = new Climber();
+  // private final Climber climber = new Climber();
 
   // Commands
   private final DriveWithController driveWithController = new DriveWithController(swerveDrive, driveController);
@@ -107,12 +106,15 @@ public class RobotContainer {
   private final ManualClaw manualClaw = new ManualClaw(claw, manipulatorController);
   private final RotateArmToResting armToResting = new RotateArmToResting(arm);
   private final RotateArmToScoring armToScoring = new RotateArmToScoring(arm);
-  //private final ManualClimber manualClimber = new ManualClimber(climber, driveController);
-  //private final ToggleClimberPistons toggleClimberPiston1 = new ToggleClimberPistons(climber, 1);
-  //private final ToggleClimberPistons toggleClimberPiston2 = new ToggleClimberPistons(climber, 2);
+  // private final ManualClimber manualClimber = new ManualClimber(climber,
+  // driveController);
+  // private final ToggleClimberPistons toggleClimberPiston1 = new
+  // ToggleClimberPistons(climber, 1);
+  // private final ToggleClimberPistons toggleClimberPiston2 = new
+  // ToggleClimberPistons(climber, 2);
 
   private SendableChooser<ChooseAutoPath> chooseAutoPath;
-  private SendableChooser<DelayEx> delayEx;
+  private SendableChooser<ChooseAutoDelay> chooseAutoDelay;
 
   private enum ChooseAutoPath {
     NONE,
@@ -124,10 +126,20 @@ public class RobotContainer {
     TOP_LEFT,
   }
 
-  private enum DelayEx {
-    OPTION1,
-    OPTION2,
-    OPTION3
+  private enum ChooseAutoDelay {
+    NO_DELAY(0),
+    DELAY_2_SECONDS(2),
+    DELAY_5_SECONDS(3);
+
+    private double delay;
+
+    ChooseAutoDelay(double delay) {
+      this.delay = delay;
+    }
+
+    public double getDelay() {
+      return delay;
+    }
   }
 
   /**
@@ -182,6 +194,20 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
+    Command autoCommand = getSelectedAutonomousCommand();
+    Command delayCommand = getSelectedDelayCommand();
+
+    if (delayCommand == null) {
+      return autoCommand;
+    } else if (autoCommand == null) {
+      return delayCommand;
+    } else {
+      return delayCommand.andThen(autoCommand);
+    }
+  }
+
+  /** Returns the autonmous command selected in the Shuffleboard tab. */
+  private Command getSelectedAutonomousCommand() {
     switch (chooseAutoPath.getSelected()) {
       case NONE:
         return new InstantCommand(() -> System.out.println("NO AUTONOMOUS COMMAND SELECTED"));
@@ -207,6 +233,20 @@ public class RobotContainer {
       default:
         return null;
     }
+  }
+
+  /**
+   * Returns a command to wait the period of time selected in the Shuffleboard
+   * tab, or null if no delay is selected.
+   */
+  private Command getSelectedDelayCommand() {
+    ChooseAutoDelay delayChoice = chooseAutoDelay.getSelected();
+
+    if (delayChoice.getDelay() == 0) {
+      return null;
+    }
+
+    return new WaitCommand(delayChoice.getDelay());
   }
 
   public void initSubsystems() {
@@ -235,10 +275,10 @@ public class RobotContainer {
     chooseAutoPath.addOption("Bottom Right", ChooseAutoPath.TOP_LEFT);
     autoLayout.add("AutoPath", chooseAutoPath).withWidget(BuiltInWidgets.kComboBoxChooser);
 
-    delayEx = new SendableChooser<DelayEx>();
-    delayEx.setDefaultOption("0 sec", DelayEx.OPTION1);
-    delayEx.addOption("2 sec", DelayEx.OPTION2);
-    delayEx.addOption("5 sec", DelayEx.OPTION3);
-    autoLayout.add("Delay", delayEx).withWidget(BuiltInWidgets.kComboBoxChooser);
+    chooseAutoDelay = new SendableChooser<ChooseAutoDelay>();
+    chooseAutoDelay.setDefaultOption("0 sec", ChooseAutoDelay.NO_DELAY);
+    chooseAutoDelay.addOption("2 sec", ChooseAutoDelay.DELAY_2_SECONDS);
+    chooseAutoDelay.addOption("5 sec", ChooseAutoDelay.DELAY_5_SECONDS);
+    autoLayout.add("Delay", chooseAutoDelay).withWidget(BuiltInWidgets.kComboBoxChooser);
   }
 }
