@@ -7,7 +7,7 @@ import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.DigitalInput;
-import edu.wpi.first.wpilibj.DutyCycleEncoder;
+import edu.wpi.first.wpilibj.DutyCycle;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.motorcontrol.PWMVictorSPX;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
@@ -40,8 +40,8 @@ public class Arm extends ProfiledPIDSubsystem {
     @RobotPreferencesValue
     public static final DoubleValue kD = new DoubleValue("Arm", "kD", 1);
 
-
-    // The default values for the feed forward gain were estimated using http://reca.lc.
+    // The default values for the feed forward gain were estimated using
+    // http://reca.lc.
     // (https://www.reca.lc/arm?armMass=%7B%22s%22%3A15%2C%22u%22%3A%22lbs%22%7D&comLength=%7B%22s%22%3A21.5%2C%22u%22%3A%22in%22%7D&currentLimit=%7B%22s%22%3A40%2C%22u%22%3A%22A%22%7D&efficiency=100&endAngle=%7B%22s%22%3A45%2C%22u%22%3A%22deg%22%7D&iterationLimit=10000&motor=%7B%22quantity%22%3A1%2C%22name%22%3A%22MiniCIM%22%7D&ratio=%7B%22magnitude%22%3A100%2C%22ratioType%22%3A%22Reduction%22%7D&startAngle=%7B%22s%22%3A-23%2C%22u%22%3A%22deg%22%7D)
     @RobotPreferencesValue
     public static final DoubleValue kS = new DoubleValue("Arm", "kS", 1.0 /* V */);
@@ -55,7 +55,8 @@ public class Arm extends ProfiledPIDSubsystem {
     private final DigitalInput restingPositionLimitSwitch = new DigitalInput(ArmConstants.kRestingPosChannel);
     private final DigitalInput scoringPositionLimitSwitch = new DigitalInput(ArmConstants.kScoringPosChannel);
     private final PWMVictorSPX m_motor = new PWMVictorSPX(ArmConstants.kMotorPort);
-    private final DutyCycleEncoder m_encoder = new DutyCycleEncoder(ArmConstants.kEncoderChannel);
+    private final DigitalInput encoderDigitalInput = new DigitalInput(ArmConstants.kEncoderChannel);
+    private final DutyCycle encoderDutyCycle = new DutyCycle(encoderDigitalInput);
     private final ArmFeedforward m_feedforward = new ArmFeedforward(
             kS.getValue(), kG.getValue(), kV.getValue(), kA.getValue());
 
@@ -70,11 +71,6 @@ public class Arm extends ProfiledPIDSubsystem {
                         ArmConstants.kMaxAccelerationRadPerSecSquared)),
                 0);
 
-        // Configure the encoder for REV-11-1271 Through Bore Encoder duty cycle and to
-        // report angle in radians.
-        m_encoder.setDutyCycleRange(ArmConstants.kEncoderMinimumDutyCycle, ArmConstants.kEncoderMaximumDutyCycle);
-        m_encoder.setDistancePerRotation(ArmConstants.kEncoderDistancePerRotation);
-
         // Initialize the goal state to the arm's current position.
         setGoal(getRadians());
     }
@@ -83,10 +79,10 @@ public class Arm extends ProfiledPIDSubsystem {
         m_motor.setVoltage(motorVoltage);
     }
 
-    public void stopMotor () {
+    public void stopMotor() {
         m_motor.stopMotor();
     }
-    
+
     @Override
     protected void useOutput(double output, TrapezoidProfile.State setpoint) {
         // Calculate the feedforward from the sepoint
@@ -104,7 +100,8 @@ public class Arm extends ProfiledPIDSubsystem {
 
     /** Returns the arm's current angle in radians. */
     public double getRadians() {
-        return Math.toRadians(levelAngleOffset.getValue()) - m_encoder.getDistance();
+        return Math.toRadians(levelAngleOffset.getValue())
+                - (encoderDutyCycle.getOutput() * ArmConstants.kEncoderDistancePerRotation);
     }
 
     /** Returns whether the arm is at its resting/acquiring position. */
@@ -129,8 +126,13 @@ public class Arm extends ProfiledPIDSubsystem {
         layout.addBoolean("Resting", () -> isAtRestingPosition()).withWidget(BuiltInWidgets.kBooleanBox);
         layout.addBoolean("Stowed", () -> isAtStowedPosition()).withWidget(BuiltInWidgets.kBooleanBox);
 
-        ShuffleboardLayout control = armTab.getLayout("Control", BuiltInLayouts.kList).withPosition(2, 0).withSize(2, 2);
+        ShuffleboardLayout encoderLayout = armTab.getLayout("Encoders", BuiltInLayouts.kList).withPosition(2, 0)
+                .withSize(2, 2);
+        encoderLayout.add(encoderDutyCycle);
+
+        ShuffleboardLayout control = armTab.getLayout("Control", BuiltInLayouts.kList).withPosition(4, 0).withSize(2,
+                2);
         ShuffleboardUtils.addNumberSlider(control, "Arm Motor", 0.0, voltage -> setMotorVoltage(voltage))
-            .withProperties(Map.of("Min", -12.0, "Max", 12.0, "Block increment", 0.05));
+                .withProperties(Map.of("Min", -12.0, "Max", 12.0, "Block increment", 0.05));
     }
 }
