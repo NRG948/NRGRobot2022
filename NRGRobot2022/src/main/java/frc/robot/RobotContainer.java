@@ -115,6 +115,7 @@ public class RobotContainer {
   private SendableChooser<DelayEx> delayEx;
 
   private enum ChooseAutoPath {
+    NONE,
     PROFILE_DRIVE,
     PROFILE_ARM,
     TEST_DRIVE,
@@ -182,6 +183,9 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     switch (chooseAutoPath.getSelected()) {
+      case NONE:
+        return new InstantCommand(() -> System.out.println("NO AUTONOMOUS COMMAND SELECTED"));
+
       case PROFILE_DRIVE:
         return new CharacterizeSwerveDrive(swerveDrive);
 
@@ -218,6 +222,8 @@ public class RobotContainer {
 
     chooseAutoPath = new SendableChooser<ChooseAutoPath>();
 
+    chooseAutoPath.setDefaultOption("None", ChooseAutoPath.NONE);
+
     if (enableTesting.getValue()) {
       chooseAutoPath.addOption("Profile Drive", ChooseAutoPath.PROFILE_DRIVE);
       chooseAutoPath.addOption("Profile Arm", ChooseAutoPath.PROFILE_ARM);
@@ -230,7 +236,7 @@ public class RobotContainer {
     autoLayout.add("AutoPath", chooseAutoPath).withWidget(BuiltInWidgets.kComboBoxChooser);
 
     delayEx = new SendableChooser<DelayEx>();
-    delayEx.addOption("0 sec", DelayEx.OPTION1);
+    delayEx.setDefaultOption("0 sec", DelayEx.OPTION1);
     delayEx.addOption("2 sec", DelayEx.OPTION2);
     delayEx.addOption("5 sec", DelayEx.OPTION3);
     autoLayout.add("Delay", delayEx).withWidget(BuiltInWidgets.kComboBoxChooser);
