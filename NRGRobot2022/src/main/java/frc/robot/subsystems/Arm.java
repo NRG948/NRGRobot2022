@@ -121,17 +121,21 @@ public class Arm extends ProfiledPIDSubsystem {
         }
 
         ShuffleboardTab armTab = Shuffleboard.getTab("Arm");
-        ShuffleboardLayout layout = armTab.getLayout("Arm", BuiltInLayouts.kList).withPosition(0, 0).withSize(2, 3);
+        ShuffleboardLayout layout = armTab.getLayout("Arm", BuiltInLayouts.kList)
+                .withPosition(0, 0)
+                .withSize(2, 3);
         layout.addNumber("Angle", () -> Math.toDegrees(getRadians()));
         layout.addBoolean("Resting", () -> isAtRestingPosition()).withWidget(BuiltInWidgets.kBooleanBox);
         layout.addBoolean("Stowed", () -> isAtStowedPosition()).withWidget(BuiltInWidgets.kBooleanBox);
 
-        ShuffleboardLayout encoderLayout = armTab.getLayout("Encoders", BuiltInLayouts.kList).withPosition(2, 0)
+        ShuffleboardLayout encoderLayout = armTab.getLayout("Encoders", BuiltInLayouts.kList)
+                .withPosition(2, 0)
                 .withSize(2, 2);
         encoderLayout.add(encoderDutyCycle);
 
-        ShuffleboardLayout control = armTab.getLayout("Control", BuiltInLayouts.kList).withPosition(4, 0).withSize(2,
-                2);
+        ShuffleboardLayout control = armTab.getLayout("Control", BuiltInLayouts.kList)
+                .withPosition(4, 0)
+                .withSize(2, 2);
         ShuffleboardUtils.addNumberSlider(control, "Arm Motor", 0.0, voltage -> setMotorVoltage(voltage))
                 .withProperties(Map.of("Min", -12.0, "Max", 12.0, "Block increment", 0.05));
     }
