@@ -20,8 +20,8 @@ public final class Constants {
     public static final class ArmConstants {
         public static final int kMotorPort = 0;
     
-        public static final double kMaxVelocityRadPerSecond = 3;
-        public static final double kMaxAccelerationRadPerSecSquared = 10;
+        public static final double kMaxVelocityRadPerSecond = Math.PI;
+        public static final double kMaxAccelerationRadPerSecSquared = 2 * Math.PI;
     
         public static final int kScoringPosChannel = 2;
         public static final int kRestingPosChannel = 3;

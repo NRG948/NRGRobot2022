@@ -16,7 +16,7 @@ public class RotateArmToResting extends CommandBase {
     @Override
     public void initialize() {
         System.out.println("\nResting Arm\n");
-        arm.setGoal(Math.toRadians(Arm.restingAngle.getValue()));
+        arm.setGoal(-25);
         arm.enable();
     }
 
@@ -37,3 +37,4 @@ public class RotateArmToResting extends CommandBase {
         return arm.isAtRestingPosition();
     }
 }
+    

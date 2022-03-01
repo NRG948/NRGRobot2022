@@ -26,19 +26,21 @@ import frc.robot.utilities.ShuffleboardUtils;
 @RobotPreferencesLayout(groupName = "Arm", column = 3, row = 0, width = 2, height = 3, type = "Grid Layout")
 public class Arm extends ProfiledPIDSubsystem {
     @RobotPreferencesValue
-    public static final DoubleValue levelAngleOffset = new DoubleValue("Arm", "levelAngleOffset", 85.88);
+    public static final DoubleValue levelAngleOffset = new DoubleValue("Arm", "levelAngleOffset", 264.0);
     @RobotPreferencesValue
-    public static final DoubleValue stowedAngle = new DoubleValue("Arm", "stowedAngle", 100);
+    public static final DoubleValue stowedAngle = new DoubleValue("Arm", "stowedAngle", 110);
     @RobotPreferencesValue
     public static final DoubleValue restingAngle = new DoubleValue("Arm", "restingAngle", -20);
     @RobotPreferencesValue
     public static final BooleanValue enableTab = new BooleanValue("Arm", "enableTab", false);
+    
+    //TODO: Need to figure out such a high P value works bettwe than a low P value.
     @RobotPreferencesValue
-    public static final DoubleValue kP = new DoubleValue("Arm", "kP", 10);
+    public static final DoubleValue kP = new DoubleValue("Arm", "kP", 20);
     @RobotPreferencesValue
     public static final DoubleValue kI = new DoubleValue("Arm", "kI", 0);
     @RobotPreferencesValue
-    public static final DoubleValue kD = new DoubleValue("Arm", "kD", 1);
+    public static final DoubleValue kD = new DoubleValue("Arm", "kD", 0);
 
     // The default values for the feed forward gain were estimated using
     // http://reca.lc.
@@ -72,7 +74,9 @@ public class Arm extends ProfiledPIDSubsystem {
                 0);
 
         // Initialize the goal state to the arm's current position.
-        setGoal(getRadians());
+        double currentPosition = getRadians();
+        setGoal(currentPosition);
+        m_controller.reset(currentPosition);
     }
 
     public void setMotorVoltage(double motorVoltage) {
@@ -84,13 +88,21 @@ public class Arm extends ProfiledPIDSubsystem {
     }
 
     @Override
-    protected void useOutput(double output, TrapezoidProfile.State setpoint) {
-        // Calculate the feedforward from the sepoint
-        double feedforward = m_feedforward.calculate(setpoint.position, setpoint.velocity);
-        // Add the feedforward to the PID output to get the motor output
-        final double batteryVoltage = RobotController.getBatteryVoltage();
+    public void disable() {
+        super.disable();
+        m_motor.stopMotor();
+    }
 
-        m_motor.set((output + feedforward) / batteryVoltage);
+    @Override
+    protected void useOutput(double output, TrapezoidProfile.State setpoint) {
+        // Calculate and add the feedforward from the setpoint
+        output += m_feedforward.calculate(setpoint.position, setpoint.velocity);
+
+        if (output != 0.0) {
+            m_motor.setVoltage(output);
+        } else {
+            m_motor.stopMotor();
+        }
     }
 
     @Override
