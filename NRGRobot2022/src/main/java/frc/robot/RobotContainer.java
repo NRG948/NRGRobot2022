@@ -176,9 +176,9 @@ public class RobotContainer {
     // xboxButtonY.whenPressed(setModuleState_90);
 
     xboxDpadUp.whenPressed(new TurnToAngle(swerveDrive, 135));
-    xboxDpadRight.whenPressed(new TurnToAngle(swerveDrive, -135));
+    xboxDpadRight.whenPressed(new TurnToAngle(swerveDrive, 45));
     xboxDpadDown.whenPressed(new TurnToAngle(swerveDrive, -45));
-    xboxDpadLeft.whenPressed(new TurnToAngle(swerveDrive, 45));
+    xboxDpadLeft.whenPressed(new TurnToAngle(swerveDrive, -135));
 
     manipulatorLeftBumper.whenPressed(armToResting);
     manipulatorRightBumper.whenPressed(armToScoring);
