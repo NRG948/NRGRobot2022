@@ -238,10 +238,13 @@ public class SwerveDrive extends SubsystemBase {
   }
 
   public static final double MAX_SPEED = 3.0; // 3 meters per second
-  public static final double MAX_ANGULAR_SPEED = Math.PI; // 1/2 rotation per second
+  public static final double MAX_ANGULAR_SPEED = (3*Math.PI)/2; // 1/2 rotation per second
   public static final double MAX_ACCELERATION = 2.0; // TODO: find Max acceleration in meters per second squared
+  public static final double MAX_AUTO_ANGULAR_SPEED = Math.PI/2; 
+  public static final double MAX_AUTO_ANGULAR_ACCELERATION = (3*Math.PI)/2; 
+
   public static final TrapezoidProfile.Constraints THETA_CONTROLLER_CONSTRAINTS = new TrapezoidProfile.Constraints(
-      SwerveDrive.MAX_SPEED, SwerveDrive.MAX_ACCELERATION);
+      SwerveDrive.MAX_AUTO_ANGULAR_SPEED, SwerveDrive.MAX_AUTO_ANGULAR_ACCELERATION);
 
   @RobotPreferencesValue
   public static final DoubleValue turnP = new DoubleValue("SwerveDrive", "turnP", 1.0);
