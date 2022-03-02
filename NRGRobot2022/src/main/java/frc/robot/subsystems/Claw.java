@@ -1,5 +1,6 @@
 package frc.robot.subsystems;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.motorcontrol.PWMVictorSPX;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
@@ -12,7 +13,7 @@ public class Claw extends SubsystemBase {
     }
 
     public void activateClaw(double power) {
-        clawMotor.set(power);
+        clawMotor.set(MathUtil.applyDeadband(power, 0.02));
     }
 
 }
