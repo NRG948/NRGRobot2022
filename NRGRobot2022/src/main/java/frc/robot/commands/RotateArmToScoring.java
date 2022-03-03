@@ -16,7 +16,7 @@ public class RotateArmToScoring extends CommandBase {
     @Override
     public void initialize() {
         System.out.println("\nScoring Arm\n");
-        arm.setGoal(Math.toRadians(80));
+        arm.setGoal(Math.toRadians(87));
         arm.enable();
     }
 

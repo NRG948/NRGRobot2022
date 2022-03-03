@@ -60,6 +60,9 @@ import frc.robot.subsystems.Climber;
 @RobotPreferencesLayout(groupName = "Autonomous", column = 3, row = 3, width = 2, height = 1)
 public class RobotContainer {
 
+  public static double TARMAC_DOWN_ORIENTATION = Math.toRadians(-21);
+  public static double TARMAC_RIGHT_ORIENTATION = Math.toRadians(69);
+
   @RobotPreferencesValue
   public static BooleanValue enableTesting = new BooleanValue("Autonomous", "enableTesting", false);
 

@@ -30,5 +30,6 @@ public final class Constants {
         public static final double kEncoderMaximumDutyCycle = 1024.0 / 1025.0;
         public static final double kEncoderDistancePerRotation = 2.0 * Math.PI;
       }
+    
 
 }
