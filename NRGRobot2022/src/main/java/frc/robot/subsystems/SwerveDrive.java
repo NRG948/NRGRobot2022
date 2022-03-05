@@ -262,15 +262,15 @@ public class SwerveDrive extends SubsystemBase {
   public Rotation2d targetAngle = Rotation2d.fromDegrees(0);
 
   // X and Y swaped
-  private final Translation2d frontLeftLocation = new Translation2d(0.3302, 0.2413);
-  private final Translation2d frontRightLocation = new Translation2d(0.3302, -0.2413);
-  private final Translation2d backLeftLocation = new Translation2d(-0.3302, 0.2413);
-  private final Translation2d backRightLocation = new Translation2d(-0.3302, -0.2413);
+  public static final Translation2d FRONT_LEFT_LOCATION = new Translation2d(0.3302, 0.2413);
+  public static final Translation2d FRONT_RIGHT_LOCATION = new Translation2d(0.3302, -0.2413);
+  public static final Translation2d BACK_LEFT_LOCATION = new Translation2d(-0.3302, 0.2413);
+  public static final Translation2d BACK_RIGHT_LOCATION = new Translation2d(-0.3302, -0.2413);
 
   private final AHRS ahrs = new AHRS(SerialPort.Port.kMXP);
 
   private final SwerveDriveKinematics kinematics = new SwerveDriveKinematics(
-      frontLeftLocation, frontRightLocation, backLeftLocation, backRightLocation);
+      FRONT_LEFT_LOCATION, FRONT_RIGHT_LOCATION, BACK_LEFT_LOCATION, BACK_RIGHT_LOCATION);
   private final SwerveDriveOdometry odometry = new SwerveDriveOdometry(kinematics, getRotation2d());
 
   private final Module frontLeft = new Module(1, 2, 9, "Front Left");

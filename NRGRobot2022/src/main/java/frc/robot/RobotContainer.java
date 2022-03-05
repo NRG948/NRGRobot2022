@@ -60,8 +60,15 @@ import frc.robot.subsystems.Climber;
 @RobotPreferencesLayout(groupName = "Autonomous", column = 3, row = 3, width = 2, height = 1)
 public class RobotContainer {
 
-  public static double TARMAC_DOWN_ORIENTATION = Math.toRadians(-21);
-  public static double TARMAC_RIGHT_ORIENTATION = Math.toRadians(69);
+  public static Rotation2d TARMAC_DOWN_ORIENTATION = Rotation2d.fromDegrees(-21);
+  public static Rotation2d TARMAC_RIGHT_ORIENTATION = Rotation2d.fromDegrees(69);
+
+  // Initial position for Tarmac right, right-side start.
+  // TODO: Include adjust for bumper offset from wheel.
+  public static Translation2d TARMAC_RIGHT_RIGHT_INITIAL_LOCATION = new Translation2d(8.52, 3.04)
+    .minus(SwerveDrive.FRONT_RIGHT_LOCATION.rotateBy(TARMAC_RIGHT_ORIENTATION));
+  public static Pose2d TARMAC_RIGHT_RIGHT_INITIAL_POSE =
+    new Pose2d(TARMAC_RIGHT_RIGHT_INITIAL_LOCATION, TARMAC_RIGHT_ORIENTATION);
 
   @RobotPreferencesValue
   public static BooleanValue enableTesting = new BooleanValue("Autonomous", "enableTesting", false);
