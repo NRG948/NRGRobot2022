@@ -26,7 +26,7 @@ import frc.robot.utilities.ShuffleboardUtils;
 @RobotPreferencesLayout(groupName = "Arm", column = 3, row = 0, width = 2, height = 3, type = "Grid Layout")
 public class Arm extends ProfiledPIDSubsystem {
     @RobotPreferencesValue
-    public static final DoubleValue levelAngleOffset = new DoubleValue("Arm", "levelAngleOffset", 264.0);
+    public static final DoubleValue levelAngleOffset = new DoubleValue("Arm", "levelAngleOffset", 140.0);
     @RobotPreferencesValue
     public static final DoubleValue stowedAngle = new DoubleValue("Arm", "stowedAngle", 110);
     @RobotPreferencesValue
