@@ -26,9 +26,9 @@ import frc.robot.utilities.ShuffleboardUtils;
 @RobotPreferencesLayout(groupName = "Arm", column = 3, row = 0, width = 2, height = 3, type = "Grid Layout")
 public class Arm extends ProfiledPIDSubsystem {
     @RobotPreferencesValue
-    public static final DoubleValue levelAngleOffset = new DoubleValue("Arm", "levelAngleOffset", 140.0);
+    public static final DoubleValue levelAngleOffset = new DoubleValue("Arm", "levelAngleOffset", 219.0);
     @RobotPreferencesValue
-    public static final DoubleValue stowedAngle = new DoubleValue("Arm", "stowedAngle", 110);
+    public static final DoubleValue stowedAngle = new DoubleValue("Arm", "stowedAngle", 120);
     @RobotPreferencesValue
     public static final DoubleValue restingAngle = new DoubleValue("Arm", "restingAngle", -20);
     @RobotPreferencesValue
@@ -113,7 +113,7 @@ public class Arm extends ProfiledPIDSubsystem {
     /** Returns the arm's current angle in radians. */
     public double getRadians() {
         return Math.toRadians(levelAngleOffset.getValue())
-                - (encoderDutyCycle.getOutput() * ArmConstants.kEncoderDistancePerRotation);
+                - ((1.0 - encoderDutyCycle.getOutput()) * ArmConstants.kEncoderDistancePerRotation);
     }
 
     /** Returns whether the arm is at its resting/acquiring position. */
