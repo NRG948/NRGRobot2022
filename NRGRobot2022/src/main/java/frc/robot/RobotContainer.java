@@ -12,6 +12,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.GenericHID;
+import edu.wpi.first.wpilibj.Tracer;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
@@ -60,15 +61,21 @@ import frc.robot.subsystems.Climber;
 @RobotPreferencesLayout(groupName = "Autonomous", column = 3, row = 3, width = 2, height = 1)
 public class RobotContainer {
 
+  public static Translation2d ROBOT_FRONT_LEFT_LOCATION = new Translation2d(0.521, 0.432);
+  public static Translation2d ROBOT_FRONT_RIGHT_LOCATION = new Translation2d(0.521, -0.432);
+
+  public static Translation2d TARGET_RIGHT_LOCATION = new Translation2d(7.583, 0.594);
+  public static Pose2d TARGET_RIGHT_POSE = new Pose2d(TARGET_RIGHT_LOCATION, Rotation2d.fromDegrees(-90));
+
   public static Rotation2d TARMAC_DOWN_ORIENTATION = Rotation2d.fromDegrees(-21);
   public static Rotation2d TARMAC_RIGHT_ORIENTATION = Rotation2d.fromDegrees(69);
 
   // Initial position for Tarmac right, right-side start.
   // TODO: Include adjust for bumper offset from wheel.
-  public static Translation2d TARMAC_RIGHT_RIGHT_INITIAL_LOCATION = new Translation2d(8.52, 3.04)
-    .minus(SwerveDrive.FRONT_RIGHT_LOCATION.rotateBy(TARMAC_RIGHT_ORIENTATION));
-  public static Pose2d TARMAC_RIGHT_RIGHT_INITIAL_POSE =
-    new Pose2d(TARMAC_RIGHT_RIGHT_INITIAL_LOCATION, TARMAC_RIGHT_ORIENTATION);
+  public static Translation2d RIGHT_TARMAC_RIGHT_START_LOCATION = new Translation2d(8.52, 3.04)
+      .minus(ROBOT_FRONT_RIGHT_LOCATION.rotateBy(TARMAC_RIGHT_ORIENTATION));
+  public static Pose2d RIGHT_TARMAC_RIGHT_START_POSE = new Pose2d(RIGHT_TARMAC_RIGHT_START_LOCATION,
+      TARMAC_RIGHT_ORIENTATION);
 
   @RobotPreferencesValue
   public static BooleanValue enableTesting = new BooleanValue("Autonomous", "enableTesting", false);
@@ -131,9 +138,10 @@ public class RobotContainer {
     PROFILE_DRIVE,
     PROFILE_ARM,
     TEST_DRIVE,
-    BOTTOM,
-    BOTTOM_LEFT,
-    TOP_LEFT,
+    RIGHT_TARMAC_RIGHT_START,
+    RIGHT_TARMAC_LEFT_START,
+    DOWN_TARMAC_RIGHT_START,
+    DOWN_TARMAC_LEFT_START
   }
 
   private enum ChooseAutoDelay {
@@ -240,8 +248,30 @@ public class RobotContainer {
                 true),
             new InstantCommand(() -> swerveDrive.stopMotors()));
 
+      case RIGHT_TARMAC_RIGHT_START:
+        return new ResetSubsystems(swerveDrive).andThen(
+            CommandUtils.newFollowWaypointsCommand(swerveDrive,
+                // Start at the origin facing the +X direction
+                RIGHT_TARMAC_RIGHT_START_POSE,
+                // Pass through these two interior waypoints, making an 's' curve path
+                List.of(new Translation2d(7.684, 1.662)),
+                // End 3 meters straight ahead of where we started, facing forward
+                TARGET_RIGHT_POSE,
+                true),
+            new WaitCommand(1.0),
+            CommandUtils.newFollowWaypointsCommand(swerveDrive,
+                // Start at the origin facing the +X direction
+                TARGET_RIGHT_POSE,
+                // Pass through these two interior waypoints, making an 's' curve path
+                List.of(new Translation2d(7.684, 1.662)),
+                // End 3 meters straight ahead of where we started, facing forward
+                RIGHT_TARMAC_RIGHT_START_POSE,
+                true),
+            new InstantCommand(() -> swerveDrive.stopMotors()));
+
       default:
         return null;
+
     }
   }
 
@@ -280,9 +310,10 @@ public class RobotContainer {
       chooseAutoPath.addOption("Test Drive", ChooseAutoPath.TEST_DRIVE);
     }
 
-    chooseAutoPath.addOption("Bottom", ChooseAutoPath.BOTTOM);
-    chooseAutoPath.addOption("Bottom Left", ChooseAutoPath.BOTTOM_LEFT);
-    chooseAutoPath.addOption("Bottom Right", ChooseAutoPath.TOP_LEFT);
+    chooseAutoPath.addOption("Right Tarmac Right Start", ChooseAutoPath.RIGHT_TARMAC_RIGHT_START);
+    chooseAutoPath.addOption("Right Tamrac Left Start", ChooseAutoPath.RIGHT_TARMAC_LEFT_START);
+    chooseAutoPath.addOption("Down Tarmac Right Start", ChooseAutoPath.DOWN_TARMAC_RIGHT_START);
+    chooseAutoPath.addOption("Down Tarmac Left Start", ChooseAutoPath.DOWN_TARMAC_LEFT_START);
     autoLayout.add("AutoPath", chooseAutoPath).withWidget(BuiltInWidgets.kComboBoxChooser);
 
     chooseAutoDelay = new SendableChooser<ChooseAutoDelay>();
