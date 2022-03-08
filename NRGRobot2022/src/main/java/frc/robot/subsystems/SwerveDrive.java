@@ -46,7 +46,7 @@ import frc.robot.commands.CharacterizeSwerveDrive;
 import frc.robot.preferences.RobotPreferencesLayout;
 import frc.robot.preferences.RobotPreferencesValue;
 
-@RobotPreferencesLayout(groupName = "SwerveDrive", column = 0, row = 0, width = 1, height = 3)
+@RobotPreferencesLayout(groupName = "SwerveDrive", column = 0, row = 0, width = 2, height = 3, type = "Grid Layout")
 public class SwerveDrive extends SubsystemBase {
 
   /*
@@ -57,7 +57,7 @@ public class SwerveDrive extends SubsystemBase {
    */
 
   /* Swerve Module helper class */
-  @RobotPreferencesLayout(groupName = "SwerveModule", column = 1, row = 0, width = 2, height = 4)
+  @RobotPreferencesLayout(groupName = "SwerveModule", column = 2, row = 0, width = 1, height = 4)
   public static class Module {
     @RobotPreferencesValue
     public static DoubleValue driveP = new DoubleValue("SwerveModule", "driveP", 1.0);
@@ -252,6 +252,12 @@ public class SwerveDrive extends SubsystemBase {
   public static final DoubleValue turnI = new DoubleValue("SwerveDrive", "turnI", 0);
   @RobotPreferencesValue
   public static final DoubleValue turnD = new DoubleValue("SwerveDrive", "turnD", 0);
+  @RobotPreferencesValue
+  public static final DoubleValue driveP = new DoubleValue("SwerveDrive", "driveP", 1.0);
+  @RobotPreferencesValue
+  public static final DoubleValue driveI = new DoubleValue("SwerveDrive", "driveI", 0);
+  @RobotPreferencesValue
+  public static final DoubleValue driveD = new DoubleValue("SwerveDrive", "driveD", 0);
   @RobotPreferencesValue
   public static final BooleanValue enableTab = new BooleanValue("SwerveDrive", "enableTab", false);
 

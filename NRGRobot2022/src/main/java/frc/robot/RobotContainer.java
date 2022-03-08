@@ -250,6 +250,7 @@ public class RobotContainer {
 
       case RIGHT_TARMAC_RIGHT_START:
         return new ResetSubsystems(swerveDrive).andThen(
+            new InstantCommand(() -> swerveDrive.resetOdometry(RIGHT_TARMAC_RIGHT_START_POSE)), 
             CommandUtils.newFollowWaypointsCommand(swerveDrive,
                 // Start at the origin facing the +X direction
                 RIGHT_TARMAC_RIGHT_START_POSE,
