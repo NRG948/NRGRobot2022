@@ -360,6 +360,11 @@ public class SwerveDrive extends SubsystemBase {
     return kinematics;
   }
 
+  /** Returns the distance, in meters, from the center of the robot frame to the wheels. */
+  public double getModuleRadius() {
+    return FRONT_LEFT_LOCATION.getNorm();
+  }
+
   /**
    * Sets the maximum drive speed. This value is clamped to the range
    * [0..MAX_SPEED].

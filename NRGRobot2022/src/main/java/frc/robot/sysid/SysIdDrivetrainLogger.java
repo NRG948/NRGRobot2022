@@ -6,9 +6,22 @@ package frc.robot.sysid;
 
 /** Add your docs here. */
 public class SysIdDrivetrainLogger extends SysIdLogger {
+    private final double wheelModuleRadius;
 
-    double primaryMotorVoltage;
-    double secondaryMotorVoltage;
+    private double primaryMotorVoltage;
+    private double secondaryMotorVoltage;
+
+    /**
+     * Constructs an instance of a logger to gather data on a drivetrain.
+     * 
+     * @param wheelModuleRadius The distance in meters from the center of the robot
+     *                          frame to the wheel module. This is used to calculate
+     *                          the distance driven by each side of the robot to
+     *                          simulate expected data for a differential drive.
+     */
+    public SysIdDrivetrainLogger(double wheelModuleRadius) {
+        this.wheelModuleRadius = wheelModuleRadius;
+    }
 
     @Override
     protected boolean isWrongMechanism() {
@@ -20,15 +33,36 @@ public class SysIdDrivetrainLogger extends SysIdLogger {
     /**
      * Logs data for the SysID tool for a Swerve drivetrain.
      * 
-     * @param measurePosition     The measured position of the robot in the
+     * @param measuredPosition    The measured position of the robot in the
      *                            direction of movement.
-     * @param measuredVelocity    The measured velocity of the robot.
-     * @param measuredAngle       The measured orientation of the robot.
+     * @param measuredVelocity    The measured velocity of the robot, in meters per
+     *                            second.
+     * @param measuredAngle       The measured orientation of the robot, in radians.
      * @param measuredAngularRate The measured angular rate of the change of the
-     *                            robot.
+     *                            robot, in radians per second.
      */
-    public void log(double measurePosition, double measuredVelocity, double measuredAngle, double measuredAngularRate) {
+    public void log(
+            double measuredPosition,
+            double measuredVelocity,
+            double measuredAngle,
+            double measuredAngularRate) {
         updateData();
+
+        boolean rotating = isRotating();
+        double leftPosition;
+        double rightPosition;
+
+        if (!rotating) {
+            // When running the linear translation tests, report the same position for both
+            // sides to simulate the data for a differntial drivetrain.
+            leftPosition = measuredPosition;
+            rightPosition = measuredPosition;
+        } else {
+            // When running the rotation tests, calculate the distance travelled by the left
+            // and right sides of the robot using the wheel module distance.
+            rightPosition = wheelModuleRadius * measuredAngle;
+            leftPosition = -rightPosition;
+        }
 
         // The data format for a general drivetrain is described here in
         // https://github.com/wpilibsuite/sysid/blob/main/docs/data-collection.md#drivetrain
@@ -38,16 +72,16 @@ public class SysIdDrivetrainLogger extends SysIdLogger {
         addData(getTimestamp(),
                 primaryMotorVoltage,
                 secondaryMotorVoltage,
-                measurePosition,
-                measurePosition,
-                measuredVelocity,
+                leftPosition,
+                rightPosition,
+                (rotating ? -1 : 1) * measuredVelocity,
                 measuredVelocity,
                 measuredAngle,
                 measuredAngularRate);
 
         double motorVoltage = getMotorVoltage();
 
-        primaryMotorVoltage = (isRotating() ? -1 : 1) * motorVoltage;
+        primaryMotorVoltage = (rotating ? -1 : 1) * motorVoltage;
         secondaryMotorVoltage = motorVoltage;
     }
 

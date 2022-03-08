@@ -14,12 +14,13 @@ import frc.robot.sysid.SysIdDrivetrainLogger;
 public class CharacterizeSwerveDrive extends CommandBase {
 
   private final SwerveDrive swerveDrive;
+  private final SysIdDrivetrainLogger logger;
 
-  private final SysIdDrivetrainLogger logger = new SysIdDrivetrainLogger();
-
-  /** Creates a new CharacterizeDrivetrainCommand. */
+  /** Creates a new CharacterizeSwerveDrive. */
   public CharacterizeSwerveDrive(SwerveDrive swerveDrive) {
     this.swerveDrive = swerveDrive;
+    this.logger = new SysIdDrivetrainLogger(swerveDrive.getModuleRadius());
+
     addRequirements(swerveDrive);
   }
 
