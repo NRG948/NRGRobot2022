@@ -19,7 +19,7 @@ import frc.robot.subsystems.SwerveDrive;
 public final class CommandUtils {
     public static final double kPXController = 1;
     public static final double kPYController = 1;
-    public static final double kPThetaController = 1;
+    public static final double kPThetaController = 430.35;
 
     public static Command newFollowWaypointsCommand(
             SwerveDrive swerve,
@@ -31,7 +31,10 @@ public final class CommandUtils {
         Trajectory trajectory = swerve.generateTrajectory(initialPose2d, waypoints, finalPose2d, reversed);
 
         var thetaController = new ProfiledPIDController(
-                kPThetaController, 0, 0, SwerveDrive.THETA_CONTROLLER_CONSTRAINTS);
+                SwerveDrive.turnP.getValue(), 
+                SwerveDrive.turnI.getValue(), 
+                SwerveDrive.turnD.getValue(), 
+                SwerveDrive.THETA_CONTROLLER_CONSTRAINTS);
         thetaController.enableContinuousInput(-Math.PI, Math.PI);
 
         SwerveControllerCommand swerveControllerCommand = new SwerveControllerCommand(
@@ -40,8 +43,8 @@ public final class CommandUtils {
                 swerve.getKinematics(),
 
                 // Position controllers
-                new PIDController(kPXController, 0, 0),
-                new PIDController(kPYController, 0, 0),
+                new PIDController(SwerveDrive.driveP.getValue(), SwerveDrive.driveI.getValue(), SwerveDrive.driveD.getValue()),
+                new PIDController(SwerveDrive.driveP.getValue(), SwerveDrive.driveI.getValue(), SwerveDrive.driveD.getValue()),
                 thetaController,
                 swerve::setModuleStates,
                 swerve);
