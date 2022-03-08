@@ -47,8 +47,6 @@ public final class CommandUtils {
                 swerve);
 
         // Run path following command, then stop at the end.
-        return new InstantCommand(() -> swerve.resetOdometry(trajectory.getInitialPose()))
-                .andThen(swerveControllerCommand)
-                .andThen(() -> swerve.stopMotors());
+        return swerveControllerCommand.andThen(() -> swerve.stopMotors());
     }
 }
