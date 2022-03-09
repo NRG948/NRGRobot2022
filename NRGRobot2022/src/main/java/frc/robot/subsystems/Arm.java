@@ -36,7 +36,7 @@ public class Arm extends ProfiledPIDSubsystem {
     
     //TODO: Need to figure out such a high P value works bettwe than a low P value.
     @RobotPreferencesValue
-    public static final DoubleValue kP = new DoubleValue("Arm", "kP", 20);
+    public static final DoubleValue kP = new DoubleValue("Arm", "kP", 7);
     @RobotPreferencesValue
     public static final DoubleValue kI = new DoubleValue("Arm", "kI", 0);
     @RobotPreferencesValue
@@ -50,7 +50,7 @@ public class Arm extends ProfiledPIDSubsystem {
     @RobotPreferencesValue
     public static final DoubleValue kG = new DoubleValue("Arm", "kG", 3.10 /* V */);
     @RobotPreferencesValue
-    public static final DoubleValue kV = new DoubleValue("Arm", "kV", 1.96 /* V*s/rad */);
+    public static final DoubleValue kV = new DoubleValue("Arm", "kV", 1.675 /* V*s/rad */);
     @RobotPreferencesValue
     public static final DoubleValue kA = new DoubleValue("Arm", "kA", 0.17 /* V*s^2/rad */);
 
