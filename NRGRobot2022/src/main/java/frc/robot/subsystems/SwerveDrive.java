@@ -513,9 +513,10 @@ public class SwerveDrive extends SubsystemBase {
         .withPosition(0, 0)
         .withSize(2, 3);
 
-    swerveOdometry.addNumber("Gyro", () -> getRotation2d().getDegrees());
+    swerveOdometry.addNumber("Heading", () -> getPose2d().getRotation().getDegrees());
     swerveOdometry.addNumber("X", () -> getPose2d().getX());
     swerveOdometry.addNumber("Y", () -> getPose2d().getY());
+    swerveOdometry.addNumber("Gyro", () -> getRotation2d().getDegrees());
     swerveOdometry.addNumber("FR Encoder", () -> frontRight.getWheelDistance());
     swerveOdometry.addNumber("FL Encoder", () -> frontLeft.getWheelDistance());
     swerveOdometry.addNumber("BR Encoder", () -> backRight.getWheelDistance());
