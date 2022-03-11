@@ -7,6 +7,8 @@ package frc.robot;
 
 import java.util.List;
 
+import javax.management.InstanceAlreadyExistsException;
+
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -170,6 +172,7 @@ public class RobotContainer {
     // Configure the button bindings
     configureButtonBindings();
     claw.setDefaultCommand(manualClaw);
+    swerveDrive.setDefaultCommand(driveWithController);
 
     // Init Shuffleboard
     RobotPreferences.addShuffleBoardTab();
@@ -188,10 +191,11 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
-    xboxButtonx.whenPressed(driveWithController);
+    // xboxButtonx.whenPressed(driveWithController);
     xboxButtonA.whenPressed(interrupt);
     // xboxButtonB.whenPressed(setModuleState_0);
     // xboxButtonY.whenPressed(setModuleState_90);
+    xboxMenuButton.whenPressed(new InstantCommand(() -> swerveDrive.resetHeading()));
 
     xboxDpadUp.whenPressed(new TurnToAngle(swerveDrive, 135));
     xboxDpadRight.whenPressed(new TurnToAngle(swerveDrive, 45));

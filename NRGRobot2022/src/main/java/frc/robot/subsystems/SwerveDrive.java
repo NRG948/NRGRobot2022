@@ -335,7 +335,7 @@ public class SwerveDrive extends SubsystemBase {
 
     var swerveModuleStates = kinematics.toSwerveModuleStates(
         fieldRelative
-            ? ChassisSpeeds.fromFieldRelativeSpeeds(xSpeed, ySpeed, rot, getRotation2d())
+            ? ChassisSpeeds.fromFieldRelativeSpeeds(xSpeed, ySpeed, rot, getPose2d().getRotation())
             : new ChassisSpeeds(xSpeed, ySpeed, rot));
     setModuleStates(swerveModuleStates);
   }
@@ -403,6 +403,12 @@ public class SwerveDrive extends SubsystemBase {
    */
   public void resetOdometry(Pose2d pose) {
     odometry.resetPosition(pose, getRotation2d());
+  }
+
+  public void resetHeading() {
+    Pose2d currentPos = getPose2d();
+    Pose2d newPos2d = new Pose2d(currentPos.getTranslation(), new Rotation2d());
+    this.resetOdometry(newPos2d);
   }
 
   @Override
