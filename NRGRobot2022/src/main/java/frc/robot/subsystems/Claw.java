@@ -12,6 +12,7 @@ public class Claw extends SubsystemBase {
         clawMotor = new PWMVictorSPX(clawChannel);
     }
 
+    // Turns on claw motor. Positive power out-takes, negative power intakes
     public void activateClaw(double power) {
         clawMotor.set(MathUtil.applyDeadband(power, 0.02));
     }

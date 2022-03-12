@@ -28,6 +28,7 @@ import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.POVButton;
 import frc.robot.commands.CharacterizeSwerveDrive;
+import frc.robot.commands.AutoClaw;
 import frc.robot.commands.CharacterizeArm;
 import frc.robot.commands.CommandUtils;
 import frc.robot.commands.DriveForward;
@@ -38,6 +39,7 @@ import frc.robot.commands.ManualClimber;
 import frc.robot.commands.ResetSubsystems;
 import frc.robot.commands.RotateArmToResting;
 import frc.robot.commands.RotateArmToScoring;
+import frc.robot.commands.RotateArmToStowed;
 import frc.robot.commands.SetModuleState;
 import frc.robot.commands.ToggleClimberPistons;
 import frc.robot.commands.TurnToAngle;
@@ -143,7 +145,8 @@ public class RobotContainer {
     RIGHT_TARMAC_RIGHT_START,
     RIGHT_TARMAC_LEFT_START,
     DOWN_TARMAC_RIGHT_START,
-    DOWN_TARMAC_LEFT_START
+    DOWN_TARMAC_LEFT_START,
+    RIGHT_TARMAC_SHOOT_BACKUP
   }
 
   private enum ChooseAutoDelay {
@@ -243,11 +246,8 @@ public class RobotContainer {
       case TEST_DRIVE:
         return new ResetSubsystems(swerveDrive).andThen(
             CommandUtils.newFollowWaypointsCommand(swerveDrive,
-                // Start at the origin facing the +X direction
                 new Pose2d(0, 0, new Rotation2d(0)),
-                // Pass through these two interior waypoints, making an 's' curve path
                 List.of(new Translation2d(-1, -0.25)),
-                // End 3 meters straight ahead of where we started, facing forward
                 new Pose2d(-2, 0, Rotation2d.fromDegrees(-180)),
                 true),
             new InstantCommand(() -> swerveDrive.stopMotors()));
@@ -256,19 +256,27 @@ public class RobotContainer {
         return new ResetSubsystems(swerveDrive).andThen(
             new InstantCommand(() -> swerveDrive.resetOdometry(RIGHT_TARMAC_RIGHT_START_POSE)), 
             CommandUtils.newFollowWaypointsCommand(swerveDrive,
-                // Start at the origin facing the +X direction
                 RIGHT_TARMAC_RIGHT_START_POSE,
-                // Pass through these two interior waypoints, making an 's' curve path
                 List.of(new Translation2d(7.684, 1.662)),
-                // End 3 meters straight ahead of where we started, facing forward
                 TARGET_RIGHT_POSE,
                 true),
             new WaitCommand(1.0),
             CommandUtils.newFutureFollowWaypointsCommand(swerveDrive,
-                // Pass through these two interior waypoints, making an 's' curve path
                 List.of(new Translation2d(7.684, 1.662)),
-                // End 3 meters straight ahead of where we started, facing forward
                 RIGHT_TARMAC_RIGHT_START_POSE,
+                true),
+            new InstantCommand(() -> swerveDrive.stopMotors()));
+
+      case RIGHT_TARMAC_SHOOT_BACKUP:
+        return new ResetSubsystems(swerveDrive).andThen(
+            new InstantCommand(() -> swerveDrive.resetOdometry(RIGHT_TARMAC_RIGHT_START_POSE)), 
+            new RotateArmToScoring(arm),
+            new AutoClaw(1.0, 1, claw),
+            new RotateArmToStowed(arm),
+            CommandUtils.newFollowWaypointsCommand(swerveDrive,
+                RIGHT_TARMAC_RIGHT_START_POSE,
+                List.of(new Translation2d(7.684, 1.662)),
+                TARGET_RIGHT_POSE,
                 true),
             new InstantCommand(() -> swerveDrive.stopMotors()));
 
