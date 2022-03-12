@@ -23,7 +23,7 @@ import frc.robot.preferences.RobotPreferences.BooleanValue;
 import frc.robot.preferences.RobotPreferences.DoubleValue;
 import frc.robot.utilities.ShuffleboardUtils;
 
-@RobotPreferencesLayout(groupName = "Arm", column = 3, row = 0, width = 2, height = 3, type = "Grid Layout")
+@RobotPreferencesLayout(groupName = "Arm", column = 4, row = 0, width = 2, height = 3, type = "Grid Layout")
 public class Arm extends ProfiledPIDSubsystem {
     @RobotPreferencesValue
     public static final DoubleValue levelAngleOffset = new DoubleValue("Arm", "levelAngleOffset", 219.0);

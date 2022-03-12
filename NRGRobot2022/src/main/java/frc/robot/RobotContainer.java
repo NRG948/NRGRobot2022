@@ -60,17 +60,17 @@ import frc.robot.subsystems.Climber;
  * the robot (including
  * subsystems, commands, and button mappings) should be declared here.
  */
-@RobotPreferencesLayout(groupName = "Autonomous", column = 3, row = 3, width = 2, height = 1)
+@RobotPreferencesLayout(groupName = "Autonomous", column = 4, row = 3, width = 2, height = 1)
 public class RobotContainer {
 
   public static Translation2d ROBOT_FRONT_LEFT_LOCATION = new Translation2d(0.521, 0.432);
   public static Translation2d ROBOT_FRONT_RIGHT_LOCATION = new Translation2d(0.521, -0.432);
 
-  public static Translation2d TARGET_RIGHT_LOCATION = new Translation2d(7.583, 0.594);
-  public static Pose2d TARGET_RIGHT_POSE = new Pose2d(TARGET_RIGHT_LOCATION, Rotation2d.fromDegrees(-90));
-
   public static Rotation2d TARMAC_DOWN_ORIENTATION = Rotation2d.fromDegrees(-21);
   public static Rotation2d TARMAC_RIGHT_ORIENTATION = Rotation2d.fromDegrees(69);
+
+  public static Translation2d TARGET_RIGHT_LOCATION = new Translation2d(7.583, 0.594);
+  public static Pose2d TARGET_RIGHT_POSE = new Pose2d(TARGET_RIGHT_LOCATION, Rotation2d.fromDegrees(-90));
 
   // Initial position for Tarmac right, right-side start.
   // TODO: Include adjust for bumper offset from wheel.

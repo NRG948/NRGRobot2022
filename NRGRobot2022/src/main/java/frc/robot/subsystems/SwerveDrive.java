@@ -57,14 +57,14 @@ public class SwerveDrive extends SubsystemBase {
    */
 
   /* Swerve Module helper class */
-  @RobotPreferencesLayout(groupName = "SwerveModule", column = 2, row = 0, width = 1, height = 4)
+  @RobotPreferencesLayout(groupName = "SwerveModule", column = 2, row = 0, width = 2, height = 4)
   public static class Module {
     @RobotPreferencesValue
     public static DoubleValue driveP = new DoubleValue("SwerveModule", "driveP", 1.0);
     @RobotPreferencesValue
-    public static DoubleValue driveFeedForwardS = new DoubleValue("SwerveModule", "driveFeedForwardS", 1.0);
+    public static DoubleValue driveFeedForwardS = new DoubleValue("SwerveModule", "driveFeedForwardS", -0.1789);
     @RobotPreferencesValue
-    public static DoubleValue driveFeedForwardV = new DoubleValue("SwerveModule", "driveFeedForwardV", 3.0);
+    public static DoubleValue driveFeedForwardV = new DoubleValue("SwerveModule", "driveFeedForwardV", 13.307);
     @RobotPreferencesValue
     public static DoubleValue turnP = new DoubleValue("SwerveModule", "turnP", 7.0);
     @RobotPreferencesValue
@@ -241,7 +241,9 @@ public class SwerveDrive extends SubsystemBase {
   public static final double MAX_ANGULAR_SPEED = (3*Math.PI)/2; // 1/2 rotation per second
   public static final double MAX_ACCELERATION = 2.0; // TODO: find Max acceleration in meters per second squared
   public static final double MAX_AUTO_ANGULAR_SPEED = Math.PI/2; 
-  public static final double MAX_AUTO_ANGULAR_ACCELERATION = (3*Math.PI)/2; 
+  public static final double MAX_AUTO_ANGULAR_ACCELERATION = (3*Math.PI)/2;
+  public static final double MAX_AUTO_SPEED = 1.5;
+  public static final double MAX_AUTO_ACCELERATION = 0.5;
 
   public static final TrapezoidProfile.Constraints THETA_CONTROLLER_CONSTRAINTS = new TrapezoidProfile.Constraints(
       SwerveDrive.MAX_AUTO_ANGULAR_SPEED, SwerveDrive.MAX_AUTO_ANGULAR_ACCELERATION);
@@ -304,7 +306,7 @@ public class SwerveDrive extends SubsystemBase {
   }
 
   /**
-   * Method to drive the robot using joystick info.
+   * Method to drive the robot using joystick info. 
    *
    * @param xSpeed        Speed of the robot in the x direction (forward).
    * @param ySpeed        Speed of the robot in the y direction (sideways).
@@ -486,7 +488,7 @@ public class SwerveDrive extends SubsystemBase {
       List<Translation2d> waypoints,
       Pose2d finalPose2d,
       boolean reversed) {
-    TrajectoryConfig config = new TrajectoryConfig(MAX_SPEED, MAX_ACCELERATION)
+    TrajectoryConfig config = new TrajectoryConfig(MAX_AUTO_SPEED, MAX_AUTO_ACCELERATION)
         // Add kinematics to ensure max speed is actually obeyed
         .setKinematics(kinematics)
         .setReversed(reversed);
