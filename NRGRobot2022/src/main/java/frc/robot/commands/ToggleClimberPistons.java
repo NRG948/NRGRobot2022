@@ -11,11 +11,11 @@ import frc.robot.subsystems.Climber;
 public class ToggleClimberPistons extends CommandBase {
 
   private Climber climber;
-  private DoubleSolenoid piston;
+  private Climber.Piston piston;
   /** Creates a new ToggleClimberPistons. */
-  public ToggleClimberPistons(Climber climber, int pistonNumber) {
+  public ToggleClimberPistons(Climber climber, Climber.Piston piston) {
     this.climber = climber;
-    this.piston = pistonNumber == 1 ? climber.getP1() : climber.getP2();
+    this.piston = piston;
     addRequirements(this.climber);
   }
 

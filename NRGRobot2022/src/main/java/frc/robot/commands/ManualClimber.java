@@ -41,4 +41,3 @@ public class ManualClimber extends CommandBase {
     return false;
   }
 }
- 

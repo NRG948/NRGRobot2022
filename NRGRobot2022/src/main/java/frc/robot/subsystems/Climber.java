@@ -12,50 +12,56 @@ import edu.wpi.first.wpilibj.motorcontrol.PWMVictorSPX;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Climber extends SubsystemBase {
-  
-  private final PWMVictorSPX climberMotor; 
-  private final DoubleSolenoid piston1;
-  private final DoubleSolenoid piston2;
-  
+
+  private final PWMVictorSPX climberMotor = new PWMVictorSPX(0);
+  private final DoubleSolenoid piston[] = {
+      new DoubleSolenoid(PneumaticsModuleType.CTREPCM, 1, 2),
+      new DoubleSolenoid(PneumaticsModuleType.CTREPCM, 3, 4)
+  };
+
+  public enum Piston {
+    _1(0), _2(1);
+
+    private final int index;
+
+    private Piston(int index) {
+      this.index = index;
+    }
+
+    public int getIndex() {
+      return index;
+    }
+  }
+
   public enum State {
     EXTEND, RETRACT;
-  } 
+  }
 
   /** Creates a new Climber. */
   public Climber() {
-    climberMotor = new PWMVictorSPX(0);
-    piston1 = new DoubleSolenoid(PneumaticsModuleType.CTREPCM, 1, 2);
-    piston2 = new DoubleSolenoid(PneumaticsModuleType.CTREPCM, 3, 4);
+
   }
 
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
   }
-  public DoubleSolenoid getP1() {
-    return piston1;
-  }
-
-  public DoubleSolenoid getP2() {
-      return piston2;
-  }
 
   public void rotateMotor(double power) {
-      climberMotor.set(power);
+    climberMotor.set(power);
   }
 
   /** Returns the current state of the acquirer pistons */
-  public State getState(DoubleSolenoid p) {
-      return p.get() == Value.kForward ? State.EXTEND : State.RETRACT;
+  public State getState(Piston p) {
+    return piston[p.getIndex()].get() == Value.kForward ? State.EXTEND : State.RETRACT;
   }
 
-  public void setState(State state, DoubleSolenoid p) {
-      p.set(state == State.EXTEND ? Value.kForward : Value.kReverse);
+  public void setState(State state, Piston p) {
+    piston[p.getIndex()].set(state == State.EXTEND ? Value.kForward : Value.kReverse);
   }
 
-  public void toggleState(DoubleSolenoid p) {
-      setState(getState(p) == State.EXTEND ? State.RETRACT : State.EXTEND, p);
+  public void toggleState(Piston p) {
+    setState(getState(p) == State.EXTEND ? State.RETRACT : State.EXTEND, p);
   }
-
 
 }
