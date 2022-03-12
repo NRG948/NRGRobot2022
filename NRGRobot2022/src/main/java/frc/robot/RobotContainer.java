@@ -60,7 +60,7 @@ import frc.robot.subsystems.Climber;
  * the robot (including
  * subsystems, commands, and button mappings) should be declared here.
  */
-@RobotPreferencesLayout(groupName = "Autonomous", column = 3, row = 3, width = 2, height = 1)
+@RobotPreferencesLayout(groupName = "Autonomous", column = 4, row = 3, width = 2, height = 1)
 public class RobotContainer {
 
   public static Translation2d ROBOT_FRONT_LEFT_LOCATION = new Translation2d(0.521, 0.432);
