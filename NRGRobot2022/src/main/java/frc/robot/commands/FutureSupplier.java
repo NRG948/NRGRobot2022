@@ -9,5 +9,4 @@ import java.util.concurrent.Future;
 /** Add your docs here. */
 public interface FutureSupplier<Type> {
     Future<Type> getFuture();
-    
 }

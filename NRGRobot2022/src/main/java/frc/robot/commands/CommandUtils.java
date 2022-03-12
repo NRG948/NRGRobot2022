@@ -5,6 +5,10 @@
 package frc.robot.commands;
 
 import java.util.List;
+import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
@@ -12,6 +16,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
 import frc.robot.subsystems.SwerveDrive;
@@ -21,7 +26,9 @@ public final class CommandUtils {
     public static final double kPYController = 1;
     public static final double kPThetaController = 430.35;
 
-    public static Command newFollowWaypointsCommand(
+    public static ExecutorService executor = Executors.newSingleThreadExecutor();
+
+    public static CommandBase newFollowWaypointsCommand(
             SwerveDrive swerve,
             Pose2d initialPose2d,
             List<Translation2d> waypoints,
@@ -51,5 +58,13 @@ public final class CommandUtils {
 
         // Run path following command, then stop at the end.
         return swerveControllerCommand.andThen(() -> swerve.stopMotors());
+    }
+    
+    public static Future<CommandBase> newFollowWaypointsCommandAsync (
+        SwerveDrive swerve,
+        List<Translation2d> waypoints,
+        Pose2d finalPose2d,
+        boolean reversed) {
+        return executor.submit(() -> newFollowWaypointsCommand(swerve, swerve.getPose2d(), waypoints, finalPose2d, reversed));
     }
 }
