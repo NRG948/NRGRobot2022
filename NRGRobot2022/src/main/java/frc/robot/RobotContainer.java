@@ -264,9 +264,7 @@ public class RobotContainer {
                 TARGET_RIGHT_POSE,
                 true),
             new WaitCommand(1.0),
-            CommandUtils.newFollowWaypointsCommand(swerveDrive,
-                // Start at the origin facing the +X direction
-                TARGET_RIGHT_POSE,
+            CommandUtils.newFutureFollowWaypointsCommand(swerveDrive,
                 // Pass through these two interior waypoints, making an 's' curve path
                 List.of(new Translation2d(7.684, 1.662)),
                 // End 3 meters straight ahead of where we started, facing forward
