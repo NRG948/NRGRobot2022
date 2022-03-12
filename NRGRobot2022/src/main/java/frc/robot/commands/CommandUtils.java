@@ -5,19 +5,15 @@
 package frc.robot.commands;
 
 import java.util.List;
-import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.trajectory.Trajectory;
-import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
 import frc.robot.subsystems.SwerveDrive;
 
@@ -38,9 +34,9 @@ public final class CommandUtils {
         Trajectory trajectory = swerve.generateTrajectory(initialPose2d, waypoints, finalPose2d, reversed);
 
         var thetaController = new ProfiledPIDController(
-                SwerveDrive.turnP.getValue(), 
-                SwerveDrive.turnI.getValue(), 
-                SwerveDrive.turnD.getValue(), 
+                SwerveDrive.turnP.getValue(),
+                SwerveDrive.turnI.getValue(),
+                SwerveDrive.turnD.getValue(),
                 SwerveDrive.THETA_CONTROLLER_CONSTRAINTS);
         thetaController.enableContinuousInput(-Math.PI, Math.PI);
 
@@ -50,8 +46,10 @@ public final class CommandUtils {
                 swerve.getKinematics(),
 
                 // Position controllers
-                new PIDController(SwerveDrive.driveP.getValue(), SwerveDrive.driveI.getValue(), SwerveDrive.driveD.getValue()),
-                new PIDController(SwerveDrive.driveP.getValue(), SwerveDrive.driveI.getValue(), SwerveDrive.driveD.getValue()),
+                new PIDController(SwerveDrive.driveP.getValue(), SwerveDrive.driveI.getValue(),
+                        SwerveDrive.driveD.getValue()),
+                new PIDController(SwerveDrive.driveP.getValue(), SwerveDrive.driveI.getValue(),
+                        SwerveDrive.driveD.getValue()),
                 thetaController,
                 swerve::setModuleStates,
                 swerve);
@@ -59,12 +57,13 @@ public final class CommandUtils {
         // Run path following command, then stop at the end.
         return swerveControllerCommand.andThen(() -> swerve.stopMotors());
     }
-    
-    public static Future<CommandBase> newFollowWaypointsCommandAsync (
-        SwerveDrive swerve,
-        List<Translation2d> waypoints,
-        Pose2d finalPose2d,
-        boolean reversed) {
-        return executor.submit(() -> newFollowWaypointsCommand(swerve, swerve.getPose2d(), waypoints, finalPose2d, reversed));
+
+    public static FutureScheduledCommand newFutureFollowWaypointsCommand(
+            SwerveDrive swerve,
+            List<Translation2d> waypoints,
+            Pose2d finalPose2d,
+            boolean reversed) {
+        return new FutureScheduledCommand(() -> executor.submit(() -> newFollowWaypointsCommand(swerve,
+                swerve.getPose2d(), waypoints, finalPose2d, reversed)));
     }
 }
