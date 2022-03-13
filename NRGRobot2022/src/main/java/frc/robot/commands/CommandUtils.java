@@ -18,11 +18,7 @@ import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
 import frc.robot.subsystems.SwerveDrive;
 
 public final class CommandUtils {
-    public static final double kPXController = 1;
-    public static final double kPYController = 1;
-    public static final double kPThetaController = 430.35;
-
-    public static ExecutorService executor = Executors.newSingleThreadExecutor();
+    public static final ExecutorService executor = Executors.newSingleThreadExecutor();
 
     public static CommandBase newFollowWaypointsCommand(
             SwerveDrive swerve,
@@ -63,7 +59,7 @@ public final class CommandUtils {
             List<Translation2d> waypoints,
             Pose2d finalPose2d,
             boolean reversed) {
-        return new FutureScheduledCommand(() -> executor.submit(() -> newFollowWaypointsCommand(swerve,
-                swerve.getPose2d(), waypoints, finalPose2d, reversed)));
+        return new FutureScheduledCommand(() -> executor.submit(() -> newFollowWaypointsCommand(
+                swerve, swerve.getPose2d(), waypoints, finalPose2d, reversed)));
     }
 }

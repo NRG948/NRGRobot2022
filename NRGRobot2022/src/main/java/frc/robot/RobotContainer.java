@@ -52,6 +52,8 @@ import frc.robot.subsystems.SwerveDrive;
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.Claw;
 import frc.robot.subsystems.Climber;
+import frc.robot.subsystems.ClimberExtender;
+import frc.robot.subsystems.ClimberHooks;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -116,7 +118,8 @@ public class RobotContainer {
   private final RaspberryPiVision raspberryPiVision = new RaspberryPiVision();
   private final Claw claw = new Claw(1); // Port 1
   private final Arm arm = new Arm(); // limit switch channels to be updated
-  // private final Climber climber = new Climber();
+  private final ClimberExtender climberExtender = new ClimberExtender();
+  private final ClimberHooks climberHooks = new ClimberHooks();
 
   // Commands
   private final DriveWithController driveWithController = new DriveWithController(swerveDrive, driveController);
