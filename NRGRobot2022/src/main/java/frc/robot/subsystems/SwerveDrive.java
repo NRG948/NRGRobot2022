@@ -57,7 +57,7 @@ public class SwerveDrive extends SubsystemBase {
    */
 
   /* Swerve Module helper class */
-  @RobotPreferencesLayout(groupName = "SwerveModule", column = 2, row = 0, width = 2, height = 4)
+  @RobotPreferencesLayout(groupName = "SwerveModule", column = 2, row = 0, width = 2, height = 3, type = "Grid Layout")
   public static class Module {
     @RobotPreferencesValue
     public static DoubleValue driveP = new DoubleValue("SwerveModule", "driveP", 1.0);
@@ -70,9 +70,11 @@ public class SwerveDrive extends SubsystemBase {
     @RobotPreferencesValue
     public static DoubleValue turnP = new DoubleValue("SwerveModule", "turnP", 7.0);
     @RobotPreferencesValue
-    public static DoubleValue turnFeedForwardS = new DoubleValue("SwerveModule", "turnFeedForwardS", 1.0);
+    public static DoubleValue turnKs = new DoubleValue("SwerveModule", "turnKs", 1.0);
     @RobotPreferencesValue
-    public static DoubleValue turnFeedForwardV = new DoubleValue("SwerveModule", "turnFeedForwardV", 0.5);
+    public static DoubleValue turnKv = new DoubleValue("SwerveModule", "turnKv", 0.5);
+    @RobotPreferencesValue
+    public static DoubleValue turnKa = new DoubleValue("SwerveModule", "turnKa", 0);
 
     private static final double WHEEL_RADIUS = 0.047625; // Meters
     private static final int ENCODER_RESOLUTION = 2048; // Steps per Rev
@@ -102,8 +104,8 @@ public class SwerveDrive extends SubsystemBase {
     // Gains are for example purposes only - must be determined for your own robot!
     private final SimpleMotorFeedforward driveFeedforward = new SimpleMotorFeedforward(
         driveKs.getValue(), driveKv.getValue(), driveKa.getValue());
-    private final SimpleMotorFeedforward turnFeedforward = new SimpleMotorFeedforward(turnFeedForwardS.getValue(),
-        turnFeedForwardV.getValue());
+    private final SimpleMotorFeedforward turnFeedforward = new SimpleMotorFeedforward(
+        turnKs.getValue(), turnKv.getValue(), turnKa.getValue());
 
     private SwerveModuleState desiredState = new SwerveModuleState(0, new Rotation2d(0));
 
