@@ -64,4 +64,25 @@ public class Climber extends SubsystemBase {
     setState(getState(p) == State.EXTEND ? State.RETRACT : State.EXTEND, p);
   }
 
+    /*
+  CommandSequence:
+  1: 
+  P1: Retracted
+  P2: Extended
+  Hits first bar/(Hits Limit switch 1): 
+    Retract P2
+  2: 
+  P1: Retracted
+  P2: Retracted
+  Hits second bar (Hits Limit switch 2): 
+    Extend P1
+    Retract P1
+  3: 
+  P1: Retracted
+  P2: Retracted
+  Hits Traveral Bar (Hits Limit switch 1): 
+    Extend P2
+  Stop Motor. 
+  */
+
 }
