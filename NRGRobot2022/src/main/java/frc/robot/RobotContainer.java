@@ -41,6 +41,7 @@ import frc.robot.commands.RotateArmToResting;
 import frc.robot.commands.RotateArmToScoring;
 import frc.robot.commands.RotateArmToStowed;
 import frc.robot.commands.SetModuleState;
+import frc.robot.commands.ToggleClimberExtender;
 import frc.robot.commands.ToggleClimberPistons;
 import frc.robot.commands.TurnToAngle;
 import frc.robot.preferences.RobotPreferences;
@@ -132,10 +133,6 @@ public class RobotContainer {
   private final RotateArmToScoring armToScoring = new RotateArmToScoring(arm);
   // private final ManualClimber manualClimber = new ManualClimber(climber,
   // driveController);
-  // private final ToggleClimberPistons toggleClimberPiston1 = new
-  // ToggleClimberPistons(climber, 1);
-  // private final ToggleClimberPistons toggleClimberPiston2 = new
-  // ToggleClimberPistons(climber, 2);
 
   private SendableChooser<ChooseAutoPath> chooseAutoPath;
   private SendableChooser<ChooseAutoDelay> chooseAutoDelay;
@@ -214,6 +211,8 @@ public class RobotContainer {
     // xboxMenuButton.whenPressed(interrupt.andThen(manualClimber));
     // xboxButtonB.whenPressed(toggleClimberPiston1);
     // xboxButtonY.whenPressed(toggleClimberPiston2);
+
+    manipulatorButtonA.whenPressed(new ToggleClimberExtender(climberExtender));
   }
 
   /**
