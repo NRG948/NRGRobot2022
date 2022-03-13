@@ -62,11 +62,11 @@ public class SwerveDrive extends SubsystemBase {
     @RobotPreferencesValue
     public static DoubleValue driveP = new DoubleValue("SwerveModule", "driveP", 1.0);
     @RobotPreferencesValue
-    public static DoubleValue driveKs = new DoubleValue("SwerveModule", "driveKs", -0.1789);
+    public static DoubleValue driveKs = new DoubleValue("SwerveModule", "driveKs", 1.0);
     @RobotPreferencesValue
-    public static DoubleValue driveKv = new DoubleValue("SwerveModule", "driveKv", 13.307);
+    public static DoubleValue driveKv = new DoubleValue("SwerveModule", "driveKv", 3.0);
     @RobotPreferencesValue
-    public static DoubleValue driveKa = new DoubleValue("SwerveModule", "driveKa", 3.3969);
+    public static DoubleValue driveKa = new DoubleValue("SwerveModule", "driveKa", 0);
     @RobotPreferencesValue
     public static DoubleValue turnP = new DoubleValue("SwerveModule", "turnP", 7.0);
     @RobotPreferencesValue
