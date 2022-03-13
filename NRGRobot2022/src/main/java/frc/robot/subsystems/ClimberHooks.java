@@ -24,7 +24,11 @@ public class ClimberHooks extends SubsystemBase {
     private final DigitalInput limitSwitch2;
 
     public enum State {
-        EXTEND, RETRACT;
+        OPEN, CLOSED;
+    }
+
+    public enum PistonSelection {
+        PISTON_1, PISTON_2;
     }
 
     /** Creates a new ExampleSubsystem. **/
@@ -46,6 +50,15 @@ public class ClimberHooks extends SubsystemBase {
     public void simulationPeriodic() {
         // This method will be called once per scheduler run during simulation
 
+    }
+
+    public DoubleSolenoid getPiston(PistonSelection p) {
+        if(p.equals(PistonSelection.PISTON_1)) {
+            return piston1;
+        }
+        else {
+            return piston2;
+        }
     }
 
     public DoubleSolenoid getP1() {
@@ -83,14 +96,14 @@ public class ClimberHooks extends SubsystemBase {
 
     /** Returns the current state of the acquirer pistons */
     public State getState(DoubleSolenoid p) {
-        return p.get() == Value.kForward ? State.EXTEND : State.RETRACT;
+        return p.get() == Value.kForward ? State.OPEN : State.CLOSED;
     }
 
     public void setState(State state, DoubleSolenoid p) {
-        p.set(state == State.EXTEND ? Value.kForward : Value.kReverse);
+        p.set(state == State.OPEN ? Value.kForward : Value.kReverse);
     }
 
     public void toggleState(DoubleSolenoid p) {
-        setState(getState(p) == State.EXTEND ? State.RETRACT : State.EXTEND, p);
+        setState(getState(p) == State.OPEN ? State.CLOSED : State.OPEN, p);
     }
 }
