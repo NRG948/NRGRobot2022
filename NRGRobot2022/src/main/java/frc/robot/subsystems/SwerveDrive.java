@@ -62,9 +62,11 @@ public class SwerveDrive extends SubsystemBase {
     @RobotPreferencesValue
     public static DoubleValue driveP = new DoubleValue("SwerveModule", "driveP", 1.0);
     @RobotPreferencesValue
-    public static DoubleValue driveFeedForwardS = new DoubleValue("SwerveModule", "driveFeedForwardS", -0.1789);
+    public static DoubleValue driveKs = new DoubleValue("SwerveModule", "driveKs", -0.1789);
     @RobotPreferencesValue
-    public static DoubleValue driveFeedForwardV = new DoubleValue("SwerveModule", "driveFeedForwardV", 13.307);
+    public static DoubleValue driveKv = new DoubleValue("SwerveModule", "driveKv", 13.307);
+    @RobotPreferencesValue
+    public static DoubleValue driveKa = new DoubleValue("SwerveModule", "driveKa", 3.3969);
     @RobotPreferencesValue
     public static DoubleValue turnP = new DoubleValue("SwerveModule", "turnP", 7.0);
     @RobotPreferencesValue
@@ -98,8 +100,8 @@ public class SwerveDrive extends SubsystemBase {
             MODULE_MAX_ANGULAR_VELOCITY, MODULE_MAX_ANGULAR_ACCELERATION));
 
     // Gains are for example purposes only - must be determined for your own robot!
-    private final SimpleMotorFeedforward driveFeedforward = new SimpleMotorFeedforward(driveFeedForwardS.getValue(),
-        driveFeedForwardV.getValue());
+    private final SimpleMotorFeedforward driveFeedforward = new SimpleMotorFeedforward(
+        driveKs.getValue(), driveKv.getValue(), driveKa.getValue());
     private final SimpleMotorFeedforward turnFeedforward = new SimpleMotorFeedforward(turnFeedForwardS.getValue(),
         turnFeedForwardV.getValue());
 
@@ -238,10 +240,10 @@ public class SwerveDrive extends SubsystemBase {
   }
 
   public static final double MAX_SPEED = 3.0; // 3 meters per second
-  public static final double MAX_ANGULAR_SPEED = (3*Math.PI)/2; // 1/2 rotation per second
+  public static final double MAX_ANGULAR_SPEED = (3 * Math.PI) / 2; // 1/2 rotation per second
   public static final double MAX_ACCELERATION = 2.0; // TODO: find Max acceleration in meters per second squared
-  public static final double MAX_AUTO_ANGULAR_SPEED = Math.PI/2; 
-  public static final double MAX_AUTO_ANGULAR_ACCELERATION = (3*Math.PI)/2;
+  public static final double MAX_AUTO_ANGULAR_SPEED = Math.PI / 2;
+  public static final double MAX_AUTO_ANGULAR_ACCELERATION = (3 * Math.PI) / 2;
   public static final double MAX_AUTO_SPEED = 1.5;
   public static final double MAX_AUTO_ACCELERATION = 0.5;
 
@@ -286,7 +288,6 @@ public class SwerveDrive extends SubsystemBase {
   private final Module backLeft = new Module(7, 8, 12, "Back Left");
   private final Module backRight = new Module(5, 6, 11, "Back Right");
 
-
   private final ProfiledPIDController thetaController = new ProfiledPIDController(
       turnP.getValue(), turnI.getValue(), turnD.getValue(), THETA_CONTROLLER_CONSTRAINTS);
 
@@ -306,7 +307,7 @@ public class SwerveDrive extends SubsystemBase {
   }
 
   /**
-   * Method to drive the robot using joystick info. 
+   * Method to drive the robot using joystick info.
    *
    * @param xSpeed        Speed of the robot in the x direction (forward).
    * @param ySpeed        Speed of the robot in the y direction (sideways).
@@ -362,7 +363,10 @@ public class SwerveDrive extends SubsystemBase {
     return kinematics;
   }
 
-  /** Returns the distance, in meters, from the center of the robot frame to the wheels. */
+  /**
+   * Returns the distance, in meters, from the center of the robot frame to the
+   * wheels.
+   */
   public double getModuleRadius() {
     return FRONT_LEFT_LOCATION.getNorm();
   }
