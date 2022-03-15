@@ -12,8 +12,10 @@ import javax.management.InstanceAlreadyExistsException;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.GenericHID;
+import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.Tracer;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
@@ -134,6 +136,8 @@ public class RobotContainer {
   // private final ManualClimber manualClimber = new ManualClimber(climber,
   // driveController);
 
+  private final Compressor compressor = new Compressor(PneumaticsModuleType.CTREPCM);
+
   private SendableChooser<ChooseAutoPath> chooseAutoPath;
   private SendableChooser<ChooseAutoDelay> chooseAutoDelay;
 
@@ -183,6 +187,7 @@ public class RobotContainer {
     raspberryPiVision.addShuffleboardTab();
     arm.addShuffleboardTab();
     this.addAutonomousShuffleboardTab();
+    compressor.enableDigital();
   }
 
   /**
