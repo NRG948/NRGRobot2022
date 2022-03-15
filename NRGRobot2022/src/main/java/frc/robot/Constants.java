@@ -30,4 +30,7 @@ public final class Constants {
         public static final double kEncoderDistancePerRotation = 2.0 * Math.PI;
     }
 
+    public static final class ClimberConstants {
+        public static final int kClimberRotatorMotor = 13;
+    }
 }

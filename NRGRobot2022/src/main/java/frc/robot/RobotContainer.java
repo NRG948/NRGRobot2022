@@ -7,16 +7,13 @@ package frc.robot;
 
 import java.util.List;
 
-import javax.management.InstanceAlreadyExistsException;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
-import edu.wpi.first.wpilibj.Tracer;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
@@ -37,14 +34,12 @@ import frc.robot.commands.DriveForward;
 import frc.robot.commands.DriveWithController;
 import frc.robot.commands.Interrupt;
 import frc.robot.commands.ManualClaw;
-import frc.robot.commands.ManualClimber;
 import frc.robot.commands.ResetSubsystems;
 import frc.robot.commands.RotateArmToResting;
 import frc.robot.commands.RotateArmToScoring;
 import frc.robot.commands.RotateArmToStowed;
 import frc.robot.commands.SetModuleState;
 import frc.robot.commands.ToggleClimberExtender;
-import frc.robot.commands.ToggleClimberPistons;
 import frc.robot.commands.TurnToAngle;
 import frc.robot.preferences.RobotPreferences;
 import frc.robot.preferences.RobotPreferencesLayout;
@@ -54,7 +49,6 @@ import frc.robot.subsystems.RaspberryPiVision;
 import frc.robot.subsystems.SwerveDrive;
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.Claw;
-import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.ClimberExtender;
 import frc.robot.subsystems.ClimberHooks;
 
@@ -136,8 +130,6 @@ public class RobotContainer {
   // private final ManualClimber manualClimber = new ManualClimber(climber,
   // driveController);
 
-  private final Compressor compressor = new Compressor(PneumaticsModuleType.CTREPCM);
-
   private SendableChooser<ChooseAutoPath> chooseAutoPath;
   private SendableChooser<ChooseAutoDelay> chooseAutoDelay;
 
@@ -187,7 +179,6 @@ public class RobotContainer {
     raspberryPiVision.addShuffleboardTab();
     arm.addShuffleboardTab();
     this.addAutonomousShuffleboardTab();
-    compressor.enableDigital();
   }
 
   /**

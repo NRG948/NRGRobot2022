@@ -25,7 +25,6 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.preferences.RobotPreferencesLayout;
 import frc.robot.preferences.RobotPreferencesValue;
-import frc.robot.preferences.RobotPreferences.BooleanValue;
 import frc.robot.preferences.RobotPreferences.DoubleValue;
 import frc.robot.utilities.ShuffleboardUtils;
   @RobotPreferencesLayout(groupName = "SwerveModule", column = 2, row = 0, width = 2, height = 3, type = "Grid Layout")

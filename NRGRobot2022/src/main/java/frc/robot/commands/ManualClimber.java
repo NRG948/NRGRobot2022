@@ -6,19 +6,19 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.subsystems.Climber;
+import frc.robot.subsystems.ClimberRotator;
 
 public class ManualClimber extends CommandBase {
 
-  private Climber climber;
+  private ClimberRotator climberRotator;
   private XboxController controller;
 
   /** Creates a new ManualClimber. */
-  public ManualClimber(Climber climber, XboxController controller) {
-    this.climber = climber;
+  public ManualClimber(ClimberRotator climberRotator, XboxController controller) {
+    this.climberRotator = climberRotator;
     this.controller = controller;
 
-    addRequirements(this.climber);
+    addRequirements(this.climberRotator);
   }
 
   // Called when the command is initially scheduled.
@@ -28,7 +28,7 @@ public class ManualClimber extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    climber.rotateMotor(controller.getRightY() >= 0 ? controller.getRightY() : 0);
+    climberRotator.rotateMotor(controller.getRightY() >= 0 ? controller.getRightY() : 0);
   }
 
   // Called once the command ends or is interrupted.

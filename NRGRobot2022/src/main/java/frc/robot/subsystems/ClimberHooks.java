@@ -4,20 +4,11 @@ import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
-import edu.wpi.first.wpilibj.motorcontrol.PWMVictorSPX;
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.preferences.RobotPreferencesValue;
-import frc.robot.preferences.RobotPreferences.DoubleValue;
 // import frc.robot.preferences.RobotPreferencesLayout;
 
 public class ClimberHooks extends SubsystemBase {
-    // TODO: Figure out column, row, width, and height for widget
-    // @RobotPreferencesLayout(groupName = "ClimberModule", column = 2, row = 0, width = 2, height = 3, type = "Grid Layout")
-    @RobotPreferencesValue
-    public static DoubleValue climbingPower = new DoubleValue("ClimberModule", "Climbing Power", 0.5);
-
-    private final PWMVictorSPX climberMotor;
+    
     private final DoubleSolenoid piston1;
     private final DoubleSolenoid piston2;
     private final DigitalInput beamBreak1;
@@ -34,7 +25,6 @@ public class ClimberHooks extends SubsystemBase {
 
     /** Creates a new ClimberHooks subsystem. **/
     public ClimberHooks() {
-        climberMotor = new PWMVictorSPX(0); // TODO: change this to a Falcon on CANbus
         piston1 = new DoubleSolenoid(PneumaticsModuleType.CTREPCM, 2, 3);
         piston2 = new DoubleSolenoid(PneumaticsModuleType.CTREPCM, 4, 5);
 
@@ -53,25 +43,7 @@ public class ClimberHooks extends SubsystemBase {
         // This method will be called once per scheduler run during simulation
     }
 
-    /** Runs the climber motor with a power set via a preferences value. */
-    public void rotateMotor() {
-        climberMotor.set(climbingPower.getValue());
-    }
-
-    /** Stops the climber motor. */
-    public void stopMotor() {
-        climberMotor.stopMotor();
-    }
-
-    // Do not use this method. Similar code needs to be placed into Climber commands.
-    public void rotateTimedMotor(double d) {
-        Timer time = new Timer();
-        time.start();
-        while (!time.hasElapsed(d)) {
-            climberMotor.set(climbingPower.getValue());
-        }
-        time.stop();
-    }
+    
 
     /** Returns true iff the climber hook is latched on a bar. */
     public boolean isHookLatched(HookSelection hook) {
@@ -104,4 +76,24 @@ public class ClimberHooks extends SubsystemBase {
             return piston2;
         }
     }
+    /*
+  CommandSequence:
+  1: 
+  P1: Retracted
+  P2: Extended
+  Hits first bar/(Hits Limit switch 1): 
+    Retract P2
+  2: 
+  P1: Retracted
+  P2: Retracted
+  Hits second bar (Hits Limit switch 2): 
+    Extend P1
+    Retract P1
+  3: 
+  P1: Retracted
+  P2: Retracted
+  Hits Traveral Bar (Hits Limit switch 1): 
+    Extend P2
+  Stop Motor. 
+  */
 }
