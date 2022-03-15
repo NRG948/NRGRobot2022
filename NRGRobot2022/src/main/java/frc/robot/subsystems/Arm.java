@@ -29,6 +29,8 @@ public class Arm extends ProfiledPIDSubsystem {
     @RobotPreferencesValue
     public static final DoubleValue stowedAngle = new DoubleValue("Arm", "stowedAngle", 120);
     @RobotPreferencesValue
+    public static final DoubleValue scoringAngle = new DoubleValue("Arm", "scoringAngle", 87);
+    @RobotPreferencesValue
     public static final DoubleValue restingAngle = new DoubleValue("Arm", "restingAngle", -20);
     @RobotPreferencesValue
     public static final BooleanValue enableTab = new BooleanValue("Arm", "enableTab", false);
