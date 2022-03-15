@@ -15,36 +15,37 @@ public class ClimberHooks extends SubsystemBase {
     // TODO: Figure out column, row, width, and height for widget
     // @RobotPreferencesLayout(groupName = "ClimberModule", column = 2, row = 0, width = 2, height = 3, type = "Grid Layout")
     @RobotPreferencesValue
-        public static DoubleValue climbingPower = new DoubleValue("ClimberModule", "Climbing Power", -0.1);
+    public static DoubleValue climbingPower = new DoubleValue("ClimberModule", "Climbing Power", 0.5);
 
-    private final PWMVictorSPX climberMotor; 
+    private final PWMVictorSPX climberMotor;
     private final DoubleSolenoid piston1;
     private final DoubleSolenoid piston2;
     private final DigitalInput beamBreak1;
     private final DigitalInput beamBreak2;
 
     public enum State {
-        OPEN, CLOSED;
+        OPEN, // kForward position
+        CLOSED; // kReverse position
     }
 
     public enum HookSelection {
         HOOK_1, HOOK_2;
     }
 
-    /** Creates a new ExampleSubsystem. **/
+    /** Creates a new ClimberHooks subsystem. **/
     public ClimberHooks() {
-        climberMotor = new PWMVictorSPX(0); // change this to falcon on CANbus
+        climberMotor = new PWMVictorSPX(0); // TODO: change this to a Falcon on CANbus
         piston1 = new DoubleSolenoid(PneumaticsModuleType.CTREPCM, 2, 3);
         piston2 = new DoubleSolenoid(PneumaticsModuleType.CTREPCM, 4, 5);
 
-        //the beam breaks will read TBD when it engages the bar
+        // The beam breaks will read TBD(true/false) when it engages the bar
         beamBreak1 = new DigitalInput(5);
         beamBreak2 = new DigitalInput(6);
     }
 
     @Override
     public void periodic() {
-      // This method will be called once per scheduler run
+        // This method will be called once per scheduler run
     }
 
     @Override
@@ -52,51 +53,55 @@ public class ClimberHooks extends SubsystemBase {
         // This method will be called once per scheduler run during simulation
     }
 
-    public DoubleSolenoid getPiston(HookSelection p) {
-        if (p.equals(HookSelection.HOOK_1)) {
-            return piston1;
-        }
-        else {
-            return piston2;
-        }
-    }
-
-    public boolean getLimitSwitch(HookSelection p) {
-        if (p.equals(HookSelection.HOOK_1)) {
-            return beamBreak1.get();
-        }
-        else {
-            return beamBreak2.get();
-        }
-    }
-
+    /** Runs the climber motor with a power set via a preferences value. */
     public void rotateMotor() {
         climberMotor.set(climbingPower.getValue());
     }
 
+    /** Stops the climber motor. */
     public void stopMotor() {
-        climberMotor.set(0);
+        climberMotor.stopMotor();
     }
 
+    // Do not use this method. Similar code needs to be placed into Climber commands.
     public void rotateTimedMotor(double d) {
         Timer time = new Timer();
         time.start();
         while (!time.hasElapsed(d)) {
-          climberMotor.set(climbingPower.getValue());
+            climberMotor.set(climbingPower.getValue());
         }
         time.stop();
     }
 
-    /** Returns the current state of the acquirer pistons */
+    /** Returns true iff the climber hook is latched on a bar. */
+    public boolean isHookLatched(HookSelection hook) {
+        if (hook.equals(HookSelection.HOOK_1)) {
+            return beamBreak1.get();
+        } else {
+            return beamBreak2.get();
+        }
+    }
+
+    /** Returns the current state of a climber hook piston. */
     public State getState(HookSelection hook) {
         return getPiston(hook).get() == Value.kForward ? State.OPEN : State.CLOSED;
     }
 
+    /** Sets the state of a climber hook piston. */
     public void setState(State state, HookSelection hook) {
         getPiston(hook).set(state == State.OPEN ? Value.kForward : Value.kReverse);
     }
 
+    /** Reverses the state of a climber hook piston. */
     public void toggleState(HookSelection hook) {
         setState(getState(hook) == State.OPEN ? State.CLOSED : State.OPEN, hook);
+    }
+
+    private DoubleSolenoid getPiston(HookSelection hook) {
+        if (hook.equals(HookSelection.HOOK_1)) {
+            return piston1;
+        } else {
+            return piston2;
+        }
     }
 }
