@@ -12,8 +12,10 @@ import javax.management.InstanceAlreadyExistsException;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.GenericHID;
+import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.Tracer;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
@@ -41,6 +43,7 @@ import frc.robot.commands.RotateArmToResting;
 import frc.robot.commands.RotateArmToScoring;
 import frc.robot.commands.RotateArmToStowed;
 import frc.robot.commands.SetModuleState;
+import frc.robot.commands.ToggleClimberExtender;
 import frc.robot.commands.ToggleClimberPistons;
 import frc.robot.commands.TurnToAngle;
 import frc.robot.preferences.RobotPreferences;
@@ -52,6 +55,8 @@ import frc.robot.subsystems.SwerveDrive;
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.Claw;
 import frc.robot.subsystems.Climber;
+import frc.robot.subsystems.ClimberExtender;
+import frc.robot.subsystems.ClimberHooks;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -116,7 +121,8 @@ public class RobotContainer {
   private final RaspberryPiVision raspberryPiVision = new RaspberryPiVision();
   private final Claw claw = new Claw(1); // Port 1
   private final Arm arm = new Arm(); // limit switch channels to be updated
-  // private final Climber climber = new Climber();
+  private final ClimberExtender climberExtender = new ClimberExtender();
+  private final ClimberHooks climberHooks = new ClimberHooks();
 
   // Commands
   private final DriveWithController driveWithController = new DriveWithController(swerveDrive, driveController);
@@ -129,10 +135,8 @@ public class RobotContainer {
   private final RotateArmToScoring armToScoring = new RotateArmToScoring(arm);
   // private final ManualClimber manualClimber = new ManualClimber(climber,
   // driveController);
-  // private final ToggleClimberPistons toggleClimberPiston1 = new
-  // ToggleClimberPistons(climber, 1);
-  // private final ToggleClimberPistons toggleClimberPiston2 = new
-  // ToggleClimberPistons(climber, 2);
+
+  private final Compressor compressor = new Compressor(PneumaticsModuleType.CTREPCM);
 
   private SendableChooser<ChooseAutoPath> chooseAutoPath;
   private SendableChooser<ChooseAutoDelay> chooseAutoDelay;
@@ -183,6 +187,7 @@ public class RobotContainer {
     raspberryPiVision.addShuffleboardTab();
     arm.addShuffleboardTab();
     this.addAutonomousShuffleboardTab();
+    compressor.enableDigital();
   }
 
   /**
@@ -211,6 +216,8 @@ public class RobotContainer {
     // xboxMenuButton.whenPressed(interrupt.andThen(manualClimber));
     // xboxButtonB.whenPressed(toggleClimberPiston1);
     // xboxButtonY.whenPressed(toggleClimberPiston2);
+
+    manipulatorButtonA.whenPressed(new ToggleClimberExtender(climberExtender));
   }
 
   /**

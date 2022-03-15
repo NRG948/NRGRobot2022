@@ -6,7 +6,6 @@ package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.motorcontrol.PWMVictorSPX;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -63,5 +62,26 @@ public class Climber extends SubsystemBase {
   public void toggleState(Piston p) {
     setState(getState(p) == State.EXTEND ? State.RETRACT : State.EXTEND, p);
   }
+
+    /*
+  CommandSequence:
+  1: 
+  P1: Retracted
+  P2: Extended
+  Hits first bar/(Hits Limit switch 1): 
+    Retract P2
+  2: 
+  P1: Retracted
+  P2: Retracted
+  Hits second bar (Hits Limit switch 2): 
+    Extend P1
+    Retract P1
+  3: 
+  P1: Retracted
+  P2: Retracted
+  Hits Traveral Bar (Hits Limit switch 1): 
+    Extend P2
+  Stop Motor. 
+  */
 
 }
