@@ -5,8 +5,10 @@
 
 package frc.robot;
 
-import java.util.List;
+import static frc.robot.subsystems.ClimberHooks.HookSelection.HOOK_1;
+import static frc.robot.subsystems.ClimberHooks.HookSelection.HOOK_2;
 
+import java.util.List;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -35,10 +37,12 @@ import frc.robot.commands.DriveWithController;
 import frc.robot.commands.Interrupt;
 import frc.robot.commands.KeepClimberRotatorVertical;
 import frc.robot.commands.ManualClaw;
+import frc.robot.commands.ManualClimber;
 import frc.robot.commands.ResetSubsystems;
 import frc.robot.commands.RotateArmToResting;
 import frc.robot.commands.RotateArmToScoring;
 import frc.robot.commands.RotateArmToStowed;
+import frc.robot.commands.SetHook;
 import frc.robot.commands.SetModuleState;
 import frc.robot.commands.ToggleClimberExtender;
 import frc.robot.commands.TurnToAngle;
@@ -48,6 +52,7 @@ import frc.robot.preferences.RobotPreferencesValue;
 import frc.robot.preferences.RobotPreferences.BooleanValue;
 import frc.robot.subsystems.RaspberryPiVision;
 import frc.robot.subsystems.SwerveDrive;
+import frc.robot.subsystems.ClimberHooks.State;
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.Claw;
 import frc.robot.subsystems.ClimberExtender;
@@ -114,7 +119,11 @@ public class RobotContainer {
   private JoystickButton manipulatorLeftBumper = new JoystickButton(manipulatorController, 5);
   private JoystickButton manipulatorRightBumper = new JoystickButton(manipulatorController, 6);
   private JoystickButton manipulatorStartButton = new JoystickButton(manipulatorController, 7);
-
+  private JoystickButton manipulatorMenuButton = new JoystickButton(driveController, 8);
+  private POVButton manipulatorDpadUp = new POVButton(manipulatorController, 0);
+  private POVButton manipulatorDpadRight = new POVButton(manipulatorController, 90);
+  private POVButton manipulatorDpadDown = new POVButton(manipulatorController, 180);
+  private POVButton manipulatorDpadLeft = new POVButton(manipulatorController, 270);
   // Subsystems
   private final SwerveDrive swerveDrive = new SwerveDrive();
   private final RaspberryPiVision raspberryPiVision = new RaspberryPiVision();
@@ -133,8 +142,7 @@ public class RobotContainer {
   private final ManualClaw manualClaw = new ManualClaw(claw, manipulatorController);
   private final RotateArmToResting armToResting = new RotateArmToResting(arm);
   private final RotateArmToScoring armToScoring = new RotateArmToScoring(arm);
-  // private final ManualClimber manualClimber = new ManualClimber(climber,
-  // driveController);
+  private final ManualClimber manualClimber = new ManualClimber(climberRotator, manipulatorController);
 
   private SendableChooser<ChooseAutoPath> chooseAutoPath;
   private SendableChooser<ChooseAutoDelay> chooseAutoDelay;
@@ -209,10 +217,11 @@ public class RobotContainer {
 
     manipulatorLeftBumper.whenPressed(armToResting);
     manipulatorRightBumper.whenPressed(armToScoring);
-
-    // xboxMenuButton.whenPressed(interrupt.andThen(manualClimber));
-    // xboxButtonB.whenPressed(toggleClimberPiston1);
-    // xboxButtonY.whenPressed(toggleClimberPiston2);
+    manipulatorDpadUp.whenPressed(new SetHook(climberHooks, HOOK_1, State.CLOSED));
+    manipulatorDpadUp.whenReleased(new SetHook(climberHooks, HOOK_1, State.OPEN));
+    manipulatorDpadDown.whenPressed(new SetHook(climberHooks, HOOK_2, State.CLOSED));
+    manipulatorDpadDown.whenReleased(new SetHook(climberHooks, HOOK_2, State.OPEN));
+    manipulatorMenuButton.whenPressed(interrupt.andThen(manualClimber));
 
     manipulatorButtonA.whenPressed(new ToggleClimberExtender(climberExtender));
 
