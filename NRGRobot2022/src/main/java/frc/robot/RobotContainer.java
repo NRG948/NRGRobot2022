@@ -66,21 +66,23 @@ import frc.robot.subsystems.ClimberRotator;
 @RobotPreferencesLayout(groupName = "Autonomous", column = 4, row = 3, width = 2, height = 1)
 public class RobotContainer {
 
-  public static Translation2d ROBOT_FRONT_LEFT_LOCATION = new Translation2d(0.521, 0.432);
-  public static Translation2d ROBOT_FRONT_RIGHT_LOCATION = new Translation2d(0.521, -0.432);
+  private static Translation2d ROBOT_FRONT_LEFT_LOCATION = new Translation2d(0.521, 0.432);
+  private static Translation2d ROBOT_FRONT_RIGHT_LOCATION = new Translation2d(0.521, -0.432);
 
-  public static Rotation2d TARMAC_DOWN_ORIENTATION = Rotation2d.fromDegrees(-21);
-  public static Rotation2d TARMAC_RIGHT_ORIENTATION = Rotation2d.fromDegrees(69);
-
-  public static Translation2d TARGET_RIGHT_LOCATION = new Translation2d(7.583, 0.594);
-  public static Pose2d TARGET_RIGHT_POSE = new Pose2d(TARGET_RIGHT_LOCATION, Rotation2d.fromDegrees(-90));
+  private static Rotation2d TARMAC_DOWN_ORIENTATION = Rotation2d.fromDegrees(-21);
+  private static Rotation2d TARMAC_RIGHT_ORIENTATION = Rotation2d.fromDegrees(69);
 
   // Initial position for Tarmac right, right-side start.
   // TODO: Include adjust for bumper offset from wheel.
-  public static Translation2d RIGHT_TARMAC_RIGHT_START_LOCATION = new Translation2d(8.52, 3.04)
+  private static Translation2d RIGHT_TARMAC_RIGHT_START_LOCATION = new Translation2d(8.52, 3.04)
       .minus(ROBOT_FRONT_RIGHT_LOCATION.rotateBy(TARMAC_RIGHT_ORIENTATION));
-  public static Pose2d RIGHT_TARMAC_RIGHT_START_POSE = new Pose2d(RIGHT_TARMAC_RIGHT_START_LOCATION,
+  private static Pose2d RIGHT_TARMAC_RIGHT_START_POSE = new Pose2d(RIGHT_TARMAC_RIGHT_START_LOCATION,
       TARMAC_RIGHT_ORIENTATION);
+
+  private static Translation2d RIGHT_TARMAC_RIGHT_WAYPOINT = new Translation2d(7.684, 1.662);
+
+  private static Translation2d TARGET_RIGHT_LOCATION = new Translation2d(7.583, 0.594);
+  private static Pose2d TARGET_RIGHT_POSE = new Pose2d(TARGET_RIGHT_LOCATION, Rotation2d.fromDegrees(-90));
 
   @RobotPreferencesValue
   public static BooleanValue enableTesting = new BooleanValue("Autonomous", "enableTesting", false);
@@ -261,12 +263,12 @@ public class RobotContainer {
             new InstantCommand(() -> swerveDrive.resetOdometry(RIGHT_TARMAC_RIGHT_START_POSE)), 
             CommandUtils.newFollowWaypointsCommand(swerveDrive,
                 RIGHT_TARMAC_RIGHT_START_POSE,
-                List.of(new Translation2d(7.684, 1.662)),
+                List.of(RIGHT_TARMAC_RIGHT_WAYPOINT),
                 TARGET_RIGHT_POSE,
                 true),
             new WaitCommand(1.0),
             CommandUtils.newFutureFollowWaypointsCommand(swerveDrive,
-                List.of(new Translation2d(7.684, 1.662)),
+                List.of(RIGHT_TARMAC_RIGHT_WAYPOINT),
                 RIGHT_TARMAC_RIGHT_START_POSE,
                 true),
             new InstantCommand(() -> swerveDrive.stopMotors()));
