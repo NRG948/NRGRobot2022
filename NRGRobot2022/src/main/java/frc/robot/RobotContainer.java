@@ -33,6 +33,7 @@ import frc.robot.commands.CommandUtils;
 import frc.robot.commands.DriveForward;
 import frc.robot.commands.DriveWithController;
 import frc.robot.commands.Interrupt;
+import frc.robot.commands.KeepClimberRotatorVertical;
 import frc.robot.commands.ManualClaw;
 import frc.robot.commands.ResetSubsystems;
 import frc.robot.commands.RotateArmToResting;
@@ -51,6 +52,7 @@ import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.Claw;
 import frc.robot.subsystems.ClimberExtender;
 import frc.robot.subsystems.ClimberHooks;
+import frc.robot.subsystems.ClimberRotator;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -109,6 +111,7 @@ public class RobotContainer {
   private JoystickButton manipulatorButtonY = new JoystickButton(manipulatorController, 4); // y Button
   private JoystickButton manipulatorLeftBumper = new JoystickButton(manipulatorController, 5);
   private JoystickButton manipulatorRightBumper = new JoystickButton(manipulatorController, 6);
+  private JoystickButton manipulatorStartButton = new JoystickButton(manipulatorController, 7);
 
   // Subsystems
   private final SwerveDrive swerveDrive = new SwerveDrive();
@@ -117,6 +120,7 @@ public class RobotContainer {
   private final Arm arm = new Arm(); // limit switch channels to be updated
   private final ClimberExtender climberExtender = new ClimberExtender();
   private final ClimberHooks climberHooks = new ClimberHooks();
+  private final ClimberRotator climberRotator = new ClimberRotator();
 
   // Commands
   private final DriveWithController driveWithController = new DriveWithController(swerveDrive, driveController);
@@ -209,6 +213,8 @@ public class RobotContainer {
     // xboxButtonY.whenPressed(toggleClimberPiston2);
 
     manipulatorButtonA.whenPressed(new ToggleClimberExtender(climberExtender));
+
+    manipulatorStartButton.whileHeld(new KeepClimberRotatorVertical(climberRotator));
   }
 
   /**
