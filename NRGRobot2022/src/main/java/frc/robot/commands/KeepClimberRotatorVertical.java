@@ -4,21 +4,16 @@
 
 package frc.robot.commands;
 
-import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.ClimberRotator;
 
-public class ManualClimber extends CommandBase {
-
+public class KeepClimberRotatorVertical extends CommandBase {
   private ClimberRotator climberRotator;
-  private XboxController controller;
 
-  /** Creates a new ManualClimber. */
-  public ManualClimber(ClimberRotator climberRotator, XboxController controller) {
+  /** Creates a new KeepClimberRotatorVertical. */
+  public KeepClimberRotatorVertical(ClimberRotator climberRotator) {
     this.climberRotator = climberRotator;
-    this.controller = controller;
-
-    addRequirements(this.climberRotator);
+    addRequirements(climberRotator);
   }
 
   // Called when the command is initially scheduled.
@@ -28,14 +23,23 @@ public class ManualClimber extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    climberRotator.rotateMotor(controller.getRightTriggerAxis()); 
+    double tolerance = ClimberRotator.verticalTolerance.getValue();
+    double position = climberRotator.getRotatorPosition();
+    double power = 0;
+
+    if(Math.abs(position) > tolerance) {
+      power = ClimberRotator.kP.getValue() * position; // do  we need to negate this?
+    }
+    climberRotator.rotateMotor(power);
   }
 
   // Called once the command ends or is interrupted.
   @Override
-  public void end(boolean interrupted) {}
+  public void end(boolean interrupted) {
+    climberRotator.stopMotor();
+  }
 
-  // Returns true when the command should end.
+  // this command runs until interrupted.
   @Override
   public boolean isFinished() {
     return false;

@@ -36,8 +36,8 @@ public class Robot extends TimedRobot {
     // and put our
     // autonomous chooser on the dashboard.
     m_robotContainer = new RobotContainer();
-    compressor = new Compressor(PneumaticsModuleType.CTREPCM);
-    compressor.enableDigital();
+    //compressor = new Compressor(PneumaticsModuleType.REVPH);
+   // compressor.enableDigital();
     
   }
 
@@ -83,7 +83,7 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousInit() {
     m_robotContainer.initSubsystems();
-    m_autonomousCommand = m_robotContainer.getAutonomousCommand();
+    m_autonomousCommand = Autonomous.getAutonomousCommand();
 
     // schedule the autonomous command (example)
     if (m_autonomousCommand != null) {

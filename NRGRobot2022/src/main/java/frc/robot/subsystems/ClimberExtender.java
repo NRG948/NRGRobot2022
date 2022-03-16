@@ -7,7 +7,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class ClimberExtender extends SubsystemBase {
     // Large extending pistons controlled on one solenoid.
-    private final DoubleSolenoid extenderPistons = new DoubleSolenoid(PneumaticsModuleType.CTREPCM, 0, 1);
+    private final DoubleSolenoid extenderPistons = new DoubleSolenoid(PneumaticsModuleType.REVPH, 0, 1);
 
     public enum State {
         UP, DOWN;
