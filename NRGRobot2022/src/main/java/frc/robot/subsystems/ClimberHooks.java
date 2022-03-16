@@ -6,6 +6,7 @@ import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 // import frc.robot.preferences.RobotPreferencesLayout;
+import frc.robot.Constants.ClimberConstants;
 
 public class ClimberHooks extends SubsystemBase {
     
@@ -25,8 +26,8 @@ public class ClimberHooks extends SubsystemBase {
 
     /** Creates a new ClimberHooks subsystem. **/
     public ClimberHooks() {
-        piston1 = new DoubleSolenoid(PneumaticsModuleType.REVPH, 2, 3);
-        piston2 = new DoubleSolenoid(PneumaticsModuleType.REVPH, 4, 5);
+        piston1 = new DoubleSolenoid(ClimberConstants.PH_ID, PneumaticsModuleType.REVPH, 2, 3);
+        piston2 = new DoubleSolenoid(ClimberConstants.PH_ID, PneumaticsModuleType.REVPH, 4, 5);
 
         // The beam breaks will read TBD(true/false) when it engages the bar
         beamBreak1 = new DigitalInput(5);

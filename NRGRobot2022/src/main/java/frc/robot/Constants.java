@@ -32,5 +32,9 @@ public final class Constants {
 
     public static final class ClimberConstants {
         public static final int kClimberRotatorMotor = 13;
+        /**
+         *
+         */
+        public static final int PH_ID = 15;
     }
 }
