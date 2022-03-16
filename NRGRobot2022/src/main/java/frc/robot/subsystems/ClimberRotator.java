@@ -30,7 +30,7 @@ public class ClimberRotator extends SubsystemBase {
   @RobotPreferencesValue
   public static final DoubleValue kI = new DoubleValue("ClimberModule", "kI", 0);
   @RobotPreferencesValue
-  public static final DoubleValue kD = new DoubleValue("", "kD", 0);
+  public static final DoubleValue kD = new DoubleValue("ClimberModule", "kD", 0);
 
   /** Creates a new ClimberRotator. */
   private final TalonFX climberMotor;
