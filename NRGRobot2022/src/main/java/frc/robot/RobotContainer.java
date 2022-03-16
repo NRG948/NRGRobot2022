@@ -97,7 +97,7 @@ public class RobotContainer {
   private JoystickButton manipulatorLeftBumper = new JoystickButton(manipulatorController, 5);
   private JoystickButton manipulatorRightBumper = new JoystickButton(manipulatorController, 6);
   private JoystickButton manipulatorStartButton = new JoystickButton(manipulatorController, 7);
-  private JoystickButton manipulatorMenuButton = new JoystickButton(driveController, 8);
+  private JoystickButton manipulatorMenuButton = new JoystickButton(manipulatorController, 8);
   private POVButton manipulatorDpadUp = new POVButton(manipulatorController, 0);
   private POVButton manipulatorDpadRight = new POVButton(manipulatorController, 90);
   private POVButton manipulatorDpadDown = new POVButton(manipulatorController, 180);
@@ -168,7 +168,7 @@ public class RobotContainer {
     manipulatorDpadUp.whenReleased(new SetHook(climberHooks, HOOK_1, State.OPEN));
     manipulatorDpadDown.whenPressed(new SetHook(climberHooks, HOOK_2, State.CLOSED));
     manipulatorDpadDown.whenReleased(new SetHook(climberHooks, HOOK_2, State.OPEN));
-    manipulatorMenuButton.whenPressed(interrupt.andThen(manualClimber));
+    manipulatorMenuButton.whenPressed(manualClimber);
 
     manipulatorButtonA.whenPressed(new ToggleClimberExtender(climberExtender));
 
