@@ -8,8 +8,6 @@ package frc.robot;
 import static frc.robot.subsystems.ClimberHooks.HookSelection.HOOK_1;
 import static frc.robot.subsystems.ClimberHooks.HookSelection.HOOK_2;
 
-import java.util.List;
-
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -58,6 +56,7 @@ import frc.robot.subsystems.Claw;
 import frc.robot.subsystems.ClimberExtender;
 import frc.robot.subsystems.ClimberHooks;
 import frc.robot.subsystems.ClimberRotator;
+import frc.robot.Autonomous;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -68,29 +67,8 @@ import frc.robot.subsystems.ClimberRotator;
  * the robot (including
  * subsystems, commands, and button mappings) should be declared here.
  */
-@RobotPreferencesLayout(groupName = "Autonomous", column = 4, row = 3, width = 2, height = 1)
+
 public class RobotContainer {
-
-  private static Translation2d ROBOT_FRONT_LEFT_LOCATION = new Translation2d(0.521, 0.432);
-  private static Translation2d ROBOT_FRONT_RIGHT_LOCATION = new Translation2d(0.521, -0.432);
-
-  private static Rotation2d TARMAC_DOWN_ORIENTATION = Rotation2d.fromDegrees(-21);
-  private static Rotation2d TARMAC_RIGHT_ORIENTATION = Rotation2d.fromDegrees(69);
-
-  // Initial position for Tarmac right, right-side start.
-  // TODO: Include adjust for bumper offset from wheel.
-  private static Translation2d RIGHT_TARMAC_RIGHT_START_LOCATION = new Translation2d(8.52, 3.04)
-      .minus(ROBOT_FRONT_RIGHT_LOCATION.rotateBy(TARMAC_RIGHT_ORIENTATION));
-  private static Pose2d RIGHT_TARMAC_RIGHT_START_POSE = new Pose2d(RIGHT_TARMAC_RIGHT_START_LOCATION,
-      TARMAC_RIGHT_ORIENTATION);
-
-  private static Translation2d RIGHT_TARMAC_RIGHT_WAYPOINT = new Translation2d(7.684, 1.662);
-
-  private static Translation2d TARGET_RIGHT_LOCATION = new Translation2d(7.583, 0.594);
-  private static Pose2d TARGET_RIGHT_POSE = new Pose2d(TARGET_RIGHT_LOCATION, Rotation2d.fromDegrees(-90));
-
-  @RobotPreferencesValue
-  public static BooleanValue enableTesting = new BooleanValue("Autonomous", "enableTesting", false);
 
   // Operator interface (e.g. Joysticks)
   private final XboxController driveController = new XboxController(2);
@@ -125,13 +103,13 @@ public class RobotContainer {
   private POVButton manipulatorDpadDown = new POVButton(manipulatorController, 180);
   private POVButton manipulatorDpadLeft = new POVButton(manipulatorController, 270);
   // Subsystems
-  private final SwerveDrive swerveDrive = new SwerveDrive();
-  private final RaspberryPiVision raspberryPiVision = new RaspberryPiVision();
-  private final Claw claw = new Claw(1); // Port 1
-  private final Arm arm = new Arm(); // limit switch channels to be updated
-  private final ClimberExtender climberExtender = new ClimberExtender();
-  private final ClimberHooks climberHooks = new ClimberHooks();
-  private final ClimberRotator climberRotator = new ClimberRotator();
+  public static final SwerveDrive swerveDrive = new SwerveDrive();
+  public static final RaspberryPiVision raspberryPiVision = new RaspberryPiVision();
+  public static final Claw claw = new Claw(1); // Port 1
+  public static final Arm arm = new Arm(); // limit switch channels to be updated
+  public static final ClimberExtender climberExtender = new ClimberExtender();
+  public static final ClimberHooks climberHooks = new ClimberHooks();
+  public static final ClimberRotator climberRotator = new ClimberRotator();
 
   // Commands
   private final DriveWithController driveWithController = new DriveWithController(swerveDrive, driveController);
@@ -143,37 +121,6 @@ public class RobotContainer {
   private final RotateArmToResting armToResting = new RotateArmToResting(arm);
   private final RotateArmToScoring armToScoring = new RotateArmToScoring(arm);
   private final ManualClimber manualClimber = new ManualClimber(climberRotator, manipulatorController);
-
-  private SendableChooser<ChooseAutoPath> chooseAutoPath;
-  private SendableChooser<ChooseAutoDelay> chooseAutoDelay;
-
-  private enum ChooseAutoPath {
-    NONE,
-    PROFILE_DRIVE,
-    PROFILE_ARM,
-    TEST_DRIVE,
-    RIGHT_TARMAC_RIGHT_START,
-    RIGHT_TARMAC_LEFT_START,
-    DOWN_TARMAC_RIGHT_START,
-    DOWN_TARMAC_LEFT_START,
-    RIGHT_TARMAC_SHOOT_BACKUP
-  }
-
-  private enum ChooseAutoDelay {
-    NO_DELAY(0),
-    DELAY_2_SECONDS(2),
-    DELAY_5_SECONDS(3);
-
-    private double delay;
-
-    ChooseAutoDelay(double delay) {
-      this.delay = delay;
-    }
-
-    public double getDelay() {
-      return delay;
-    }
-  }
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -192,7 +139,7 @@ public class RobotContainer {
     swerveDrive.initShuffleboardTab();
     raspberryPiVision.addShuffleboardTab();
     arm.addShuffleboardTab();
-    this.addAutonomousShuffleboardTab();
+    Autonomous.addAutonomousShuffleboardTab();
   }
 
   /**
@@ -228,124 +175,7 @@ public class RobotContainer {
     manipulatorStartButton.whileHeld(new KeepClimberRotatorVertical(climberRotator));
   }
 
-  /**
-   * Use this to pass the autonomous command to the main {@link Robot} class.
-   *
-   * @return the command to run in autonomous
-   */
-  public Command getAutonomousCommand() {
-    Command autoCommand = getSelectedAutonomousCommand();
-    Command delayCommand = getSelectedDelayCommand();
-
-    if (delayCommand == null) {
-      return autoCommand;
-    } else if (autoCommand == null) {
-      return delayCommand;
-    } else {
-      return delayCommand.andThen(autoCommand);
-    }
-  }
-
-  /** Returns the autonmous command selected in the Shuffleboard tab. */
-  private Command getSelectedAutonomousCommand() {
-    switch (chooseAutoPath.getSelected()) {
-      case NONE:
-        return new InstantCommand(() -> System.out.println("NO AUTONOMOUS COMMAND SELECTED"));
-
-      case PROFILE_DRIVE:
-        return new CharacterizeSwerveDrive(swerveDrive);
-
-      case PROFILE_ARM:
-        return new CharacterizeArm(arm);
-
-      case TEST_DRIVE:
-        return new ResetSubsystems(swerveDrive).andThen(
-            CommandUtils.newFollowWaypointsCommand(swerveDrive,
-                new Pose2d(0, 0, new Rotation2d(0)),
-                List.of(new Translation2d(-1, -0.25)),
-                new Pose2d(-2, 0, Rotation2d.fromDegrees(-180)),
-                true),
-            new InstantCommand(() -> swerveDrive.stopMotors()));
-
-      case RIGHT_TARMAC_RIGHT_START:
-        return new ResetSubsystems(swerveDrive).andThen(
-            new InstantCommand(() -> swerveDrive.resetOdometry(RIGHT_TARMAC_RIGHT_START_POSE)), 
-            CommandUtils.newFollowWaypointsCommand(swerveDrive,
-                RIGHT_TARMAC_RIGHT_START_POSE,
-                List.of(RIGHT_TARMAC_RIGHT_WAYPOINT),
-                TARGET_RIGHT_POSE,
-                true),
-            new WaitCommand(1.0),
-            CommandUtils.newFutureFollowWaypointsCommand(swerveDrive,
-                List.of(RIGHT_TARMAC_RIGHT_WAYPOINT),
-                RIGHT_TARMAC_RIGHT_START_POSE,
-                true),
-            new InstantCommand(() -> swerveDrive.stopMotors()));
-
-      case RIGHT_TARMAC_SHOOT_BACKUP:
-        return new ResetSubsystems(swerveDrive).andThen(
-            new InstantCommand(() -> swerveDrive.resetOdometry(RIGHT_TARMAC_RIGHT_START_POSE)), 
-            new RotateArmToScoring(arm),
-            new AutoClaw(1.0, 1, claw),
-            new RotateArmToStowed(arm),
-            CommandUtils.newFollowWaypointsCommand(swerveDrive,
-                RIGHT_TARMAC_RIGHT_START_POSE,
-                List.of(new Translation2d(7.684, 1.662)),
-                TARGET_RIGHT_POSE,
-                true),
-            new InstantCommand(() -> swerveDrive.stopMotors()));
-
-      default:
-        return null;
-
-    }
-  }
-
-  /**
-   * Returns a command to wait the period of time selected in the Shuffleboard
-   * tab, or null if no delay is selected.
-   */
-  private Command getSelectedDelayCommand() {
-    ChooseAutoDelay delayChoice = chooseAutoDelay.getSelected();
-
-    if (delayChoice.getDelay() == 0) {
-      return null;
-    }
-
-    return new WaitCommand(delayChoice.getDelay());
-  }
-
   public void initSubsystems() {
     raspberryPiVision.initPipeline();
-  }
-
-  private void addAutonomousShuffleboardTab() {
-    ShuffleboardTab autoTab = Shuffleboard.getTab("Autonomous");
-
-    ShuffleboardLayout autoLayout = autoTab.getLayout("Autonomous", BuiltInLayouts.kList)
-        .withPosition(0, 0)
-        .withSize(6, 4);
-
-    chooseAutoPath = new SendableChooser<ChooseAutoPath>();
-
-    chooseAutoPath.setDefaultOption("None", ChooseAutoPath.NONE);
-
-    if (enableTesting.getValue()) {
-      chooseAutoPath.addOption("Profile Drive", ChooseAutoPath.PROFILE_DRIVE);
-      chooseAutoPath.addOption("Profile Arm", ChooseAutoPath.PROFILE_ARM);
-      chooseAutoPath.addOption("Test Drive", ChooseAutoPath.TEST_DRIVE);
-    }
-
-    chooseAutoPath.addOption("Right Tarmac Right Start", ChooseAutoPath.RIGHT_TARMAC_RIGHT_START);
-    chooseAutoPath.addOption("Right Tamrac Left Start", ChooseAutoPath.RIGHT_TARMAC_LEFT_START);
-    chooseAutoPath.addOption("Down Tarmac Right Start", ChooseAutoPath.DOWN_TARMAC_RIGHT_START);
-    chooseAutoPath.addOption("Down Tarmac Left Start", ChooseAutoPath.DOWN_TARMAC_LEFT_START);
-    autoLayout.add("AutoPath", chooseAutoPath).withWidget(BuiltInWidgets.kComboBoxChooser);
-
-    chooseAutoDelay = new SendableChooser<ChooseAutoDelay>();
-    chooseAutoDelay.setDefaultOption("0 sec", ChooseAutoDelay.NO_DELAY);
-    chooseAutoDelay.addOption("2 sec", ChooseAutoDelay.DELAY_2_SECONDS);
-    chooseAutoDelay.addOption("5 sec", ChooseAutoDelay.DELAY_5_SECONDS);
-    autoLayout.add("Delay", chooseAutoDelay).withWidget(BuiltInWidgets.kComboBoxChooser);
   }
 }
