@@ -241,27 +241,6 @@ public class SwerveDrive extends SubsystemBase {
     return odometry.getPoseMeters();
   }
 
-  /** Sets the desired state of a swerve module. */
-  @Deprecated(forRemoval = true)
-  public void setModuleState(int index, double speed, double angle) {
-    Rotation2d rotation = Rotation2d.fromDegrees(angle);
-    SwerveModuleState state = new SwerveModuleState(speed, rotation);
-    switch (index) {
-      case 0:
-        frontLeft.setDesiredState(state);
-        break;
-      case 1:
-        frontRight.setDesiredState(state);
-        break;
-      case 2:
-        backLeft.setDesiredState(state);
-        break;
-      case 3:
-        backRight.setDesiredState(state);
-        break;
-    }
-  }
-
   /** Sets the desired module states. */
   public void setModuleStates(SwerveModuleState[] desiredStates) {
     SwerveDriveKinematics.desaturateWheelSpeeds(

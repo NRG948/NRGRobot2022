@@ -28,7 +28,6 @@ import frc.robot.commands.RotateArmToResting;
 import frc.robot.commands.RotateArmToScoring;
 import frc.robot.commands.RotateClimber;
 import frc.robot.commands.SetHook;
-import frc.robot.commands.SetModuleState;
 import frc.robot.commands.ToggleClimberExtender;
 import frc.robot.commands.TurnToAngle;
 import frc.robot.preferences.RobotPreferences;
@@ -173,7 +172,6 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
-    // xboxButtonx.whenPressed(driveWithController);
     xboxButtonA.whenPressed(interrupt);
     xboxMenuButton.whenPressed(new InstantCommand(() -> swerveDrive.resetHeading()));
 
