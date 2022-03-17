@@ -8,60 +8,38 @@ package frc.robot;
 import static frc.robot.subsystems.ClimberHooks.HookSelection.HOOK_1;
 import static frc.robot.subsystems.ClimberHooks.HookSelection.HOOK_2;
 
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.GenericHID;
-import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.XboxController;
-import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
-import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
-import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
-import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.POVButton;
-import frc.robot.commands.CharacterizeSwerveDrive;
-import frc.robot.commands.AutoClaw;
-import frc.robot.commands.CharacterizeArm;
-import frc.robot.commands.CommandUtils;
 import frc.robot.commands.DriveStraight;
 import frc.robot.commands.DriveWithController;
 import frc.robot.commands.Interrupt;
 import frc.robot.commands.KeepClimberRotatorVertical;
 import frc.robot.commands.ManualClaw;
 import frc.robot.commands.ManualClimber;
-import frc.robot.commands.ResetSubsystems;
 import frc.robot.commands.RotateArmToResting;
 import frc.robot.commands.RotateArmToScoring;
-import frc.robot.commands.RotateArmToStowed;
 import frc.robot.commands.RotateClimber;
 import frc.robot.commands.SetHook;
 import frc.robot.commands.SetModuleState;
 import frc.robot.commands.ToggleClimberExtender;
 import frc.robot.commands.TurnToAngle;
 import frc.robot.preferences.RobotPreferences;
-import frc.robot.preferences.RobotPreferencesLayout;
-import frc.robot.preferences.RobotPreferencesValue;
-import frc.robot.preferences.RobotPreferences.BooleanValue;
-import frc.robot.subsystems.RaspberryPiVision;
-import frc.robot.subsystems.SwerveDrive;
-import frc.robot.subsystems.ClimberHooks.State;
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.Claw;
 import frc.robot.subsystems.ClimberExtender;
 import frc.robot.subsystems.ClimberHooks;
+import frc.robot.subsystems.ClimberHooks.State;
 import frc.robot.subsystems.ClimberRotator;
-import frc.robot.Autonomous;
-import frc.robot.commandGroups.ClimbSequencePart1;
+import frc.robot.subsystems.RaspberryPiVision;
+import frc.robot.subsystems.SwerveDrive;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -119,9 +97,6 @@ public class RobotContainer {
   // Commands
   private final DriveWithController driveWithController = new DriveWithController(swerveDrive, driveController);
   private final Interrupt interrupt = new Interrupt(swerveDrive);
-  private final DriveStraight driveForward = new DriveStraight(swerveDrive, 0.3, 0);
-  private final SetModuleState setModuleState_0 = new SetModuleState(swerveDrive, driveController, 0);
-  private final SetModuleState setModuleState_90 = new SetModuleState(swerveDrive, driveController, 90);
   private final ManualClaw manualClaw = new ManualClaw(claw, manipulatorController);
   private final RotateArmToResting armToResting = new RotateArmToResting(arm);
   private final RotateArmToScoring armToScoring = new RotateArmToScoring(arm);
@@ -200,8 +175,6 @@ public class RobotContainer {
   private void configureButtonBindings() {
     // xboxButtonx.whenPressed(driveWithController);
     xboxButtonA.whenPressed(interrupt);
-    // xboxButtonB.whenPressed(setModuleState_0);
-    // xboxButtonY.whenPressed(setModuleState_90);
     xboxMenuButton.whenPressed(new InstantCommand(() -> swerveDrive.resetHeading()));
 
     xboxDpadUp.whenPressed(new TurnToAngle(swerveDrive, 135));

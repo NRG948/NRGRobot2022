@@ -49,7 +49,7 @@ public class ClimberHooks extends SubsystemBase {
     }
 
     /** Returns true iff the climber hook is latched on a bar. */
-    public boolean isHookLatched(HookSelection hook) {
+    public boolean isBarDetected(HookSelection hook) {
         if (hook.equals(HookSelection.HOOK_1)) {
             return beamBreak1.get();
         } else {
@@ -87,6 +87,5 @@ public class ClimberHooks extends SubsystemBase {
 
         rotatorLayout.addBoolean("Beam Break 1", () -> beamBreak1.get()).withWidget(BuiltInWidgets.kBooleanBox);
         rotatorLayout.addBoolean("Beam Break 2", () -> beamBreak2.get()).withWidget(BuiltInWidgets.kBooleanBox);
-
     }
 }
