@@ -7,11 +7,11 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.SwerveDrive;
 
-public class DriveForward extends CommandBase {
+public class DriveStraight extends CommandBase {
   private SwerveDrive swerveDrive;
 
   /** Creates a new DriveForward. */
-  public DriveForward(SwerveDrive sDrive) {
+  public DriveStraight(SwerveDrive sDrive) {
     // Use addRequirements() here to declare subsystem dependencies.
     swerveDrive = sDrive;
     addRequirements(swerveDrive);
