@@ -17,7 +17,7 @@ import frc.robot.preferences.RobotPreferencesValue;
 import frc.robot.preferences.RobotPreferences.DoubleValue;
 
    
-@RobotPreferencesLayout(groupName = "ClimberModule", column = 2, row = 0, width = 2, height = 3, type = "Grid Layout")
+@RobotPreferencesLayout(groupName = "ClimberModule", column = 6, row = 0, width = 2, height = 3, type = "Grid Layout")
 public class ClimberRotator extends SubsystemBase {
 
   // TODO: Figure out column, row, width, and height for widget
