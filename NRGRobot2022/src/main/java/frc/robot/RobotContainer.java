@@ -22,7 +22,10 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.POVButton;
@@ -40,6 +43,7 @@ import frc.robot.commands.ResetSubsystems;
 import frc.robot.commands.RotateArmToResting;
 import frc.robot.commands.RotateArmToScoring;
 import frc.robot.commands.RotateArmToStowed;
+import frc.robot.commands.RotateClimber;
 import frc.robot.commands.SetHook;
 import frc.robot.commands.SetModuleState;
 import frc.robot.commands.ToggleClimberExtender;
@@ -57,6 +61,7 @@ import frc.robot.subsystems.ClimberExtender;
 import frc.robot.subsystems.ClimberHooks;
 import frc.robot.subsystems.ClimberRotator;
 import frc.robot.Autonomous;
+import frc.robot.commandGroups.ClimbSequencePart1;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -121,6 +126,42 @@ public class RobotContainer {
   private final RotateArmToResting armToResting = new RotateArmToResting(arm);
   private final RotateArmToScoring armToScoring = new RotateArmToScoring(arm);
   private final ManualClimber manualClimber = new ManualClimber(climberRotator, manipulatorController);
+
+    /*
+  CommandSequence:
+  1: 
+  Hook 1: Open
+  Hook 2: Open
+  Hits first bar/(Hits Limit switch 1): 
+    Hook 1: Closed
+  2: 
+  Hook 2: Retracted
+  Hits second bar (Hits Limit switch 2): 
+    Extend Hook 1
+    Retract Hook 1
+  3: 
+  Hook 1: Retracted
+  P2: Retracted
+  Hits Traveral Bar (Hits Limit switch 1): 
+    Extend Hook 2
+  Stop Motor. 
+  */
+
+  private final SequentialCommandGroup climbSequencePart1 = 
+    new ToggleClimberExtender(climberExtender)
+      .andThen(new SetHook(climberHooks, HOOK_1, State.OPEN))
+      .andThen(new WaitCommand(1.0))
+      .andThen(new DriveStraight(swerveDrive, .3, Math.toRadians(180))) //Drive slowly to the bar
+      .until(() -> climberHooks.isBarDetected(HOOK_1))
+      .andThen(new SetHook(climberHooks, HOOK_1, State.CLOSED))
+    ;
+
+    private final SequentialCommandGroup climbSequencePart2 = 
+      new SetHook(climberHooks, HOOK_2, State.OPEN)
+      .andThen(new RotateClimber(climberRotator)
+      .until(() -> climberHooks.isBarDetected(HOOK_2)))
+      .andThen(new SetHook(climberHooks, HOOK_2, State.CLOSED))
+      ;
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.

@@ -50,7 +50,7 @@ public class ClimberRotator extends SubsystemBase {
 
 	/** Runs the climber motor with a power set via a preferences value. */
 	public void rotateMotor() {
-		// climberMotor.set(climbingPower.getValue());
+		climberMotor.set(ControlMode.PercentOutput, climbingPower.getValue());
 	}
 
 	public void rotateMotor(double power) {
