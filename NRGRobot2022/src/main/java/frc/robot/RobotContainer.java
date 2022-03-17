@@ -140,6 +140,12 @@ public class RobotContainer {
     raspberryPiVision.addShuffleboardTab();
     arm.addShuffleboardTab();
     Autonomous.addAutonomousShuffleboardTab();
+
+    if (ClimberRotator.enableTab.getValue()) {
+      ShuffleboardTab climberTab = Shuffleboard.getTab("Climber");
+      climberRotator.addShuffleboardLayout(climberTab);
+      climberHooks.addShuffleboardLayout(climberTab);
+    }
   }
 
   /**

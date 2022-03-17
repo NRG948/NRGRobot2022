@@ -10,10 +10,15 @@ import com.ctre.phoenix.motorcontrol.can.TalonFX;
 //import com.ctre.phoenix.motorcontrol.can.TalonFX;
 
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ClimberConstants;
 import frc.robot.preferences.RobotPreferencesLayout;
 import frc.robot.preferences.RobotPreferencesValue;
+import frc.robot.preferences.RobotPreferences.BooleanValue;
 import frc.robot.preferences.RobotPreferences.DoubleValue;
 
 @RobotPreferencesLayout(groupName = "ClimberModule", column = 6, row = 0, width = 2, height = 3, type = "Grid Layout")
@@ -30,6 +35,8 @@ public class ClimberRotator extends SubsystemBase {
 	public static final DoubleValue kI = new DoubleValue("ClimberModule", "kI", 0);
 	@RobotPreferencesValue
 	public static final DoubleValue kD = new DoubleValue("ClimberModule", "kD", 0);
+	@RobotPreferencesValue
+	public static final BooleanValue enableTab = new BooleanValue("ClimberModule", "enableTab", false);
 
 	/** Creates a new ClimberRotator. */
 	private final TalonFX climberMotor;
@@ -71,5 +78,12 @@ public class ClimberRotator extends SubsystemBase {
 			// climberMotor.set(climbingPower.getValue());
 		}
 		time.stop();
+	}
+
+	public void addShuffleboardLayout(ShuffleboardTab climberTab) {
+		ShuffleboardLayout rotatorLayout = climberTab.getLayout("Rotator", BuiltInLayouts.kGrid)
+				.withPosition(0, 0)
+				.withSize(2, 2);
+		rotatorLayout.addNumber("Encoder", () -> climberMotor.getSelectedSensorPosition());
 	}
 }
