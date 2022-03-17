@@ -114,7 +114,7 @@ public class RobotContainer {
   // Commands
   private final DriveWithController driveWithController = new DriveWithController(swerveDrive, driveController);
   private final Interrupt interrupt = new Interrupt(swerveDrive);
-  private final DriveStraight driveForward = new DriveStraight(swerveDrive);
+  private final DriveStraight driveForward = new DriveStraight(swerveDrive, 0.3, 0);
   private final SetModuleState setModuleState_0 = new SetModuleState(swerveDrive, driveController, 0);
   private final SetModuleState setModuleState_90 = new SetModuleState(swerveDrive, driveController, 90);
   private final ManualClaw manualClaw = new ManualClaw(claw, manipulatorController);
