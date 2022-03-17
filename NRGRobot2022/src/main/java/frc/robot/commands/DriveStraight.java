@@ -7,15 +7,24 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.SwerveDrive;
 
-public class DriveForward extends CommandBase {
-  private SwerveDrive swerveDrive;
+public class DriveStraight extends CommandBase {
+  private final SwerveDrive swerveDrive;
+  private final double xSpeed;
+  private final double ySpeed;
 
-  /** Creates a new DriveForward. */
-  public DriveForward(SwerveDrive sDrive) {
+  /**
+   * Constructs an instance of this class.
+   * 
+   * @param sDrive  An instance of the swerve drive subsystem.
+   * @param speed   Speed to drive.
+   * @param heading The direction in radians to drive.
+   */
+  public DriveStraight(SwerveDrive sDrive, double speed, double heading) {
     // Use addRequirements() here to declare subsystem dependencies.
     swerveDrive = sDrive;
     addRequirements(swerveDrive);
-
+    xSpeed = speed * Math.cos(heading);
+    ySpeed = speed * Math.sin(heading);
   }
 
   // Called when the command is initially scheduled.
@@ -27,8 +36,7 @@ public class DriveForward extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    swerveDrive.drive(1.0, 0, 0, true, false);
-
+    swerveDrive.drive(xSpeed, ySpeed, 0, true, false);
   }
 
   // Called once the command ends or is interrupted.

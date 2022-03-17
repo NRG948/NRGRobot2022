@@ -33,7 +33,7 @@ import frc.robot.commands.CharacterizeSwerveDrive;
 import frc.robot.commands.AutoClaw;
 import frc.robot.commands.CharacterizeArm;
 import frc.robot.commands.CommandUtils;
-import frc.robot.commands.DriveForward;
+import frc.robot.commands.DriveStraight;
 import frc.robot.commands.DriveWithController;
 import frc.robot.commands.Interrupt;
 import frc.robot.commands.KeepClimberRotatorVertical;
@@ -119,7 +119,7 @@ public class RobotContainer {
   // Commands
   private final DriveWithController driveWithController = new DriveWithController(swerveDrive, driveController);
   private final Interrupt interrupt = new Interrupt(swerveDrive);
-  private final DriveForward driveForward = new DriveForward(swerveDrive);
+  private final DriveStraight driveForward = new DriveStraight(swerveDrive, 0.3, 0);
   private final SetModuleState setModuleState_0 = new SetModuleState(swerveDrive, driveController, 0);
   private final SetModuleState setModuleState_90 = new SetModuleState(swerveDrive, driveController, 90);
   private final ManualClaw manualClaw = new ManualClaw(claw, manipulatorController);
@@ -181,6 +181,12 @@ public class RobotContainer {
     raspberryPiVision.addShuffleboardTab();
     arm.addShuffleboardTab();
     Autonomous.addAutonomousShuffleboardTab();
+
+    if (ClimberRotator.enableTab.getValue()) {
+      ShuffleboardTab climberTab = Shuffleboard.getTab("Climber");
+      climberRotator.addShuffleboardLayout(climberTab);
+      climberHooks.addShuffleboardLayout(climberTab);
+    }
   }
 
   /**

@@ -4,12 +4,16 @@ import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 // import frc.robot.preferences.RobotPreferencesLayout;
 import frc.robot.Constants.ClimberConstants;
 
 public class ClimberHooks extends SubsystemBase {
-    
+
     private final DoubleSolenoid piston1;
     private final DoubleSolenoid piston2;
     private final DigitalInput beamBreak1;
@@ -44,8 +48,6 @@ public class ClimberHooks extends SubsystemBase {
         // This method will be called once per scheduler run during simulation
     }
 
-    
-
     /** Returns true iff the climber hook is latched on a bar. */
     public boolean isHookLatched(HookSelection hook) {
         if (hook.equals(HookSelection.HOOK_1)) {
@@ -77,24 +79,34 @@ public class ClimberHooks extends SubsystemBase {
             return piston2;
         }
     }
+
+    public void addShuffleboardLayout(ShuffleboardTab climberTab) {
+        ShuffleboardLayout rotatorLayout = climberTab.getLayout("Claw", BuiltInLayouts.kGrid)
+                .withPosition(2, 0)
+                .withSize(2, 2);
+
+        rotatorLayout.addBoolean("Beam Break 1", () -> beamBreak1.get()).withWidget(BuiltInWidgets.kBooleanBox);
+        rotatorLayout.addBoolean("Beam Break 2", () -> beamBreak2.get()).withWidget(BuiltInWidgets.kBooleanBox);
+
+    }
     /*
-  CommandSequence:
-  1: 
-  P1: Retracted
-  P2: Extended
-  Hits first bar/(Hits Limit switch 1): 
-    Retract P2
-  2: 
-  P1: Retracted
-  P2: Retracted
-  Hits second bar (Hits Limit switch 2): 
-    Extend P1
-    Retract P1
-  3: 
-  P1: Retracted
-  P2: Retracted
-  Hits Traveral Bar (Hits Limit switch 1): 
-    Extend P2
-  Stop Motor. 
-  */
+     * CommandSequence:
+     * 1:
+     * P1: Retracted
+     * P2: Extended
+     * Hits first bar/(Hits Limit switch 1):
+     * Retract P2
+     * 2:
+     * P1: Retracted
+     * P2: Retracted
+     * Hits second bar (Hits Limit switch 2):
+     * Extend P1
+     * Retract P1
+     * 3:
+     * P1: Retracted
+     * P2: Retracted
+     * Hits Traveral Bar (Hits Limit switch 1):
+     * Extend P2
+     * Stop Motor.
+     */
 }
