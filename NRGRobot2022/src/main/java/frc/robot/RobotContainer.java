@@ -122,7 +122,6 @@ public class RobotContainer {
   Stop Motor. 
   */
 
-    // Robot container changes from 3/17
   private final SequentialCommandGroup climbSequencePart1 = 
     // new ToggleClimberExtender(climberExtender)
       new SetHook(climberHooks, HOOK_1, State.OPEN)
