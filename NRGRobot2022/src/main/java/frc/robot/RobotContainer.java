@@ -84,7 +84,7 @@ public class RobotContainer {
   private POVButton manipulatorDpadRight = new POVButton(manipulatorController, 90);
   private POVButton manipulatorDpadDown = new POVButton(manipulatorController, 180);
   private POVButton manipulatorDpadLeft = new POVButton(manipulatorController, 270);
-  
+
   // Subsystems
   public static final SwerveDrive swerveDrive = new SwerveDrive();
   public static final RaspberryPiVision raspberryPiVision = new RaspberryPiVision();
@@ -149,6 +149,8 @@ public class RobotContainer {
       .andThen(new InstantCommand(() -> climberRotator.stopMotor()))
       ;
 
+      
+
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
@@ -200,6 +202,7 @@ public class RobotContainer {
     manipulatorDpadDown.whenPressed(new SetHook(climberHooks, HOOK_2, State.CLOSED));
     manipulatorDpadDown.whenReleased(new SetHook(climberHooks, HOOK_2, State.OPEN));
     manipulatorMenuButton.whenPressed(manualClimber);
+    manipulatorDpadRight.whenPressed(new DriveStraight(swerveDrive, .2, Math.toRadians(180))); // testing
 
     manipulatorButtonA.whenPressed(climbSequencePart1);
     manipulatorButtonB.whenPressed(climbSequencePart2);
