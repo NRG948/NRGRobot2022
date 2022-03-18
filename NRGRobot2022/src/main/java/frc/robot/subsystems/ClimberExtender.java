@@ -15,7 +15,7 @@ public class ClimberExtender extends SubsystemBase {
     }
 
     public State getState() {
-        return extenderPistons.get() == Value.kForward ? State.DOWN : State.UP;
+        return extenderPistons.get() == Value.kForward ? State.UP : State.DOWN;
     }
 
     public void setState(State state) {
