@@ -23,6 +23,7 @@ public class ToggleClimberExtender extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+    // Changes from 3/17
     System.out.println("Toggle Climber Extender");
   }
 
