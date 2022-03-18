@@ -54,27 +54,27 @@ public class RobotContainer {
 
   // Operator interface (e.g. Joysticks)
   private final XboxController driveController = new XboxController(2);
-  private JoystickButton xboxButtonA = new JoystickButton(driveController, 1); // A Button
-  private JoystickButton xboxButtonB = new JoystickButton(driveController, 2); // B Button
-  private JoystickButton xboxButtonx = new JoystickButton(driveController, 3); // x Button
-  private JoystickButton xboxButtonY = new JoystickButton(driveController, 4); // y Button
-  private JoystickButton xboxLeftBumper = new JoystickButton(driveController, 5);
-  private JoystickButton xboxRightBumper = new JoystickButton(driveController, 6);
+  private JoystickButton driverButtonA = new JoystickButton(driveController, 1); // A Button
+  private JoystickButton driverButtonB = new JoystickButton(driveController, 2); // B Button
+  private JoystickButton driverButtonX = new JoystickButton(driveController, 3); // x Button
+  private JoystickButton driverButtonY = new JoystickButton(driveController, 4); // y Button
+  private JoystickButton driverLeftBumper = new JoystickButton(driveController, 5);
+  private JoystickButton driverRightBumper = new JoystickButton(driveController, 6);
   // Left Middle Button
-  private JoystickButton xboxStartButton = new JoystickButton(driveController, 7);
+  private JoystickButton driverStartButton = new JoystickButton(driveController, 7);
   // Right Middle Button
-  private JoystickButton xboxMenuButton = new JoystickButton(driveController, 8);
+  private JoystickButton driverMenuButton = new JoystickButton(driveController, 8);
 
-  private POVButton xboxDpadUp = new POVButton(driveController, 0);
-  private POVButton xboxDpadRight = new POVButton(driveController, 90);
-  private POVButton xboxDpadDown = new POVButton(driveController, 180);
-  private POVButton xboxDpadLeft = new POVButton(driveController, 270);
+  private POVButton driverDpadUp = new POVButton(driveController, 0);
+  private POVButton driverDpadRight = new POVButton(driveController, 90);
+  private POVButton driverDpadDown = new POVButton(driveController, 180);
+  private POVButton driverDpadLeft = new POVButton(driveController, 270);
 
   // Manipulate interface
   private final XboxController manipulatorController = new XboxController(3);
   private JoystickButton manipulatorButtonA = new JoystickButton(manipulatorController, 1); // A Button
   private JoystickButton manipulatorButtonB = new JoystickButton(manipulatorController, 2); // B Button
-  private JoystickButton manipulatorButtonx = new JoystickButton(manipulatorController, 3); // x Button
+  private JoystickButton manipulatorButtonX = new JoystickButton(manipulatorController, 3); // x Button
   private JoystickButton manipulatorButtonY = new JoystickButton(manipulatorController, 4); // y Button
   private JoystickButton manipulatorLeftBumper = new JoystickButton(manipulatorController, 5);
   private JoystickButton manipulatorRightBumper = new JoystickButton(manipulatorController, 6);
@@ -84,6 +84,7 @@ public class RobotContainer {
   private POVButton manipulatorDpadRight = new POVButton(manipulatorController, 90);
   private POVButton manipulatorDpadDown = new POVButton(manipulatorController, 180);
   private POVButton manipulatorDpadLeft = new POVButton(manipulatorController, 270);
+  
   // Subsystems
   public static final SwerveDrive swerveDrive = new SwerveDrive();
   public static final RaspberryPiVision raspberryPiVision = new RaspberryPiVision();
@@ -125,7 +126,7 @@ public class RobotContainer {
     new ToggleClimberExtender(climberExtender)
       .andThen(new SetHook(climberHooks, HOOK_1, State.OPEN))
       .andThen(new WaitCommand(1.0))
-      .andThen(new DriveStraight(swerveDrive, .3, Math.toRadians(180))) //Drive slowly to the bar
+      .andThen(new DriveStraight(swerveDrive, .3, Math.toRadians(0))) //Drive slowly to the bar
       .until(() -> climberHooks.isBarDetected(HOOK_1))
       .andThen(new SetHook(climberHooks, HOOK_1, State.CLOSED))
     ;
@@ -135,6 +136,17 @@ public class RobotContainer {
       .andThen(new RotateClimber(climberRotator)
       .until(() -> climberHooks.isBarDetected(HOOK_2)))
       .andThen(new SetHook(climberHooks, HOOK_2, State.CLOSED))
+      .andThen(new WaitCommand(1.0))
+      ;
+
+      private final SequentialCommandGroup climbSequencePart3 = 
+      new SetHook(climberHooks, HOOK_1, State.OPEN)
+      .andThen(new RotateClimber(climberRotator)
+      .until(() -> climberHooks.isBarDetected(HOOK_1)))
+      .andThen(new SetHook(climberHooks, HOOK_1, State.CLOSED))
+      .andThen(new WaitCommand(1.0))
+      .andThen(new SetHook(climberHooks, HOOK_2, State.OPEN))
+      .andThen(new InstantCommand(() -> climberRotator.stopMotor()))
       ;
 
   /**
@@ -148,6 +160,7 @@ public class RobotContainer {
     configureButtonBindings();
     claw.setDefaultCommand(manualClaw);
     swerveDrive.setDefaultCommand(driveWithController);
+
 
     // Init Shuffleboard
     RobotPreferences.addShuffleBoardTab();
@@ -172,13 +185,13 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
-    xboxButtonA.whenPressed(interrupt);
-    xboxMenuButton.whenPressed(new InstantCommand(() -> swerveDrive.resetHeading()));
+    driverButtonA.whenPressed(interrupt);
+    driverMenuButton.whenPressed(new InstantCommand(() -> swerveDrive.resetHeading()));
 
-    xboxDpadUp.whenPressed(new TurnToAngle(swerveDrive, 135));
-    xboxDpadRight.whenPressed(new TurnToAngle(swerveDrive, 45));
-    xboxDpadDown.whenPressed(new TurnToAngle(swerveDrive, -45));
-    xboxDpadLeft.whenPressed(new TurnToAngle(swerveDrive, -135));
+    driverDpadUp.whenPressed(new TurnToAngle(swerveDrive, 135));
+    driverDpadRight.whenPressed(new TurnToAngle(swerveDrive, 45));
+    driverDpadDown.whenPressed(new TurnToAngle(swerveDrive, -45));
+    driverDpadLeft.whenPressed(new TurnToAngle(swerveDrive, -135));
 
     manipulatorLeftBumper.whenPressed(armToResting);
     manipulatorRightBumper.whenPressed(armToScoring);
@@ -188,7 +201,10 @@ public class RobotContainer {
     manipulatorDpadDown.whenReleased(new SetHook(climberHooks, HOOK_2, State.OPEN));
     manipulatorMenuButton.whenPressed(manualClimber);
 
-    manipulatorButtonA.whenPressed(new ToggleClimberExtender(climberExtender));
+    manipulatorButtonA.whenPressed(climbSequencePart1);
+    manipulatorButtonB.whenPressed(climbSequencePart2);
+    manipulatorButtonX.whenPressed(climbSequencePart3);
+    manipulatorButtonY.whenPressed(new ToggleClimberExtender(climberExtender));
 
     manipulatorStartButton.whileHeld(new KeepClimberRotatorVertical(climberRotator));
   }
