@@ -18,7 +18,9 @@ public class KeepClimberRotatorVertical extends CommandBase {
 
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {}
+  public void initialize() {
+    System.out.println("Keep Climber Rotator Vertical");
+  }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
@@ -28,8 +30,9 @@ public class KeepClimberRotatorVertical extends CommandBase {
     double power = 0;
 
     if(Math.abs(position) > tolerance) {
-      power = ClimberRotator.kP.getValue() * position; // do  we need to negate this?
+      power = -ClimberRotator.kP.getValue() * position; // do  we need to negate this?
     }
+    System.out.println("Rotator Power: " + power);
     climberRotator.rotateMotor(power);
   }
 

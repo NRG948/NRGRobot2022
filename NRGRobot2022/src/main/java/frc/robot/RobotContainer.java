@@ -123,18 +123,19 @@ public class RobotContainer {
   */
 
   private final SequentialCommandGroup climbSequencePart1 = 
-    new ToggleClimberExtender(climberExtender)
-      .andThen(new SetHook(climberHooks, HOOK_1, State.OPEN))
-      .andThen(new WaitCommand(1.0))
-      .andThen(new DriveStraight(swerveDrive, .3, Math.toRadians(0))) //Drive slowly to the bar
+    // new ToggleClimberExtender(climberExtender)
+      new SetHook(climberHooks, HOOK_1, State.OPEN)
+      .andThen(new WaitCommand(3.0))
+      .andThen(new DriveStraight(swerveDrive, .15, Math.toRadians(0))) //Drive slowly to the bar
       .until(() -> climberHooks.isBarDetected(HOOK_1))
+      .andThen(new WaitCommand(.2))
       .andThen(new SetHook(climberHooks, HOOK_1, State.CLOSED))
-    ;
-
+    ; 
     private final SequentialCommandGroup climbSequencePart2 = 
       new SetHook(climberHooks, HOOK_2, State.OPEN)
       .andThen(new RotateClimber(climberRotator)
       .until(() -> climberHooks.isBarDetected(HOOK_2)))
+      .andThen(new WaitCommand(.2))
       .andThen(new SetHook(climberHooks, HOOK_2, State.CLOSED))
       .andThen(new WaitCommand(1.0))
       ;
@@ -143,6 +144,7 @@ public class RobotContainer {
       new SetHook(climberHooks, HOOK_1, State.OPEN)
       .andThen(new RotateClimber(climberRotator)
       .until(() -> climberHooks.isBarDetected(HOOK_1)))
+      .andThen(new WaitCommand(.2))
       .andThen(new SetHook(climberHooks, HOOK_1, State.CLOSED))
       .andThen(new WaitCommand(1.0))
       .andThen(new SetHook(climberHooks, HOOK_2, State.OPEN))
@@ -197,10 +199,10 @@ public class RobotContainer {
 
     manipulatorLeftBumper.whenPressed(armToResting);
     manipulatorRightBumper.whenPressed(armToScoring);
-    manipulatorDpadUp.whenPressed(new SetHook(climberHooks, HOOK_1, State.CLOSED));
-    manipulatorDpadUp.whenReleased(new SetHook(climberHooks, HOOK_1, State.OPEN));
-    manipulatorDpadDown.whenPressed(new SetHook(climberHooks, HOOK_2, State.CLOSED));
-    manipulatorDpadDown.whenReleased(new SetHook(climberHooks, HOOK_2, State.OPEN));
+    manipulatorDpadUp.whenPressed(new SetHook(climberHooks, HOOK_1, State.OPEN));
+    manipulatorDpadUp.whenReleased(new SetHook(climberHooks, HOOK_1, State.CLOSED));
+    manipulatorDpadDown.whenPressed(new SetHook(climberHooks, HOOK_2, State.OPEN));
+    manipulatorDpadDown.whenReleased(new SetHook(climberHooks, HOOK_2, State.CLOSED));
     manipulatorMenuButton.whenPressed(manualClimber);
     manipulatorDpadRight.whenPressed(new DriveStraight(swerveDrive, .2, Math.toRadians(180))); // testing
 

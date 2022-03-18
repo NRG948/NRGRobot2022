@@ -28,9 +28,9 @@ public class ClimberRotator extends SubsystemBase {
 	@RobotPreferencesValue
 	public static DoubleValue climbingPower = new DoubleValue("ClimberModule", "Climbing Power", 0.5);
 	@RobotPreferencesValue
-	public static final DoubleValue verticalTolerance = new DoubleValue("ClimberModule", "Vertical Tolerance", 100);
+	public static final DoubleValue verticalTolerance = new DoubleValue("ClimberModule", "Vertical Tolerance", 1800);
 	@RobotPreferencesValue
-	public static final DoubleValue kP = new DoubleValue("ClimberModule", "kP", 0.0005);
+	public static final DoubleValue kP = new DoubleValue("ClimberModule", "kP", 0.15/1800);
 	@RobotPreferencesValue
 	public static final DoubleValue kI = new DoubleValue("ClimberModule", "kI", 0);
 	@RobotPreferencesValue

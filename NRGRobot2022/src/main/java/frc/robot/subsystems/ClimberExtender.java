@@ -8,7 +8,7 @@ import frc.robot.Constants.ClimberConstants;
 
 public class ClimberExtender extends SubsystemBase {
     // Large extending pistons controlled on one solenoid.
-    private final DoubleSolenoid extenderPistons = new DoubleSolenoid(ClimberConstants.PH_ID, PneumaticsModuleType.REVPH, 0, 1);
+    private final DoubleSolenoid extenderPistons = new DoubleSolenoid(ClimberConstants.PH_ID, PneumaticsModuleType.REVPH, 6, 0);
 
     public enum State {
         UP, DOWN;

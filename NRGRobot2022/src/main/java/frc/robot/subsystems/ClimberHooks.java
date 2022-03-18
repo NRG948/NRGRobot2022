@@ -34,8 +34,8 @@ public class ClimberHooks extends SubsystemBase {
         piston2 = new DoubleSolenoid(ClimberConstants.PH_ID, PneumaticsModuleType.REVPH, 4, 5);
 
         // The beam breaks will read TBD(true/false) when it engages the bar
-        beamBreak1 = new DigitalInput(5);
-        beamBreak2 = new DigitalInput(6);
+        beamBreak1 = new DigitalInput(6);
+        beamBreak2 = new DigitalInput(5);
     }
 
     @Override
@@ -51,9 +51,9 @@ public class ClimberHooks extends SubsystemBase {
     /** Returns true iff the climber hook is latched on a bar. */
     public boolean isBarDetected(HookSelection hook) {
         if (hook.equals(HookSelection.HOOK_1)) {
-            return beamBreak1.get();
+            return !beamBreak1.get();
         } else {
-            return beamBreak2.get();
+            return !beamBreak2.get();
         }
     }
 
@@ -81,11 +81,11 @@ public class ClimberHooks extends SubsystemBase {
     }
 
     public void addShuffleboardLayout(ShuffleboardTab climberTab) {
-        ShuffleboardLayout rotatorLayout = climberTab.getLayout("Claw", BuiltInLayouts.kGrid)
+        ShuffleboardLayout rotatorLayout = climberTab.getLayout("Hook", BuiltInLayouts.kGrid)
                 .withPosition(2, 0)
                 .withSize(2, 2);
 
-        rotatorLayout.addBoolean("Beam Break 1", () -> beamBreak1.get()).withWidget(BuiltInWidgets.kBooleanBox);
-        rotatorLayout.addBoolean("Beam Break 2", () -> beamBreak2.get()).withWidget(BuiltInWidgets.kBooleanBox);
+        rotatorLayout.addBoolean("Beam Break 1", () -> !beamBreak1.get()).withWidget(BuiltInWidgets.kBooleanBox);
+        rotatorLayout.addBoolean("Beam Break 2", () -> !beamBreak2.get()).withWidget(BuiltInWidgets.kBooleanBox);
     }
 }
