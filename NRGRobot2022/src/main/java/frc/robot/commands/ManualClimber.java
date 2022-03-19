@@ -28,7 +28,7 @@ public class ManualClimber extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    climberRotator.rotateMotor(controller.getRightTriggerAxis()); 
+    climberRotator.rotateMotor(controller.getLeftY()); 
   }
 
   // Called once the command ends or is interrupted.
