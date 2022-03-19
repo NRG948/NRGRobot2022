@@ -107,7 +107,7 @@ public class RobotContainer {
   private static final SequentialCommandGroup climbSequencePart1 =
       new InstantCommand(() -> climberExtender.setState(ClimberExtender.State.UP))
           .andThen(new SetHook(climberHooks, HOOK_1, State.OPEN))
-          .andThen(new WaitCommand(3.0))
+          .andThen(new WaitCommand(3.0)) // wait for extender to go up
           .andThen(new DriveStraight(swerveDrive, .15, Math.toRadians(0)) // Drive slowly to the bar
               .until(() -> climberHooks.isBarDetected(HOOK_1)))
           .andThen(new WaitCommand(.1))
@@ -122,7 +122,7 @@ public class RobotContainer {
               .until(() -> climberHooks.isBarDetected(HOOK_2)))
           .andThen(new WaitCommand(.2))
           .andThen(new SetHook(climberHooks, HOOK_2, State.CLOSED))
-          .andThen(new WaitCommand(1.0))
+          .andThen(new WaitCommand(0.2))
           .andThen(new InstantCommand(() -> climberRotator.stopMotor()));
 
   // Release MID RUNG, wait, climb to TRAVERSAL RUNG and grab it, delay, release HIGH RUNG
@@ -133,7 +133,7 @@ public class RobotContainer {
               .until(() -> climberHooks.isBarDetected(HOOK_1)))
           .andThen(new WaitCommand(.2))
           .andThen(new SetHook(climberHooks, HOOK_1, State.CLOSED))
-          .andThen(new WaitCommand(1.0))
+          .andThen(new WaitCommand(0.2))
           .andThen(new SetHook(climberHooks, HOOK_2, State.OPEN))
           .andThen(new InstantCommand(() -> climberRotator.stopMotor()));
 
