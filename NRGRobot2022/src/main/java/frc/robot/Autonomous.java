@@ -83,15 +83,17 @@ public class Autonomous {
             .minus(ROBOT_FRONT_RIGHT_LOCATION.rotateBy(TARMAC_RIGHT_ORIENTATION));
     private static Pose2d RIGHT_TARMAC_RIGHT_START_POSE = new Pose2d(RIGHT_TARMAC_RIGHT_START_LOCATION,
             TARMAC_RIGHT_ORIENTATION);
+    private static Translation2d RIGHT_TARMAC_RIGHT_WAYPOINT = new Translation2d(7.684, 1.662);
 
     private static Translation2d DOWN_TARMAC_LEFT_START_LOCATION = new Translation2d(7.651, 4.957)
             .minus(ROBOT_FRONT_LEFT_LOCATION.rotateBy(TARMAC_DOWN_ORIENTATION));
     private static Pose2d DOWN_TARMAC_LEFT_START_POSE = new Pose2d(DOWN_TARMAC_LEFT_START_LOCATION,
             TARMAC_DOWN_ORIENTATION);
-    private static Translation2d RIGHT_TARMAC_RIGHT_WAYPOINT = new Translation2d(7.684, 1.662);
+    
 
     private static Translation2d TARGET_RIGHT_LOCATION = new Translation2d(7.583, 0.594);
     private static Pose2d TARGET_RIGHT_POSE = new Pose2d(TARGET_RIGHT_LOCATION, Rotation2d.fromDegrees(-90));
+
     private static Translation2d TARGET_DOWN_LOCATION = new Translation2d(5.177, 6.105);
     private static Pose2d TARGET_DOWN_POSE = new Pose2d(TARGET_DOWN_LOCATION, Rotation2d.fromDegrees(159));
 
@@ -163,7 +165,7 @@ public class Autonomous {
                         CommandUtils.newFollowWaypointsCommand(RobotContainer.swerveDrive,
                                 RIGHT_TARMAC_RIGHT_START_POSE,
                                 List.of(new Translation2d(7.684, 1.662)),
-                                TARGET_RIGHT_POSE,
+                                new Pose2d(new Translation2d(8.0, 0.594), Rotation2d.fromDegrees(-90)),
                                 true),
                         new InstantCommand(() -> RobotContainer.swerveDrive.stopMotors()));
 
