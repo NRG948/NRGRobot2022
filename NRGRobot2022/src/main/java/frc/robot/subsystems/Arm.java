@@ -127,6 +127,11 @@ public class Arm extends ProfiledPIDSubsystem {
         return !scoringPositionLimitSwitch.get() || getRadians() > Math.toRadians(stowedAngle.getValue());
     }
 
+    /** Returns whether the arm is at its scoring position. */
+    public boolean isAtScoringPosition() {
+        return Math.abs(Math.toDegrees(getRadians()) - scoringAngle.getValue()) < 4;
+    }
+    
     /** Adds a tab to the Shuffleboard for Arm subsystem debugging. */
     public void addShuffleboardTab() {
         if (!enableTab.getValue()) {
