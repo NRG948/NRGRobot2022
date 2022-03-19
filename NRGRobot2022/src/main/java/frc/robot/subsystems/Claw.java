@@ -17,4 +17,8 @@ public class Claw extends SubsystemBase {
         clawMotor.set(MathUtil.applyDeadband(power, 0.02));
     }
 
+    public void stopMotor() {
+        clawMotor.stopMotor();
+    }
+
 }

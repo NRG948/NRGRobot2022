@@ -209,4 +209,10 @@ public class RobotContainer {
   public void initSubsystems() {
     raspberryPiVision.initPipeline();
   }
+
+  public void stopAllMotors() {
+    swerveDrive.stopMotors();
+    climberRotator.stopMotor();
+    claw.stopMotor();
+  }
 }
