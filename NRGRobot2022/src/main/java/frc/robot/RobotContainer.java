@@ -105,7 +105,8 @@ public class RobotContainer {
 
   // Raise the climber, drive to the MID RUNG & grab it when detected
   private static final SequentialCommandGroup climbSequencePart1 =
-      new InstantCommand(() -> climberExtender.setState(ClimberExtender.State.UP))
+      new InstantCommand(() -> swerveDrive.resetHeading())
+          .andThen(() -> climberExtender.setState(ClimberExtender.State.UP))
           .andThen(new SetHook(climberHooks, HOOK_1, State.OPEN))
           .andThen(new WaitCommand(3.0)) // wait for extender to go up
           .andThen(new DriveStraight(swerveDrive, .15, Math.toRadians(0)) // Drive slowly to the bar
@@ -118,7 +119,7 @@ public class RobotContainer {
       new SetHook(climberHooks, HOOK_2, State.OPEN)
           .andThen(new DriveStraight(swerveDrive, .1, Math.toRadians(180)) // Slowly back up
               .until(() -> climberRotator.getRotatorPosition() > 500)) // TBD
-          .andThen(new RampRotatorMotor(climberRotator, .5, .85, 3.0)
+          .andThen(new RampRotatorMotor(climberRotator, .35, .85, 2.0)
               .until(() -> climberHooks.isBarDetected(HOOK_2)))
           .andThen(new WaitCommand(.2))
           .andThen(new SetHook(climberHooks, HOOK_2, State.CLOSED))
@@ -138,8 +139,8 @@ public class RobotContainer {
           .andThen(new InstantCommand(() -> climberRotator.stopMotor()));
 
   // Fully autonomous 3-stage traversal climb
-  private static final SequentialCommandGroup climbSequenceFull =
-      new SequentialCommandGroup(climbSequencePart1, climbSequencePart2, climbSequencePart3);
+  private static final SequentialCommandGroup climbSequenceFull = null;
+      // new SequentialCommandGroup(climbSequencePart1, climbSequencePart2, climbSequencePart3);
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -179,8 +180,8 @@ public class RobotContainer {
     driverMenuButton.whenPressed(new InstantCommand(() -> swerveDrive.resetHeading()));
     driverLeftBumper.whenPressed(new KeepClimberRotatorVertical(climberRotator));
 
-    driverButtonB.whenPressed(new DriveStraight(swerveDrive, .25, Math.toRadians(0))); // testing
-    driverButtonY.whenPressed(new DriveStraight(swerveDrive, .25, Math.toRadians(180))); // testing
+   // driverButtonB.whenPressed(new DriveStraight(swerveDrive, .25, Math.toRadians(0))); // testing
+    //driverButtonY.whenPressed(new DriveStraight(swerveDrive, .25, Math.toRadians(180))); // testing
 
     driverDpadUp.whenPressed(new TurnToAngle(swerveDrive, 135));
     driverDpadRight.whenPressed(new TurnToAngle(swerveDrive, 45));
@@ -200,7 +201,7 @@ public class RobotContainer {
     manipulatorButtonA.whenPressed(climbSequencePart1);
     manipulatorButtonB.whenPressed(climbSequencePart2);
     manipulatorButtonX.whenPressed(climbSequencePart3);
-    manipulatorButtonY.whenPressed(climbSequenceFull);
+    // manipulatorButtonY.whenPressed(climbSequenceFull);
     manipulatorMenuButton.whenPressed(new ToggleClimberExtender(climberExtender));
 
   }
