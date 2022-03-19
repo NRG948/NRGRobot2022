@@ -32,7 +32,6 @@ public class KeepClimberRotatorVertical extends CommandBase {
     if(Math.abs(position) > tolerance) {
       power = -ClimberRotator.kP.getValue() * position; // do  we need to negate this?
     }
-    System.out.println("Rotator Power: " + power);
     climberRotator.rotateMotor(power);
   }
 
