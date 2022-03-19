@@ -83,7 +83,8 @@ public class Autonomous {
 
     private static Translation2d DOWN_TARMAC_LEFT_START_LOCATION = new Translation2d(7.651, 4.957)
             .minus(ROBOT_FRONT_LEFT_LOCATION.rotateBy(TARMAC_DOWN_ORIENTATION));
-    private static Pose2d DOWN_TARMAC_LEFT_START_POSE = new Pose2d(DOWN_TARMAC_LEFT_START_LOCATION, TARMAC_DOWN_ORIENTATION);
+    private static Pose2d DOWN_TARMAC_LEFT_START_POSE = new Pose2d(DOWN_TARMAC_LEFT_START_LOCATION,
+            TARMAC_DOWN_ORIENTATION);
     private static Translation2d RIGHT_TARMAC_RIGHT_WAYPOINT = new Translation2d(7.684, 1.662);
 
     private static Translation2d TARGET_RIGHT_LOCATION = new Translation2d(7.583, 0.594);
@@ -212,10 +213,12 @@ public class Autonomous {
             chooseAutoPath.addOption("Test Drive", ChooseAutoPath.TEST_DRIVE);
         }
 
-        chooseAutoPath.addOption("Right Tarmac Right Start", ChooseAutoPath.RIGHT_TARMAC_RIGHT_START);
+        // chooseAutoPath.addOption("Right Tarmac Right Start",
+        // ChooseAutoPath.RIGHT_TARMAC_RIGHT_START);
         // chooseAutoPath.addOption("Right Tamrac Left Start",
         // ChooseAutoPath.RIGHT_TARMAC_LEFT_START);
-        chooseAutoPath.addOption("Down Tarmac Right Start", ChooseAutoPath.DOWN_TARMAC_RIGHT_START);
+        // chooseAutoPath.addOption("Down Tarmac Right Start",
+        // ChooseAutoPath.DOWN_TARMAC_RIGHT_START);
         // chooseAutoPath.addOption("Down Tarmac Left Start",
         // ChooseAutoPath.DOWN_TARMAC_LEFT_START);
         chooseAutoPath.addOption("Right Tarmac Shoot & Backup", ChooseAutoPath.RIGHT_TARMAC_SHOOT_BACKUP);
