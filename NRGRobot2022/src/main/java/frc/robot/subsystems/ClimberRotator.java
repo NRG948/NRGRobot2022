@@ -24,17 +24,16 @@ import frc.robot.preferences.RobotPreferences.DoubleValue;
 @RobotPreferencesLayout(groupName = "ClimberModule", column = 6, row = 0, width = 2, height = 3, type = "Grid Layout")
 public class ClimberRotator extends SubsystemBase {
 	
-	// TODO: Figure out column, row, width, and height for widget
 	@RobotPreferencesValue
 	public static DoubleValue climbingPower = new DoubleValue("ClimberModule", "Climbing Power", 0.5);
 	@RobotPreferencesValue
-	public static final DoubleValue verticalTolerance = new DoubleValue("ClimberModule", "Vertical Tolerance", 1800);
+	public static final DoubleValue verticalTolerance = new DoubleValue("ClimberModule", "Vertical Tolerance", 1200);
 	@RobotPreferencesValue
-	public static final DoubleValue kP = new DoubleValue("ClimberModule", "kP", 0.15/1800);
+	public static final DoubleValue kP = new DoubleValue("ClimberModule", "kP", .00004);
 	@RobotPreferencesValue
-	public static final DoubleValue kI = new DoubleValue("ClimberModule", "kI", 0);
+	public static final DoubleValue kI = new DoubleValue("ClimberModule", "kI", 0); // Not used
 	@RobotPreferencesValue
-	public static final DoubleValue kD = new DoubleValue("ClimberModule", "kD", 0);
+	public static final DoubleValue kD = new DoubleValue("ClimberModule", "kD", 0); // Not used
 	@RobotPreferencesValue
 	public static final BooleanValue enableTab = new BooleanValue("ClimberModule", "enableTab", false);
 
@@ -63,6 +62,7 @@ public class ClimberRotator extends SubsystemBase {
 	public void rotateMotor(double power) {
 		climberMotor.set(ControlMode.PercentOutput, power);
 	}
+
 
 	/** Stops the climber motor. */
 	public void stopMotor() {

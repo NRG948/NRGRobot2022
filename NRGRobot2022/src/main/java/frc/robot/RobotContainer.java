@@ -24,6 +24,7 @@ import frc.robot.commands.Interrupt;
 import frc.robot.commands.KeepClimberRotatorVertical;
 import frc.robot.commands.ManualClaw;
 import frc.robot.commands.ManualClimber;
+import frc.robot.commands.RampRotatorMotor;
 import frc.robot.commands.RotateArmToResting;
 import frc.robot.commands.RotateArmToScoring;
 import frc.robot.commands.RotateClimber;
@@ -123,30 +124,34 @@ public class RobotContainer {
   */
 
   private final SequentialCommandGroup climbSequencePart1 = 
-    // new ToggleClimberExtender(climberExtender)
-      new SetHook(climberHooks, HOOK_1, State.OPEN)
+    new ToggleClimberExtender(climberExtender)
+    //new InstantCommand(() -> climberExtender.setState(ClimberExtender.State.UP))
+      .andThen(new SetHook(climberHooks, HOOK_1, State.OPEN))
       .andThen(new WaitCommand(3.0))
       .andThen(new DriveStraight(swerveDrive, .15, Math.toRadians(0))) //Drive slowly to the bar
       .until(() -> climberHooks.isBarDetected(HOOK_1))
       .andThen(new WaitCommand(.1))
       .andThen(new SetHook(climberHooks, HOOK_1, State.CLOSED))
     ; 
+
+    /*
     private final SequentialCommandGroup climbSequencePart2 = 
       new SetHook(climberHooks, HOOK_2, State.OPEN)
       .andThen(new DriveStraight(swerveDrive, .1, Math.toRadians(180))) // Slowly back up
       .until(() -> climberRotator.getRotatorPosition() > 500)
-      .andThen(new RotateClimber(climberRotator)
+      // .andThen(new RotateClimber(climberRotator)
+      .andThen(new RampRotatorMotor(climberRotator, .5, .85, 3)
       .until(() -> climberHooks.isBarDetected(HOOK_2)))
       .andThen(new WaitCommand(.1))
       .andThen(new SetHook(climberHooks, HOOK_2, State.CLOSED))
       .andThen(new WaitCommand(1.0))
-      .andThen(new InstantCommand(() -> climberRotator.stopMotor()))
-      ;
+      .andThen(new InstantCommand(() -> climberRotator.stopMotor()));
 
       private final SequentialCommandGroup climbSequencePart3 = 
       new SetHook(climberHooks, HOOK_1, State.OPEN)
       .andThen(new WaitCommand(2)) // add a .until to the wait command
-      .andThen(new RotateClimber(climberRotator)
+      // .andThen(new RotateClimber(climberRotator)
+      .andThen(new RampRotatorMotor(climberRotator, .5, .85, 3)
       .until(() -> climberHooks.isBarDetected(HOOK_1)))
       .andThen(new WaitCommand(.1))
       .andThen(new SetHook(climberHooks, HOOK_1, State.CLOSED))
@@ -159,7 +164,7 @@ public class RobotContainer {
         climbSequencePart1
         .andThen(climbSequencePart2)
         .andThen(climbSequencePart3);
-
+*/
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
@@ -199,6 +204,9 @@ public class RobotContainer {
     driverButtonA.whenPressed(interrupt);
     driverMenuButton.whenPressed(new InstantCommand(() -> swerveDrive.resetHeading()));
 
+    driverButtonB.whenPressed(new DriveStraight(swerveDrive, .25, Math.toRadians(0))); // testing
+    driverButtonY.whenPressed(new DriveStraight(swerveDrive, .25, Math.toRadians(180))); // testing
+
     driverDpadUp.whenPressed(new TurnToAngle(swerveDrive, 135));
     driverDpadRight.whenPressed(new TurnToAngle(swerveDrive, 45));
     driverDpadDown.whenPressed(new TurnToAngle(swerveDrive, -45));
@@ -211,15 +219,16 @@ public class RobotContainer {
     manipulatorDpadDown.whenPressed(new SetHook(climberHooks, HOOK_2, State.OPEN));
     manipulatorDpadDown.whenReleased(new SetHook(climberHooks, HOOK_2, State.CLOSED));
     manipulatorStartButton.whenPressed(manualClimber);
-    manipulatorDpadRight.whenPressed(new DriveStraight(swerveDrive, .2, Math.toRadians(180))); // testing
+    manipulatorDpadRight.whenPressed(new DriveStraight(swerveDrive, .2, Math.toRadians(90))); // testing
+    manipulatorDpadLeft.whenPressed(new DriveStraight(swerveDrive, .2, Math.toRadians(-90))); // testing
 
     manipulatorButtonA.whenPressed(climbSequencePart1);
-    manipulatorButtonB.whenPressed(climbSequencePart2);
-    manipulatorButtonX.whenPressed(climbSequencePart3);
+    //manipulatorButtonB.whenPressed(climbSequencePart2);
+    //manipulatorButtonX.whenPressed(climbSequencePart3);
     manipulatorButtonY.whenPressed(new ToggleClimberExtender(climberExtender));
 
     //manipulatorMenuButton.whenPressed(new KeepClimberRotatorVertical(climberRotator));
-    manipulatorMenuButton.whenPressed(climbSequenceFull);
+    // manipulatorMenuButton.whenPressed(climbSequenceFull);
   }
 
   public void initSubsystems() {

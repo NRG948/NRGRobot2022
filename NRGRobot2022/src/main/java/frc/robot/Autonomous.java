@@ -193,6 +193,7 @@ public class Autonomous {
         chooseAutoPath.addOption("Right Tamrac Left Start", ChooseAutoPath.RIGHT_TARMAC_LEFT_START);
         chooseAutoPath.addOption("Down Tarmac Right Start", ChooseAutoPath.DOWN_TARMAC_RIGHT_START);
         chooseAutoPath.addOption("Down Tarmac Left Start", ChooseAutoPath.DOWN_TARMAC_LEFT_START);
+        chooseAutoPath.addOption("Right Tarmac Shoot & Backup", ChooseAutoPath.RIGHT_TARMAC_SHOOT_BACKUP);
         autoLayout.add("AutoPath", chooseAutoPath).withWidget(BuiltInWidgets.kComboBoxChooser);
 
         chooseAutoDelay.setDefaultOption("0 sec", ChooseAutoDelay.NO_DELAY);
