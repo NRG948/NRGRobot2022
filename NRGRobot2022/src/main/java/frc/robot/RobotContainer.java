@@ -57,8 +57,8 @@ public class RobotContainer {
   private final XboxController driveController = new XboxController(2);
   private JoystickButton driverButtonA = new JoystickButton(driveController, 1); // A Button
   private JoystickButton driverButtonB = new JoystickButton(driveController, 2); // B Button
-  private JoystickButton driverButtonX = new JoystickButton(driveController, 3); // x Button
-  private JoystickButton driverButtonY = new JoystickButton(driveController, 4); // y Button
+  private JoystickButton driverButtonX = new JoystickButton(driveController, 3); // X Button
+  private JoystickButton driverButtonY = new JoystickButton(driveController, 4); // Y Button
   private JoystickButton driverLeftBumper = new JoystickButton(driveController, 5);
   private JoystickButton driverRightBumper = new JoystickButton(driveController, 6);
   // Left Middle Button
@@ -75,8 +75,8 @@ public class RobotContainer {
   private final XboxController manipulatorController = new XboxController(3);
   private JoystickButton manipulatorButtonA = new JoystickButton(manipulatorController, 1); // A Button
   private JoystickButton manipulatorButtonB = new JoystickButton(manipulatorController, 2); // B Button
-  private JoystickButton manipulatorButtonX = new JoystickButton(manipulatorController, 3); // x Button
-  private JoystickButton manipulatorButtonY = new JoystickButton(manipulatorController, 4); // y Button
+  private JoystickButton manipulatorButtonX = new JoystickButton(manipulatorController, 3); // X Button
+  private JoystickButton manipulatorButtonY = new JoystickButton(manipulatorController, 4); // Y Button
   private JoystickButton manipulatorLeftBumper = new JoystickButton(manipulatorController, 5);
   private JoystickButton manipulatorRightBumper = new JoystickButton(manipulatorController, 6);
   private JoystickButton manipulatorStartButton = new JoystickButton(manipulatorController, 7);
@@ -90,7 +90,7 @@ public class RobotContainer {
   public static final SwerveDrive swerveDrive = new SwerveDrive();
   public static final RaspberryPiVision raspberryPiVision = new RaspberryPiVision();
   public static final Claw claw = new Claw(1); // Port 1
-  public static final Arm arm = new Arm(); // limit switch channels to be updated
+  public static final Arm arm = new Arm();
   public static final ClimberExtender climberExtender = new ClimberExtender();
   public static final ClimberHooks climberHooks = new ClimberHooks();
   public static final ClimberRotator climberRotator = new ClimberRotator();
@@ -103,68 +103,44 @@ public class RobotContainer {
   private final RotateArmToScoring armToScoring = new RotateArmToScoring(arm);
   private final ManualClimber manualClimber = new ManualClimber(climberRotator, manipulatorController);
 
-    /*
-  CommandSequence:
-  1: 
-  Hook 1: Open
-  Hook 2: Open
-  Hits first bar/(Hits Limit switch 1): 
-    Hook 1: Closed
-  2: 
-  Hook 2: Retracted
-  Hits second bar (Hits Limit switch 2): 
-    Extend Hook 1
-    Retract Hook 1
-  3: 
-  Hook 1: Retracted
-  P2: Retracted
-  Hits Traveral Bar (Hits Limit switch 1): 
-    Extend Hook 2
-  Stop Motor. 
-  */
+  // Raise the climber, drive to the low bar & grab it when detected
+  private static final SequentialCommandGroup climbSequencePart1 =
+      new InstantCommand(() -> climberExtender.setState(ClimberExtender.State.UP))
+          .andThen(new SetHook(climberHooks, HOOK_1, State.OPEN))
+          .andThen(new WaitCommand(3.0))
+          .andThen(new DriveStraight(swerveDrive, .15, Math.toRadians(0)) // Drive slowly to the bar
+              .until(() -> climberHooks.isBarDetected(HOOK_1)))
+          .andThen(new WaitCommand(.1))
+          .andThen(new SetHook(climberHooks, HOOK_1, State.CLOSED));
 
-  private final SequentialCommandGroup climbSequencePart1 = 
-    new ToggleClimberExtender(climberExtender)
-    //new InstantCommand(() -> climberExtender.setState(ClimberExtender.State.UP))
-      .andThen(new SetHook(climberHooks, HOOK_1, State.OPEN))
-      .andThen(new WaitCommand(3.0))
-      .andThen(new DriveStraight(swerveDrive, .15, Math.toRadians(0))) //Drive slowly to the bar
-      .until(() -> climberHooks.isBarDetected(HOOK_1))
-      .andThen(new WaitCommand(.1))
-      .andThen(new SetHook(climberHooks, HOOK_1, State.CLOSED))
-    ; 
-
-    /*
-    private final SequentialCommandGroup climbSequencePart2 = 
+  // Back up until arm passes vertical point, rotate the climber, grab middle bar
+  private static final SequentialCommandGroup climbSequencePart2 =
       new SetHook(climberHooks, HOOK_2, State.OPEN)
-      .andThen(new DriveStraight(swerveDrive, .1, Math.toRadians(180))) // Slowly back up
-      .until(() -> climberRotator.getRotatorPosition() > 500)
-      // .andThen(new RotateClimber(climberRotator)
-      .andThen(new RampRotatorMotor(climberRotator, .5, .85, 3)
-      .until(() -> climberHooks.isBarDetected(HOOK_2)))
-      .andThen(new WaitCommand(.1))
-      .andThen(new SetHook(climberHooks, HOOK_2, State.CLOSED))
-      .andThen(new WaitCommand(1.0))
-      .andThen(new InstantCommand(() -> climberRotator.stopMotor()));
+          .andThen(new DriveStraight(swerveDrive, .1, Math.toRadians(180)) // Slowly back up
+              .until(() -> climberRotator.getRotatorPosition() > 500)) // TBD
+          .andThen(new RampRotatorMotor(climberRotator, .5, .85, 3.0)
+              .until(() -> climberHooks.isBarDetected(HOOK_2)))
+          .andThen(new WaitCommand(.2))
+          .andThen(new SetHook(climberHooks, HOOK_2, State.CLOSED))
+          .andThen(new WaitCommand(1.0))
+          .andThen(new InstantCommand(() -> climberRotator.stopMotor()));
 
-      private final SequentialCommandGroup climbSequencePart3 = 
+  // Release low bar, wait, climb to traversal rung and grab it, delay, release middle bar
+  private static final SequentialCommandGroup climbSequencePart3 =
       new SetHook(climberHooks, HOOK_1, State.OPEN)
-      .andThen(new WaitCommand(2)) // add a .until to the wait command
-      // .andThen(new RotateClimber(climberRotator)
-      .andThen(new RampRotatorMotor(climberRotator, .5, .85, 3)
-      .until(() -> climberHooks.isBarDetected(HOOK_1)))
-      .andThen(new WaitCommand(.1))
-      .andThen(new SetHook(climberHooks, HOOK_1, State.CLOSED))
-      .andThen(new WaitCommand(1.0))
-      .andThen(new SetHook(climberHooks, HOOK_2, State.OPEN))
-      .andThen(new InstantCommand(() -> climberRotator.stopMotor()))
-      ;
+          .andThen(new WaitCommand(2)) // add a .until to the wait command
+          .andThen(new RampRotatorMotor(climberRotator, .5, .85, 3.0)
+              .until(() -> climberHooks.isBarDetected(HOOK_1)))
+          .andThen(new WaitCommand(.2))
+          .andThen(new SetHook(climberHooks, HOOK_1, State.CLOSED))
+          .andThen(new WaitCommand(1.0))
+          .andThen(new SetHook(climberHooks, HOOK_2, State.OPEN))
+          .andThen(new InstantCommand(() -> climberRotator.stopMotor()));
 
-      private final SequentialCommandGroup climbSequenceFull = 
-        climbSequencePart1
-        .andThen(climbSequencePart2)
-        .andThen(climbSequencePart3);
-*/
+  // Fully autonomous 3-stage traversal climb
+  private static final SequentialCommandGroup climbSequenceFull =
+      new SequentialCommandGroup(climbSequencePart1, climbSequencePart2, climbSequencePart3);
+
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
@@ -194,15 +170,14 @@ public class RobotContainer {
 
   /**
    * Use this method to define your button->command mappings. Buttons can be
-   * created by
-   * instantiating a {@link GenericHID} or one of its subclasses ({@link
-   * edu.wpi.first.wpilibj.Joystick} or {@link XboxController}), and then passing
-   * it to a {@link
-   * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
+   * created by instantiating a {@link GenericHID} or one of its subclasses
+   * ({@link edu.wpi.first.wpilibj.Joystick} or {@link XboxController}), and
+   * then passing it to a {@link edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
     driverButtonA.whenPressed(interrupt);
     driverMenuButton.whenPressed(new InstantCommand(() -> swerveDrive.resetHeading()));
+    driverLeftBumper.whenPressed(new KeepClimberRotatorVertical(climberRotator));
 
     driverButtonB.whenPressed(new DriveStraight(swerveDrive, .25, Math.toRadians(0))); // testing
     driverButtonY.whenPressed(new DriveStraight(swerveDrive, .25, Math.toRadians(180))); // testing
@@ -223,12 +198,11 @@ public class RobotContainer {
     manipulatorDpadLeft.whenPressed(new DriveStraight(swerveDrive, .2, Math.toRadians(-90))); // testing
 
     manipulatorButtonA.whenPressed(climbSequencePart1);
-    //manipulatorButtonB.whenPressed(climbSequencePart2);
-    //manipulatorButtonX.whenPressed(climbSequencePart3);
-    manipulatorButtonY.whenPressed(new ToggleClimberExtender(climberExtender));
+    manipulatorButtonB.whenPressed(climbSequencePart2);
+    manipulatorButtonX.whenPressed(climbSequencePart3);
+    manipulatorButtonY.whenPressed(climbSequenceFull);
+    manipulatorMenuButton.whenPressed(new ToggleClimberExtender(climberExtender));
 
-    //manipulatorMenuButton.whenPressed(new KeepClimberRotatorVertical(climberRotator));
-    // manipulatorMenuButton.whenPressed(climbSequenceFull);
   }
 
   public void initSubsystems() {
