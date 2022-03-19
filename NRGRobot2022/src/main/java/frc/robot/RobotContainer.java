@@ -119,7 +119,7 @@ public class RobotContainer {
       new SetHook(climberHooks, HOOK_2, State.OPEN)
           .andThen(new DriveStraight(swerveDrive, .1, Math.toRadians(180)) // Slowly back up
               .until(() -> climberRotator.getRotatorPosition() > 500)) // TBD
-          .andThen(new PerpetualCommand(new InstantCommand(() -> climberRotator.rotateMotor()))
+          .andThen(new PerpetualCommand(new InstantCommand(() -> climberRotator.rotateMotor(), climberRotator))
               .until(() -> climberHooks.isBarDetected(HOOK_2)))
           .andThen(new WaitCommand(.2))
           .andThen(new SetHook(climberHooks, HOOK_2, State.CLOSED))
@@ -130,7 +130,7 @@ public class RobotContainer {
   private static final SequentialCommandGroup climbSequencePart3 =
       new SetHook(climberHooks, HOOK_1, State.OPEN)
           .andThen(new WaitCommand(2)) // add a .until to the wait command
-          .andThen(new RampRotatorMotor(climberRotator, .5, .85, 3.0)
+          .andThen(new PerpetualCommand(new InstantCommand(() -> climberRotator.rotateMotor(), climberRotator))
               .until(() -> climberHooks.isBarDetected(HOOK_1)))
           .andThen(new WaitCommand(.2))
           .andThen(new SetHook(climberHooks, HOOK_1, State.CLOSED))
