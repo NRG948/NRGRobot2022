@@ -45,10 +45,11 @@ public class Autonomous {
         PROFILE_ARM,
         TEST_DRIVE,
         RIGHT_TARMAC_RIGHT_START,
-        RIGHT_TARMAC_LEFT_START,
+        // RIGHT_TARMAC_LEFT_START,
         DOWN_TARMAC_RIGHT_START,
-        DOWN_TARMAC_LEFT_START,
-        RIGHT_TARMAC_SHOOT_BACKUP
+        // DOWN_TARMAC_LEFT_START,
+        RIGHT_TARMAC_SHOOT_BACKUP,
+        DOWN_TARMAC_SHOOT_BACKUP
     }
 
     private static enum ChooseAutoDelay {
@@ -80,10 +81,15 @@ public class Autonomous {
     private static Pose2d RIGHT_TARMAC_RIGHT_START_POSE = new Pose2d(RIGHT_TARMAC_RIGHT_START_LOCATION,
             TARMAC_RIGHT_ORIENTATION);
 
+    private static Translation2d DOWN_TARMAC_LEFT_START_LOCATION = new Translation2d(7.651, 4.957)
+            .minus(ROBOT_FRONT_LEFT_LOCATION.rotateBy(TARMAC_DOWN_ORIENTATION));
+    private static Pose2d DOWN_TARMAC_LEFT_START_POSE = new Pose2d(DOWN_TARMAC_LEFT_START_LOCATION, TARMAC_DOWN_ORIENTATION);
     private static Translation2d RIGHT_TARMAC_RIGHT_WAYPOINT = new Translation2d(7.684, 1.662);
 
     private static Translation2d TARGET_RIGHT_LOCATION = new Translation2d(7.583, 0.594);
     private static Pose2d TARGET_RIGHT_POSE = new Pose2d(TARGET_RIGHT_LOCATION, Rotation2d.fromDegrees(-90));
+    private static Translation2d TARGET_DOWN_LOCATION = new Translation2d(5.177, 6.105);
+    private static Pose2d TARGET_DOWN_POSE = new Pose2d(TARGET_DOWN_LOCATION, Rotation2d.fromDegrees(159));
 
     /**
      * Use this to pass the autonomous command to the main {@link Robot} class.
@@ -128,6 +134,9 @@ public class Autonomous {
                 return new ResetSubsystems(RobotContainer.swerveDrive).andThen(
                         new InstantCommand(
                                 () -> RobotContainer.swerveDrive.resetOdometry(RIGHT_TARMAC_RIGHT_START_POSE)),
+                        new RotateArmToScoring(RobotContainer.arm),
+                        new AutoClaw(1.0, 1, RobotContainer.claw),
+                        new RotateArmToStowed(RobotContainer.arm),
                         CommandUtils.newFollowWaypointsCommand(RobotContainer.swerveDrive,
                                 RIGHT_TARMAC_RIGHT_START_POSE,
                                 List.of(RIGHT_TARMAC_RIGHT_WAYPOINT),
@@ -151,6 +160,20 @@ public class Autonomous {
                                 RIGHT_TARMAC_RIGHT_START_POSE,
                                 List.of(new Translation2d(7.684, 1.662)),
                                 TARGET_RIGHT_POSE,
+                                true),
+                        new InstantCommand(() -> RobotContainer.swerveDrive.stopMotors()));
+
+            case DOWN_TARMAC_SHOOT_BACKUP:
+                return new ResetSubsystems(RobotContainer.swerveDrive).andThen(
+                        new InstantCommand(
+                                () -> RobotContainer.swerveDrive.resetOdometry(DOWN_TARMAC_LEFT_START_POSE)),
+                        new RotateArmToScoring(RobotContainer.arm),
+                        new AutoClaw(1.0, 1, RobotContainer.claw),
+                        new RotateArmToStowed(RobotContainer.arm),
+                        CommandUtils.newFollowWaypointsCommand(RobotContainer.swerveDrive,
+                                DOWN_TARMAC_LEFT_START_POSE,
+                                List.of(new Translation2d(5.919, 5.362)),
+                                TARGET_DOWN_POSE,
                                 true),
                         new InstantCommand(() -> RobotContainer.swerveDrive.stopMotors()));
 
@@ -190,10 +213,13 @@ public class Autonomous {
         }
 
         chooseAutoPath.addOption("Right Tarmac Right Start", ChooseAutoPath.RIGHT_TARMAC_RIGHT_START);
-        chooseAutoPath.addOption("Right Tamrac Left Start", ChooseAutoPath.RIGHT_TARMAC_LEFT_START);
+        // chooseAutoPath.addOption("Right Tamrac Left Start",
+        // ChooseAutoPath.RIGHT_TARMAC_LEFT_START);
         chooseAutoPath.addOption("Down Tarmac Right Start", ChooseAutoPath.DOWN_TARMAC_RIGHT_START);
-        chooseAutoPath.addOption("Down Tarmac Left Start", ChooseAutoPath.DOWN_TARMAC_LEFT_START);
+        // chooseAutoPath.addOption("Down Tarmac Left Start",
+        // ChooseAutoPath.DOWN_TARMAC_LEFT_START);
         chooseAutoPath.addOption("Right Tarmac Shoot & Backup", ChooseAutoPath.RIGHT_TARMAC_SHOOT_BACKUP);
+        chooseAutoPath.addOption("Down Tarmac Shoot & Backup", ChooseAutoPath.DOWN_TARMAC_SHOOT_BACKUP);
         autoLayout.add("AutoPath", chooseAutoPath).withWidget(BuiltInWidgets.kComboBoxChooser);
 
         chooseAutoDelay.setDefaultOption("0 sec", ChooseAutoDelay.NO_DELAY);
