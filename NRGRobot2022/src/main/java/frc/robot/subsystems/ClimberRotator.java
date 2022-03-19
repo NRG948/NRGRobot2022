@@ -42,6 +42,7 @@ public class ClimberRotator extends SubsystemBase {
 
 	public ClimberRotator() {
 		climberMotor = new TalonFX(ClimberConstants.kClimberRotatorMotor);
+		climberMotor.setSelectedSensorPosition(0);
 	}
 
 	@Override
