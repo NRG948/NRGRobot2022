@@ -103,7 +103,7 @@ public class RobotContainer {
   private final RotateArmToScoring armToScoring = new RotateArmToScoring(arm);
   private final ManualClimber manualClimber = new ManualClimber(climberRotator, manipulatorController);
 
-  // Raise the climber, drive to the low bar & grab it when detected
+  // Raise the climber, drive to the MID RUNG & grab it when detected
   private static final SequentialCommandGroup climbSequencePart1 =
       new InstantCommand(() -> climberExtender.setState(ClimberExtender.State.UP))
           .andThen(new SetHook(climberHooks, HOOK_1, State.OPEN))
@@ -113,7 +113,7 @@ public class RobotContainer {
           .andThen(new WaitCommand(.1))
           .andThen(new SetHook(climberHooks, HOOK_1, State.CLOSED));
 
-  // Back up until arm passes vertical point, rotate the climber, grab middle bar
+  // Back up until arm passes vertical point, rotate the climber, grab HIGH RUNG
   private static final SequentialCommandGroup climbSequencePart2 =
       new SetHook(climberHooks, HOOK_2, State.OPEN)
           .andThen(new DriveStraight(swerveDrive, .1, Math.toRadians(180)) // Slowly back up
@@ -125,7 +125,7 @@ public class RobotContainer {
           .andThen(new WaitCommand(1.0))
           .andThen(new InstantCommand(() -> climberRotator.stopMotor()));
 
-  // Release low bar, wait, climb to traversal rung and grab it, delay, release middle bar
+  // Release MID RUNG, wait, climb to TRAVERSAL RUNG and grab it, delay, release HIGH RUNG
   private static final SequentialCommandGroup climbSequencePart3 =
       new SetHook(climberHooks, HOOK_1, State.OPEN)
           .andThen(new WaitCommand(2)) // add a .until to the wait command
