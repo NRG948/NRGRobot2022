@@ -14,7 +14,9 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.PerpetualCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.POVButton;
@@ -94,10 +96,10 @@ public class RobotContainer {
   public static final ClimberExtender climberExtender = new ClimberExtender();
   public static final ClimberHooks climberHooks = new ClimberHooks();
   public static final ClimberRotator climberRotator = new ClimberRotator();
+  public static final Subsystem[] allSubsystems = new Subsystem[] {swerveDrive, raspberryPiVision, claw, arm, climberExtender, climberHooks, climberRotator};
 
   // Commands
   private final DriveWithController driveWithController = new DriveWithController(swerveDrive, driveController);
-  private final Interrupt interrupt = new Interrupt(swerveDrive);
   private final ManualClaw manualClaw = new ManualClaw(claw, manipulatorController);
   private final RotateArmToResting armToResting = new RotateArmToResting(arm);
   private final RotateArmToScoring armToScoring = new RotateArmToScoring(arm);
@@ -119,7 +121,7 @@ public class RobotContainer {
       new SetHook(climberHooks, HOOK_2, State.OPEN)
           .andThen(new DriveStraight(swerveDrive, .1, Math.toRadians(180)) // Slowly back up
               .until(() -> climberRotator.getRotatorPosition() > 500)) // TBD
-          .andThen(new RampRotatorMotor(climberRotator, .35, .85, 2.0)
+          .andThen(new PerpetualCommand(new InstantCommand(() -> climberRotator.rotateMotor()))
               .until(() -> climberHooks.isBarDetected(HOOK_2)))
           .andThen(new WaitCommand(.2))
           .andThen(new SetHook(climberHooks, HOOK_2, State.CLOSED))
@@ -176,7 +178,7 @@ public class RobotContainer {
    * then passing it to a {@link edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
-    driverButtonA.whenPressed(interrupt);
+    driverButtonA.whenPressed(new InstantCommand(() -> {}, allSubsystems) ); // Interrupt all
     driverMenuButton.whenPressed(new InstantCommand(() -> swerveDrive.resetHeading()));
     driverLeftBumper.whenPressed(new KeepClimberRotatorVertical(climberRotator));
 
