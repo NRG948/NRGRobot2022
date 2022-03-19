@@ -8,7 +8,7 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.SwerveDrive;
 
 public class DriveStraight extends CommandBase {
-  private final SwerveDrive swerveDrive;
+  protected final SwerveDrive swerveDrive;
   private final double xSpeed;
   private final double ySpeed;
 

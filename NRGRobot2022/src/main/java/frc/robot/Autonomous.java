@@ -22,6 +22,7 @@ import frc.robot.commands.AutoClaw;
 import frc.robot.commands.CharacterizeArm;
 import frc.robot.commands.CharacterizeSwerveDrive;
 import frc.robot.commands.CommandUtils;
+import frc.robot.commands.DriveStraightDistance;
 import frc.robot.commands.ResetSubsystems;
 import frc.robot.commands.RotateArmToScoring;
 import frc.robot.commands.RotateArmToStowed;
@@ -49,7 +50,8 @@ public class Autonomous {
         DOWN_TARMAC_RIGHT_START,
         // DOWN_TARMAC_LEFT_START,
         RIGHT_TARMAC_SHOOT_BACKUP,
-        DOWN_TARMAC_SHOOT_BACKUP
+        DOWN_TARMAC_SHOOT_BACKUP,
+        DOWN_TARMAC_DRIVE_BACKWARDS
     }
 
     private static enum ChooseAutoDelay {
@@ -178,6 +180,10 @@ public class Autonomous {
                                 true),
                         new InstantCommand(() -> RobotContainer.swerveDrive.stopMotors()));
 
+            case DOWN_TARMAC_DRIVE_BACKWARDS:
+                return new ResetSubsystems(RobotContainer.swerveDrive)
+                    .andThen(new DriveStraightDistance(RobotContainer.swerveDrive, 0.33, Math.toRadians(-180), 1));
+
             default:
                 return null;
 
@@ -223,6 +229,7 @@ public class Autonomous {
         // ChooseAutoPath.DOWN_TARMAC_LEFT_START);
         chooseAutoPath.addOption("Right Tarmac Shoot & Backup", ChooseAutoPath.RIGHT_TARMAC_SHOOT_BACKUP);
         chooseAutoPath.addOption("Down Tarmac Shoot & Backup", ChooseAutoPath.DOWN_TARMAC_SHOOT_BACKUP);
+        chooseAutoPath.addOption("Down Tarmac Drive Straight Backwards", ChooseAutoPath.DOWN_TARMAC_DRIVE_BACKWARDS);
         autoLayout.add("AutoPath", chooseAutoPath).withWidget(BuiltInWidgets.kComboBoxChooser);
 
         chooseAutoDelay.setDefaultOption("0 sec", ChooseAutoDelay.NO_DELAY);
