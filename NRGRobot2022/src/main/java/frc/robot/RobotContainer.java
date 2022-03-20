@@ -107,13 +107,15 @@ public class RobotContainer {
   // Raise the climber, drive to the MID RUNG & grab it when detected
   private static final SequentialCommandGroup climbSequencePart1 =
       new InstantCommand(() -> swerveDrive.resetHeading())
-          .andThen(() -> climberExtender.setState(ClimberExtender.State.UP))
-          .andThen(new SetHook(climberHooks, HOOK_1, State.OPEN))
+          .andThen(new InstantCommand(() -> climberExtender.setState(ClimberExtender.State.UP))
+            .alongWith(new InstantCommand(() -> {arm.setGoal(75); arm.enable();}))
+            .alongWith(new SetHook(climberHooks, HOOK_1, State.OPEN)))
           .andThen(new WaitCommand(3.0)) // wait for extender to go up
           .andThen(new DriveStraight(swerveDrive, .15, Math.toRadians(0)) // Drive slowly to the bar
               .until(() -> climberHooks.isBarDetected(HOOK_1)))
           .andThen(new WaitCommand(.1))
-          .andThen(new SetHook(climberHooks, HOOK_1, State.CLOSED));
+          .andThen(new SetHook(climberHooks, HOOK_1, State.CLOSED))
+          .andThen(new RotateArmToResting(arm).withTimeout(1.0));
 
   // Back up until arm passes vertical point, rotate the climber, grab HIGH RUNG
   private static final SequentialCommandGroup climbSequencePart2 =
