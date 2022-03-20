@@ -13,6 +13,7 @@ import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.PerpetualCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
@@ -142,6 +143,10 @@ public class RobotContainer {
   private static final SequentialCommandGroup climbSequenceFull = null;
       // new SequentialCommandGroup(climbSequencePart1, climbSequencePart2, climbSequencePart3);
 
+  private static final Command abortClimb = new InstantCommand(() -> {}, allSubsystems)
+    .andThen(new PerpetualCommand(new InstantCommand(() -> climberRotator.rotateMotor(-0.15), climberRotator)))
+      .until(() -> climberRotator.getRotatorPosition() <= 10);
+
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
@@ -201,7 +206,7 @@ public class RobotContainer {
     manipulatorButtonA.whenPressed(climbSequencePart1);
     manipulatorButtonB.whenPressed(climbSequencePart2);
     manipulatorButtonX.whenPressed(climbSequencePart3);
-    // manipulatorButtonY.whenPressed(climbSequenceFull);
+    manipulatorButtonY.whenPressed(abortClimb);
     manipulatorMenuButton.whenPressed(new ToggleClimberExtender(climberExtender));
 
   }
