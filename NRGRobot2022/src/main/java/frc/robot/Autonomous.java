@@ -18,12 +18,14 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
+import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.commands.AutoClaw;
 import frc.robot.commands.CharacterizeArm;
 import frc.robot.commands.CharacterizeSwerveDrive;
 import frc.robot.commands.CommandUtils;
 import frc.robot.commands.DriveStraightDistance;
 import frc.robot.commands.ResetSubsystems;
+import frc.robot.commands.RotateArmToResting;
 import frc.robot.commands.RotateArmToScoring;
 import frc.robot.commands.RotateArmToStowed;
 import frc.robot.preferences.RobotPreferencesLayout;
@@ -78,7 +80,6 @@ public class Autonomous {
     private static Rotation2d TARMAC_RIGHT_ORIENTATION = Rotation2d.fromDegrees(69);
 
     // Initial position for Tarmac right, right-side start.
-    // TODO: Include adjust for bumper offset from wheel.
     private static Translation2d RIGHT_TARMAC_RIGHT_START_LOCATION = new Translation2d(8.52, 3.04)
             .minus(ROBOT_FRONT_RIGHT_LOCATION.rotateBy(TARMAC_RIGHT_ORIENTATION));
     private static Pose2d RIGHT_TARMAC_RIGHT_START_POSE = new Pose2d(RIGHT_TARMAC_RIGHT_START_LOCATION,
@@ -89,7 +90,6 @@ public class Autonomous {
             .minus(ROBOT_FRONT_LEFT_LOCATION.rotateBy(TARMAC_DOWN_ORIENTATION));
     private static Pose2d DOWN_TARMAC_LEFT_START_POSE = new Pose2d(DOWN_TARMAC_LEFT_START_LOCATION,
             TARMAC_DOWN_ORIENTATION);
-    
 
     private static Translation2d TARGET_RIGHT_LOCATION = new Translation2d(7.583, 0.594);
     private static Pose2d TARGET_RIGHT_POSE = new Pose2d(TARGET_RIGHT_LOCATION, Rotation2d.fromDegrees(-90));
@@ -147,12 +147,23 @@ public class Autonomous {
                                 RIGHT_TARMAC_RIGHT_START_POSE,
                                 List.of(RIGHT_TARMAC_RIGHT_WAYPOINT),
                                 TARGET_RIGHT_POSE,
-                                true),
+                                true)
+                                .alongWith(new WaitUntilCommand(
+                                        () -> RobotContainer.swerveDrive.getHeadingDegrees() <= -45.0)
+                                                .andThen(new RotateArmToResting(RobotContainer.arm))
+                                                .andThen(() -> RobotContainer.claw.activateClaw(-1.0))),
                         new WaitCommand(1.0),
+                        new InstantCommand(() -> RobotContainer.claw.stopMotor()),
                         CommandUtils.newFutureFollowWaypointsCommand(RobotContainer.swerveDrive,
                                 List.of(RIGHT_TARMAC_RIGHT_WAYPOINT),
                                 RIGHT_TARMAC_RIGHT_START_POSE,
-                                true),
+                                true)
+                                .alongWith(new WaitUntilCommand(
+                                        () -> RobotContainer.swerveDrive.getHeadingDegrees() >= -60.0)
+                                                .andThen(new RotateArmToStowed(RobotContainer.arm))),
+                        new RotateArmToScoring(RobotContainer.arm),
+                        new AutoClaw(1.0, 1, RobotContainer.claw),
+                        new RotateArmToStowed(RobotContainer.arm),
                         new InstantCommand(() -> RobotContainer.swerveDrive.stopMotors()));
 
             case RIGHT_TARMAC_SHOOT_BACKUP:
@@ -189,7 +200,8 @@ public class Autonomous {
 
             case RIGHT_TARMAC_DRIVE_BACKWARDS:
                 return new ResetSubsystems(RobotContainer.swerveDrive)
-                        .andThen(() -> RobotContainer.swerveDrive.resetOdometry(new Pose2d(0, 0, Rotation2d.fromDegrees(45))))
+                        .andThen(() -> RobotContainer.swerveDrive
+                                .resetOdometry(new Pose2d(0, 0, Rotation2d.fromDegrees(45))))
                         .andThen(new DriveStraightDistance(RobotContainer.swerveDrive, 0.33, Math.toRadians(225), 1));
 
             default:
@@ -227,8 +239,7 @@ public class Autonomous {
             chooseAutoPath.addOption("Test Drive", ChooseAutoPath.TEST_DRIVE);
         }
 
-        // chooseAutoPath.addOption("Right Tarmac Right Start",
-        // ChooseAutoPath.RIGHT_TARMAC_RIGHT_START);
+        chooseAutoPath.addOption("Right Tarmac Two Balls", ChooseAutoPath.RIGHT_TARMAC_RIGHT_START);
         // chooseAutoPath.addOption("Right Tamrac Left Start",
         // ChooseAutoPath.RIGHT_TARMAC_LEFT_START);
         // chooseAutoPath.addOption("Down Tarmac Right Start",
