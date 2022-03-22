@@ -20,7 +20,7 @@ import frc.robot.preferences.RobotPreferencesLayout;
 import frc.robot.preferences.RobotPreferencesValue;
 import frc.robot.preferences.RobotPreferences.BooleanValue;
 
-@RobotPreferencesLayout(groupName = "RaspberryPi", column = 1, row = 3, width = 1, height = 1)
+@RobotPreferencesLayout(groupName = "RaspberryPi", column = 2, row = 3, width = 1, height = 1)
 public class RaspberryPiVision extends SubsystemBase {
   public static final String TARGET_PIPELINE_NAME_KEY = "Vision/Target/PipelineName";
   public static final String RED_CARGO_PIPELINE = "RedCargoPipeline";

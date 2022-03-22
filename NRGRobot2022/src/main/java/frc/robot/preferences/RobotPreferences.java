@@ -24,7 +24,7 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.shuffleboard.SimpleWidget;
 
 /** A class to manage robot preferences. */
-@RobotPreferencesLayout(groupName = "Preferences", column = 0, row = 3, width = 1, height = 1)
+@RobotPreferencesLayout(groupName = "Preferences", column = 0, row = 3, width = 2, height = 1, type = "Grid Layout")
 public class RobotPreferences {
 
     /** An interface to support the Visitor pattern on preferences values. */
@@ -326,6 +326,9 @@ public class RobotPreferences {
 
     @RobotPreferencesValue
     public static BooleanValue writeDefault = new BooleanValue("Preferences", "WriteDefault", true);
+
+    @RobotPreferencesValue
+    public static BooleanValue practiceBot = new BooleanValue("Preferences", "practiceBot", false);
 
     private static Reflections reflections = new Reflections(
             new ConfigurationBuilder()
