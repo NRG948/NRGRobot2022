@@ -17,14 +17,15 @@ public class DriveStraight extends CommandBase {
    * 
    * @param sDrive  An instance of the swerve drive subsystem.
    * @param speed   Speed to drive.
-   * @param heading The direction in radians to drive.
+   * @param heading The direction in degrees to drive.
    */
   public DriveStraight(SwerveDrive sDrive, double speed, double heading) {
     // Use addRequirements() here to declare subsystem dependencies.
     swerveDrive = sDrive;
     addRequirements(swerveDrive);
-    xSpeed = speed * Math.cos(heading);
-    ySpeed = speed * Math.sin(heading);
+    double headingRadians = Math.toRadians(heading);
+    xSpeed = speed * Math.cos(headingRadians);
+    ySpeed = speed * Math.sin(headingRadians);
   }
 
   // Called when the command is initially scheduled.

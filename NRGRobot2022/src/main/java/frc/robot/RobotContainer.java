@@ -112,7 +112,7 @@ public class RobotContainer {
             .alongWith(new InstantCommand(() -> {arm.setGoal(Math.toRadians(75)); arm.enable();}))
             .alongWith(new SetHook(climberHooks, HOOK_2, State.OPEN)))
           .andThen(new WaitCommand(3.0)) // wait for extender to go up
-          .andThen(new DriveStraight(swerveDrive, .15, Math.toRadians(0)) // Drive slowly to the bar
+          .andThen(new DriveStraight(swerveDrive, .15, 0) // Drive slowly to the bar
               .until(() -> climberHooks.isBarDetected(HOOK_2)))
           .andThen(new WaitCommand(.1))
           .andThen(new SetHook(climberHooks, HOOK_2, State.CLOSED));
@@ -121,7 +121,7 @@ public class RobotContainer {
   // Back up until arm passes vertical point, rotate the climber, grab HIGH RUNG
   private static final SequentialCommandGroup climbSequencePart2 =
       new SetHook(climberHooks, HOOK_2, State.OPEN)
-          .andThen(new DriveStraight(swerveDrive, .1, Math.toRadians(180)) // Slowly back up
+          .andThen(new DriveStraight(swerveDrive, .1, 180) // Slowly back up
               .until(() -> climberRotator.getRotatorPosition() > 500)) // TBD
           .andThen(new PerpetualCommand(new InstantCommand(() -> climberRotator.rotateMotor(), climberRotator))
               .until(() -> climberHooks.isBarDetected(HOOK_2)))
