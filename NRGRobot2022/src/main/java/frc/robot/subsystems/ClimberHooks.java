@@ -29,10 +29,8 @@ public class ClimberHooks extends SubsystemBase {
 
     /** Creates a new ClimberHooks subsystem. **/
     public ClimberHooks() {
-        // piston1 = new DoubleSolenoid(ClimberConstants.PH_ID, Pneumatics.getModuleType(), 2, 3);
-        piston1 = null;
-
-        piston2 = new DoubleSolenoid(ClimberConstants.PH_ID, Pneumatics.getModuleType(), 9, 5);
+        piston1 = new DoubleSolenoid(ClimberConstants.PH_ID, Pneumatics.getModuleType(), 0, 1);
+        piston2 = new DoubleSolenoid(ClimberConstants.PH_ID, Pneumatics.getModuleType(), 2, 3);
 
         // The beam breaks will read TBD(true/false) when it engages the bar
         beamBreak1 = new DigitalInput(6);
