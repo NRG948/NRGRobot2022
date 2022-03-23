@@ -91,7 +91,7 @@ public class Autonomous {
     private static Pose2d DOWN_TARMAC_LEFT_START_POSE = new Pose2d(DOWN_TARMAC_LEFT_START_LOCATION,
             TARMAC_DOWN_ORIENTATION);
 
-    private static Translation2d TARGET_RIGHT_LOCATION = new Translation2d(7.583, 0.594);
+    private static Translation2d TARGET_RIGHT_LOCATION = new Translation2d(7.583, 0.694);
     private static Pose2d TARGET_RIGHT_POSE = new Pose2d(TARGET_RIGHT_LOCATION, Rotation2d.fromDegrees(-90));
 
     private static Translation2d TARGET_DOWN_LOCATION = new Translation2d(5.177, 6.105);
@@ -149,7 +149,7 @@ public class Autonomous {
                                 TARGET_RIGHT_POSE,
                                 true)
                                 .alongWith(new WaitUntilCommand(
-                                        () -> RobotContainer.swerveDrive.getHeadingDegrees() <= -45.0)
+                                        () -> RobotContainer.swerveDrive.getHeadingDegrees() <= 15.0)
                                                 .andThen(new RotateArmToResting(RobotContainer.arm))
                                                 .andThen(() -> RobotContainer.claw.activateClaw(-1.0))),
                         new WaitCommand(1.0),
@@ -158,9 +158,7 @@ public class Autonomous {
                                 List.of(RIGHT_TARMAC_RIGHT_WAYPOINT),
                                 RIGHT_TARMAC_RIGHT_START_POSE,
                                 true)
-                                .alongWith(new WaitUntilCommand(
-                                        () -> RobotContainer.swerveDrive.getHeadingDegrees() >= -60.0)
-                                                .andThen(new RotateArmToStowed(RobotContainer.arm))),
+                                .alongWith(new RotateArmToStowed(RobotContainer.arm)),
                         new RotateArmToScoring(RobotContainer.arm),
                         new AutoClaw(1.0, 1, RobotContainer.claw),
                         new RotateArmToStowed(RobotContainer.arm),
