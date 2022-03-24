@@ -13,24 +13,15 @@ import frc.robot.utilities.Pneumatics;
 
 public class ClimberHooks extends SubsystemBase {
 
-    private final DoubleSolenoid piston1;
-    private final DoubleSolenoid piston2;
     private final DigitalInput beamBreak1;
     private final DigitalInput beamBreak2;
-
-    public enum State {
-        OPEN, // kForward position
-        CLOSED; // kReverse position
-    }
-
+    
     public enum HookSelection {
         HOOK_1, HOOK_2;
     }
 
     /** Creates a new ClimberHooks subsystem. **/
     public ClimberHooks() {
-        piston1 = new DoubleSolenoid(ClimberConstants.PH_ID, Pneumatics.getModuleType(), 0, 1);
-        piston2 = new DoubleSolenoid(ClimberConstants.PH_ID, Pneumatics.getModuleType(), 2, 3);
 
         // The beam breaks will read TBD(true/false) when it engages the bar
         beamBreak1 = new DigitalInput(6);
@@ -53,29 +44,6 @@ public class ClimberHooks extends SubsystemBase {
             return !beamBreak1.get();
         } else {
             return !beamBreak2.get();
-        }
-    }
-
-    /** Returns the current state of a climber hook piston. */
-    public State getState(HookSelection hook) {
-        return getPiston(hook).get() == Value.kForward ? State.OPEN : State.CLOSED;
-    }
-
-    /** Sets the state of a climber hook piston. */
-    public void setState(State state, HookSelection hook) {
-        getPiston(hook).set(state == State.OPEN ? Value.kForward : Value.kReverse);
-    }
-
-    /** Reverses the state of a climber hook piston. */
-    public void toggleState(HookSelection hook) {
-        setState(getState(hook) == State.OPEN ? State.CLOSED : State.OPEN, hook);
-    }
-
-    private DoubleSolenoid getPiston(HookSelection hook) {
-        if (hook.equals(HookSelection.HOOK_1)) {
-            return piston1;
-        } else {
-            return piston2;
         }
     }
 
