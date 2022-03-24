@@ -15,6 +15,9 @@ public class ClimberHooks extends SubsystemBase {
 
     private final DigitalInput beamBreak1;
     private final DigitalInput beamBreak2;
+    private boolean beamBreak1Previous = false; // Value of beamBreak1 last cycle
+    private boolean beamBreak2Previous = false;
+
     
     public enum HookSelection {
         HOOK_1, HOOK_2;
@@ -31,6 +34,9 @@ public class ClimberHooks extends SubsystemBase {
     @Override
     public void periodic() {
         // This method will be called once per scheduler run
+        beamBreak1Previous = beamBreak1.get();
+        beamBreak2Previous = beamBreak2.get();
+
     }
 
     @Override
@@ -44,6 +50,13 @@ public class ClimberHooks extends SubsystemBase {
             return !beamBreak1.get();
         } else {
             return !beamBreak2.get();
+        }
+    }
+    public boolean isPassedBar(HookSelection hook){
+        if (hook.equals(HookSelection.HOOK_1)) {
+            return beamBreak1Previous == true && beamBreak1.get() == false;
+        } else {
+            return beamBreak2Previous == true && beamBreak2.get() == false;
         }
     }
 
