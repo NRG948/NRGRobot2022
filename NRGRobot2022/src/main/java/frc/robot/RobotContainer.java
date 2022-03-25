@@ -5,28 +5,19 @@
 
 package frc.robot;
 
-import static frc.robot.subsystems.ClimberHooks.HookSelection.HOOK_1;
-import static frc.robot.subsystems.ClimberHooks.HookSelection.HOOK_2;
-
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
-import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.PerpetualCommand;
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.Subsystem;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.POVButton;
-import frc.robot.commands.DriveStraight;
 import frc.robot.commands.DriveWithController;
 import frc.robot.commands.KeepClimberRotatorVertical;
 import frc.robot.commands.ManualClaw;
 import frc.robot.commands.ManualClimber;
-import frc.robot.commands.RampRotatorMotor;
 import frc.robot.commands.RotateArmToResting;
 import frc.robot.commands.RotateArmToScoring;
 import frc.robot.commands.RotateArmToStowed;
@@ -190,8 +181,8 @@ public class RobotContainer {
     driverMenuButton.whenPressed(new InstantCommand(() -> swerveDrive.resetHeading()));
     driverLeftBumper.whenPressed(new KeepClimberRotatorVertical(climberRotator));
 
-   // driverButtonB.whenPressed(new DriveStraight(swerveDrive, .25, Math.toRadians(0))); // testing
-    //driverButtonY.whenPressed(new DriveStraight(swerveDrive, .25, Math.toRadians(180))); // testing
+    // driverButtonB.whenPressed(new DriveStraight(swerveDrive, .25, 0)); // testing
+    // driverButtonY.whenPressed(new DriveStraight(swerveDrive, .25, 180)); // testing
 
     driverDpadUp.whenPressed(new TurnToAngle(swerveDrive, 135));
     driverDpadRight.whenPressed(new TurnToAngle(swerveDrive, 45));
@@ -202,9 +193,9 @@ public class RobotContainer {
     manipulatorRightBumper.whenPressed(armToScoring);
     manipulatorStartButton.whenPressed(manualClimber);
     manipulatorDpadRight.whenPressed(new RotateArmToStowed(arm));
-   // manipulatorDpadLeft.whenPressed(new DriveStraight(swerveDrive, .2, Math.toRadians(-90))); // testing
+    // manipulatorDpadLeft.whenPressed(new DriveStraight(swerveDrive, .2, -90)); // testing
 
-    manipulatorButtonA.whenPressed(climbSequencePart1);
+    // manipulatorButtonA.whenPressed(climbSequencePart1);
     // manipulatorButtonB.whenPressed(climbSequencePart2);
     // manipulatorButtonX.whenPressed(climbSequencePart3);
     // manipulatorButtonY.whenPressed(abortClimb);
