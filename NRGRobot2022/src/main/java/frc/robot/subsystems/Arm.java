@@ -42,6 +42,8 @@ public class Arm extends ProfiledPIDSubsystem {
     public static final DoubleValue kI = new DoubleValue("Arm", "kI", 0);
     @RobotPreferencesValue
     public static final DoubleValue kD = new DoubleValue("Arm", "kD", 0);
+    @RobotPreferencesValue
+    public static final DoubleValue tolerance = new DoubleValue("Arm", "tolerance", 1);
 
     // The default values for the feed forward gain were estimated using
     // http://reca.lc.
@@ -62,6 +64,7 @@ public class Arm extends ProfiledPIDSubsystem {
     private final DutyCycle encoderDutyCycle = new DutyCycle(encoderDigitalInput);
     private final ArmFeedforward m_feedforward = new ArmFeedforward(
             kS.getValue(), kG.getValue(), kV.getValue(), kA.getValue());
+    private double lastMotorOutput;
 
     /** Create a new ArmSubsystem. */
     public Arm() {
@@ -73,6 +76,7 @@ public class Arm extends ProfiledPIDSubsystem {
                         ArmConstants.kMaxVelocityRadPerSecond,
                         ArmConstants.kMaxAccelerationRadPerSecSquared)),
                 0);
+        this.getController().setTolerance(Math.toRadians(tolerance.getValue()));
 
         // Initialize the goal state to the arm's current position.
         double currentPosition = getRadians();
@@ -104,6 +108,7 @@ public class Arm extends ProfiledPIDSubsystem {
         } else {
             m_motor.stopMotor();
         }
+        lastMotorOutput = output;
     }
 
     @Override
@@ -153,8 +158,9 @@ public class Arm extends ProfiledPIDSubsystem {
 
         ShuffleboardLayout control = armTab.getLayout("Control", BuiltInLayouts.kList)
                 .withPosition(4, 0)
-                .withSize(2, 2);
+                .withSize(3, 4);
         ShuffleboardUtils.addNumberSlider(control, "Arm Motor", 0.0, voltage -> setMotorVoltage(voltage))
                 .withProperties(Map.of("Min", -12.0, "Max", 12.0, "Block increment", 0.05));
+                control.addNumber("Motor Output", () -> lastMotorOutput).withWidget(BuiltInWidgets.kGraph);
     }
 }
