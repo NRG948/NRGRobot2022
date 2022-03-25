@@ -92,7 +92,7 @@ public class Autonomous {
             TARMAC_DOWN_ORIENTATION);
 
     private static Translation2d TARGET_RIGHT_LOCATION = new Translation2d(7.583, 0.694);
-    private static Pose2d TARGET_RIGHT_POSE = new Pose2d(TARGET_RIGHT_LOCATION, Rotation2d.fromDegrees(-90));
+    private static Pose2d TARGET_RIGHT_POSE = new Pose2d(TARGET_RIGHT_LOCATION, Rotation2d.fromDegrees(-90 - 10));
 
     private static Translation2d TARGET_DOWN_LOCATION = new Translation2d(5.177, 6.105);
     private static Pose2d TARGET_DOWN_POSE = new Pose2d(TARGET_DOWN_LOCATION, Rotation2d.fromDegrees(159));
