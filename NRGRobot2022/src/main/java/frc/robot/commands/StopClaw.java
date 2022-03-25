@@ -21,6 +21,7 @@ public class StopClaw extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+    System.out.println("Stopping claw");
     claw.activateClaw(0);
   }
 
