@@ -141,7 +141,8 @@ public class Autonomous {
                         new InstantCommand(
                                 () -> RobotContainer.swerveDrive.resetOdometry(RIGHT_TARMAC_RIGHT_START_POSE)),
                         new RotateArmToScoring(RobotContainer.arm),
-                        new AutoClaw(1.0, 1, RobotContainer.claw),
+                        new WaitUntilCommand(() -> RobotContainer.arm.isAtScoringPosition()).withTimeout(0.5),
+                        new AutoClaw(0.75, 1, RobotContainer.claw),
                         new RotateArmToStowed(RobotContainer.arm),
                         CommandUtils.newFollowWaypointsCommand(RobotContainer.swerveDrive,
                                 RIGHT_TARMAC_RIGHT_START_POSE,
@@ -152,17 +153,16 @@ public class Autonomous {
                                         () -> RobotContainer.swerveDrive.getHeadingDegrees() <= 15.0)
                                                 .andThen(new RotateArmToResting(RobotContainer.arm))
                                                 .andThen(() -> RobotContainer.claw.activateClaw(-1.0))),
-                        new WaitCommand(1.0),
                         new InstantCommand(() -> RobotContainer.claw.stopMotor()),
-                        CommandUtils.newFutureFollowWaypointsCommand(RobotContainer.swerveDrive,
+                        CommandUtils.newFollowWaypointsCommand(RobotContainer.swerveDrive,
+                                TARGET_RIGHT_POSE,
                                 List.of(RIGHT_TARMAC_RIGHT_WAYPOINT),
                                 RIGHT_TARMAC_RIGHT_START_POSE,
                                 true)
-                                .alongWith(new RotateArmToStowed(RobotContainer.arm)),
-                        new RotateArmToScoring(RobotContainer.arm),
-                        new AutoClaw(1.0, 1, RobotContainer.claw),
-                        new RotateArmToStowed(RobotContainer.arm),
-                        new InstantCommand(() -> RobotContainer.swerveDrive.stopMotors()));
+                                .alongWith(new RotateArmToScoring(RobotContainer.arm)),
+                        new WaitUntilCommand(() -> RobotContainer.arm.isAtScoringPosition()).withTimeout(0.5),
+                        new AutoClaw(0.75, 1, RobotContainer.claw),
+                        new RotateArmToStowed(RobotContainer.arm));
 
             case RIGHT_TARMAC_SHOOT_BACKUP:
                 return new ResetSubsystems(RobotContainer.swerveDrive).andThen(
