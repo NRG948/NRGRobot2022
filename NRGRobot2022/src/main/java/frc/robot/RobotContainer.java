@@ -30,7 +30,6 @@ import frc.robot.commands.RampRotatorMotor;
 import frc.robot.commands.RotateArmToResting;
 import frc.robot.commands.RotateArmToScoring;
 import frc.robot.commands.RotateArmToStowed;
-import frc.robot.commands.SetHook;
 import frc.robot.commands.ToggleClimberExtender;
 import frc.robot.commands.TurnToAngle;
 import frc.robot.preferences.RobotPreferences;
@@ -38,7 +37,6 @@ import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.Claw;
 import frc.robot.subsystems.ClimberExtender;
 import frc.robot.subsystems.ClimberHooks;
-import frc.robot.subsystems.ClimberHooks.State;
 import frc.robot.subsystems.ClimberRotator;
 import frc.robot.subsystems.RaspberryPiVision;
 import frc.robot.subsystems.SwerveDrive;
@@ -109,40 +107,42 @@ public class RobotContainer {
   private static final SequentialCommandGroup climbSequencePart1 =
       new InstantCommand(() -> swerveDrive.resetHeading())
           .andThen(new InstantCommand(() -> climberExtender.setState(ClimberExtender.State.UP))
-            .alongWith(new InstantCommand(() -> {arm.setGoal(Math.toRadians(75)); arm.enable();}))
-            .alongWith(new SetHook(climberHooks, HOOK_2, State.OPEN)))
+            .alongWith(new InstantCommand(() -> {arm.setGoal(Math.toRadians(75)); arm.enable();})))
           .andThen(new WaitCommand(3.0)) // wait for extender to go up
-          .andThen(new DriveStraight(swerveDrive, .15, 0) // Drive slowly to the bar
-              .until(() -> climberHooks.isBarDetected(HOOK_2)))
-          .andThen(new WaitCommand(.1))
-          .andThen(new SetHook(climberHooks, HOOK_2, State.CLOSED));
-          // .andThen(new RotateArmToResting(arm).withTimeout(1.0));
+          .andThen(new DriveStraight(swerveDrive, .15, 180) // Backup slowly into MID RUNG
+              .until(() -> climberHooks.isBarDetected(HOOK_1))
+          .andThen(new WaitCommand(.1)));
 
   // Back up until arm passes vertical point, rotate the climber, grab HIGH RUNG
   private static final SequentialCommandGroup climbSequencePart2 =
-      new SetHook(climberHooks, HOOK_2, State.OPEN)
-          .andThen(new DriveStraight(swerveDrive, .1, 180) // Slowly back up
-              .until(() -> climberRotator.getRotatorPosition() > 500)) // TBD
+          new DriveStraight(swerveDrive, .1, 0) // Slowly moving forward
+              .until(() -> climberRotator.getRotatorPosition() > 800) // TBD
           .andThen(new PerpetualCommand(new InstantCommand(() -> climberRotator.rotateMotor(), climberRotator))
               .until(() -> climberHooks.isBarDetected(HOOK_2)))
-          .andThen(new WaitCommand(.2))
-          .andThen(new SetHook(climberHooks, HOOK_2, State.CLOSED))
-          .andThen(new WaitCommand(0.5))
+          .andThen(new PerpetualCommand(new InstantCommand(() -> climberRotator.rotateMotor(), climberRotator))
+              .until(() -> !climberHooks.isBarDetected(HOOK_2)))
           .andThen(new InstantCommand(() -> climberRotator.stopMotor()));
 
-  // Release MID RUNG, wait, climb to TRAVERSAL RUNG and grab it, delay, release HIGH RUNG
+  // Release MID RUNG, wait, climb to TRAVERSAL RUNG and grab it
   private static final SequentialCommandGroup climbSequencePart3 =
-      new SetHook(climberHooks, HOOK_1, State.OPEN)
-          .andThen(new PerpetualCommand(new InstantCommand(() -> climberRotator.rotateMotor(ClimberRotator.climberBackDrivePower.getValue()), climberRotator)
-              .until(() -> climberRotator.getRotatorPosition() > 248000))
-          // .andThen(new WaitCommand(2)) // add a .until to the wait command
+          new InstantCommand(() -> climberRotator.backDriveMotor())
+          .andThen(new WaitCommand(0.3))
+          .andThen(new InstantCommand(() -> climberRotator.stopMotor())
+          .andThen(new WaitCommand(2)) // wait for robot to swing
           .andThen(new PerpetualCommand(new InstantCommand(() -> climberRotator.rotateMotor(), climberRotator))
               .until(() -> climberHooks.isBarDetected(HOOK_1)))
-          .andThen(new WaitCommand(.2))
-          .andThen(new SetHook(climberHooks, HOOK_1, State.CLOSED))
-          .andThen(new WaitCommand(0.5))
-          .andThen(new SetHook(climberHooks, HOOK_2, State.OPEN))
-          .andThen(new InstantCommand(() -> climberRotator.stopMotor())));
+          .andThen(new PerpetualCommand(new InstantCommand(() -> climberRotator.rotateMotor(), climberRotator))
+              .until(() -> !climberHooks.isBarDetected(HOOK_1)))
+          .andThen(new InstantCommand(() -> climberRotator.stopMotor())))
+          .andThen(new WaitCommand(1.0));
+
+  // Release the High rung, wait 3/10s of a second, stop motor.        
+  private static final SequentialCommandGroup climbSequencePart4 =
+          new InstantCommand(() -> climberRotator.backDriveMotor())
+          .andThen(new WaitCommand(0.3))
+          .andThen(new InstantCommand(() -> climberRotator.stopMotor()));
+          
+
 
   // Fully autonomous 3-stage traversal climb
   private static final SequentialCommandGroup climbSequenceFull = null;
@@ -200,10 +200,6 @@ public class RobotContainer {
 
     manipulatorLeftBumper.whenPressed(armToResting);
     manipulatorRightBumper.whenPressed(armToScoring);
-    // manipulatorDpadUp.whenPressed(new SetHook(climberHooks, HOOK_1, State.OPEN));
-    // manipulatorDpadUp.whenReleased(new SetHook(climberHooks, HOOK_1, State.CLOSED));
-    manipulatorDpadDown.whenPressed(new SetHook(climberHooks, HOOK_2, State.OPEN));
-    manipulatorDpadDown.whenReleased(new SetHook(climberHooks, HOOK_2, State.CLOSED));
     manipulatorStartButton.whenPressed(manualClimber);
     manipulatorDpadRight.whenPressed(new RotateArmToStowed(arm));
    // manipulatorDpadLeft.whenPressed(new DriveStraight(swerveDrive, .2, Math.toRadians(-90))); // testing
