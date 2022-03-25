@@ -41,11 +41,18 @@ public class ClimberRotator extends SubsystemBase {
 
 
 	/** Creates a new ClimberRotator. */
-	private final TalonFX climberMotor;
+	private final TalonFX climberMotor1;
+	private final TalonFX climberMotor2;
+
 
 	public ClimberRotator() {
-		climberMotor = new TalonFX(ClimberConstants.kClimberRotatorMotor);
-		climberMotor.setSelectedSensorPosition(0);
+		climberMotor1 = new TalonFX(ClimberConstants.kClimberRotatorMotor1);
+		climberMotor2 = new TalonFX(ClimberConstants.kClimberRotatorMotor2);
+		climberMotor1.setSelectedSensorPosition(0);
+		climberMotor2.setSelectedSensorPosition(0);
+
+		//Invert cimberMotor2 such that it runs in the same direction as climberMotor1
+		climberMotor2.setInverted(true);
 	}
 
 	@Override
@@ -55,27 +62,30 @@ public class ClimberRotator extends SubsystemBase {
 
 	/** Returns position of climber rotator. */
 	public double getRotatorPosition() {
-		return climberMotor.getSelectedSensorPosition();
+		return climberMotor1.getSelectedSensorPosition();
 	}
 
 	/** Runs the climber motor with a power set via a preferences value. */
 	public void rotateMotor() {
-		climberMotor.set(ControlMode.PercentOutput, climbingPower.getValue());
+		rotateMotor(climbingPower.getValue());
 	}
 
 	/** Runs the climber motor with a power set via a preferences value. */
 	public void backDriveMotor() {
-		climberMotor.set(ControlMode.PercentOutput, climberBackDrivePower.getValue());
+		rotateMotor(climberBackDrivePower.getValue());
 	}
 
 	public void rotateMotor(double power) {
-		climberMotor.set(ControlMode.PercentOutput, power);
+		climberMotor1.set(ControlMode.PercentOutput, power);
+		climberMotor2.set(ControlMode.PercentOutput, power);
 	}
 
 
 	/** Stops the climber motor. */
 	public void stopMotor() {
-		climberMotor.set(ControlMode.PercentOutput, 0);
+		climberMotor1.set(ControlMode.PercentOutput, 0);
+		climberMotor2.set(ControlMode.PercentOutput, 0);
+
 	}
 
 	// Do not use this method. Similar code needs to be placed into Climber
@@ -93,6 +103,8 @@ public class ClimberRotator extends SubsystemBase {
 		ShuffleboardLayout rotatorLayout = climberTab.getLayout("Rotator", BuiltInLayouts.kGrid)
 				.withPosition(0, 0)
 				.withSize(2, 2);
-		rotatorLayout.addNumber("Encoder", () -> climberMotor.getSelectedSensorPosition());
+		rotatorLayout.addNumber("Encoder1", () -> climberMotor1.getSelectedSensorPosition());
+		rotatorLayout.addNumber("Encoder2", () -> climberMotor2.getSelectedSensorPosition());
+
 	}
 }
