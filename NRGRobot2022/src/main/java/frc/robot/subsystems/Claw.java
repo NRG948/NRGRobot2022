@@ -10,6 +10,7 @@ public class Claw extends SubsystemBase {
 
     public Claw(int clawChannel) {
         clawMotor = new PWMVictorSPX(clawChannel);
+        clawMotor.setInverted(true);
     }
 
     // Turns on claw motor. Positive power out-takes, negative power intakes
