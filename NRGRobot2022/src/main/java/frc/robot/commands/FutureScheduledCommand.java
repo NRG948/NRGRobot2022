@@ -13,6 +13,7 @@ public class FutureScheduledCommand extends CommandBase {
   private final FutureSupplier<CommandBase> commandSupplier;
   private CommandBase command;
   private Future<CommandBase> futureCommand;
+  private boolean wasScheduled = false;
 
   /** Creates a new FutureScheduledCommand. */
   public FutureScheduledCommand(FutureSupplier<CommandBase> commandSupplier) {
@@ -50,6 +51,10 @@ public class FutureScheduledCommand extends CommandBase {
   @Override
   public boolean isFinished() {
     if (command != null) {
+      if (!wasScheduled) {
+        wasScheduled = command.isScheduled();
+        return false;
+      }
       return !command.isScheduled();
     }
     return false;
