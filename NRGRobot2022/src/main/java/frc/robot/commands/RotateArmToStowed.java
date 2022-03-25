@@ -34,6 +34,7 @@ public class RotateArmToStowed extends CommandBase {
     // Returns true when the command should end.
     @Override
     public boolean isFinished() {
-        return arm.isAtStowedPosition();
+        // return arm.isAtStowedPosition();
+        return true;
     }
 }
