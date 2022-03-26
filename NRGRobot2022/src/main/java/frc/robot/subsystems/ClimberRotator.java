@@ -83,9 +83,7 @@ public class ClimberRotator extends SubsystemBase {
 
 	/** Stops the climber motor. */
 	public void stopMotor() {
-		climberMotor1.set(ControlMode.PercentOutput, 0);
-		climberMotor2.set(ControlMode.PercentOutput, 0);
-
+		rotateMotor(0);
 	}
 
 	// Do not use this method. Similar code needs to be placed into Climber
