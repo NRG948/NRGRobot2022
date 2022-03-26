@@ -11,6 +11,7 @@ import com.ctre.phoenix.motorcontrol.can.TalonFX;
 
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
@@ -100,9 +101,15 @@ public class ClimberRotator extends SubsystemBase {
 	public void addShuffleboardLayout(ShuffleboardTab climberTab) {
 		ShuffleboardLayout rotatorLayout = climberTab.getLayout("Rotator", BuiltInLayouts.kGrid)
 				.withPosition(0, 0)
-				.withSize(2, 2);
+				.withSize(1, 2);
 		rotatorLayout.addNumber("Encoder1", () -> climberMotor1.getSelectedSensorPosition());
 		rotatorLayout.addNumber("Encoder2", () -> climberMotor2.getSelectedSensorPosition());
+
+		ShuffleboardLayout encoderLayout = climberTab.getLayout("Encoders", BuiltInLayouts.kList)
+				.withPosition(2, 0)
+				.withSize(6, 5);
+		encoderLayout.addNumber("Encoder1", () -> climberMotor1.getSelectedSensorPosition()).withWidget(BuiltInWidgets.kGraph);
+		encoderLayout.addNumber("Encoder2", () -> climberMotor1.getSelectedSensorPosition()).withWidget(BuiltInWidgets.kGraph);
 
 	}
 }

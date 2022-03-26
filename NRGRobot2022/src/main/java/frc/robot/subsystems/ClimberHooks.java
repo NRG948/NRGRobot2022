@@ -62,8 +62,8 @@ public class ClimberHooks extends SubsystemBase {
 
     public void addShuffleboardLayout(ShuffleboardTab climberTab) {
         ShuffleboardLayout rotatorLayout = climberTab.getLayout("Hook", BuiltInLayouts.kGrid)
-                .withPosition(2, 0)
-                .withSize(2, 2);
+                .withPosition(1, 0)
+                .withSize(1, 2);
 
         rotatorLayout.addBoolean("Beam Break 1", () -> !beamBreak1.get()).withWidget(BuiltInWidgets.kBooleanBox);
         rotatorLayout.addBoolean("Beam Break 2", () -> !beamBreak2.get()).withWidget(BuiltInWidgets.kBooleanBox);
