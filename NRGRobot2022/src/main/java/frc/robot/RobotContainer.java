@@ -206,6 +206,8 @@ public class RobotContainer {
     manipulatorStartButton.whenPressed(manualClimber);
     manipulatorDpadRight.whenPressed(new RotateArmToStowed(arm));
     // manipulatorDpadLeft.whenPressed(new DriveStraight(swerveDrive, .2, -90)); // testing
+    manipulatorDpadLeft.whenHeld(new InstantCommand(() -> climberRotator.rotateMotor()));
+    manipulatorDpadLeft.whenReleased(new InstantCommand(() -> climberRotator.stopMotor()));
     manipulatorDpadUp.whenPressed(climbUnlatch);
     manipulatorDpadDown.whenPressed(climbUnlatchTwo);
     // manipulatorButtonA.whenPressed(climbSequencePart1);
