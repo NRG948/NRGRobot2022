@@ -31,13 +31,15 @@ public class Arm extends ProfiledPIDSubsystem {
     @RobotPreferencesValue
     public static final DoubleValue scoringAngle = new DoubleValue("Arm", "scoringAngle", 87);
     @RobotPreferencesValue
+    public static final DoubleValue scoringAngle2 = new DoubleValue("Arm", "scoringAngleTwo", 67);
+    @RobotPreferencesValue
     public static final DoubleValue restingAngle = new DoubleValue("Arm", "restingAngle", -20);
     @RobotPreferencesValue
     public static final BooleanValue enableTab = new BooleanValue("Arm", "enableTab", false);
     
     //TODO: Need to figure out such a high P value works bettwe than a low P value.
     @RobotPreferencesValue
-    public static final DoubleValue kP = new DoubleValue("Arm", "kP", 7);
+    public static final DoubleValue kP = new DoubleValue("Arm", "kP", 15);
     @RobotPreferencesValue
     public static final DoubleValue kI = new DoubleValue("Arm", "kI", 0);
     @RobotPreferencesValue
