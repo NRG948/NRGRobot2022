@@ -100,15 +100,15 @@ public static final Subsystem[] allSubsystems = new Subsystem[] {swerveDrive, ra
   private final RotateArmToScoring armToScoring = new RotateArmToScoring(arm);
   // private final ManualClimber manualClimber = new ManualClimber(climberRotator, manipulatorController);
 
-  // Raise the climber, drive to the MID RUNG & grab it when detected
-  private static final SequentialCommandGroup climbSequencePart1 =
-      new InstantCommand(() -> swerveDrive.resetHeading())
-          .andThen(new InstantCommand(() -> climberExtender.setState(ClimberExtender.State.UP))
-            .alongWith(new InstantCommand(() -> {arm.setGoal(Math.toRadians(75)); arm.enable();})))
-          .andThen(new WaitCommand(3.0)) // wait for extender to go up
-          .andThen(new DriveStraight(swerveDrive, .15, 180) // Backup slowly into MID RUNG
-              .until(() -> climberHooks.isBarDetected(HookSelection.HOOK_1))
-          .andThen(new WaitCommand(.1)));
+  // // Raise the climber, drive to the MID RUNG & grab it when detected
+  // private static final SequentialCommandGroup climbSequencePart1 =
+  //     new InstantCommand(() -> swerveDrive.resetHeading())
+  //         .andThen(new InstantCommand(() -> climberExtender.setState(ClimberExtender.State.UP))
+  //           .alongWith(new InstantCommand(() -> {arm.setGoal(Math.toRadians(75)); arm.enable();})))
+  //         .andThen(new WaitCommand(3.0)) // wait for extender to go up
+  //         .andThen(new DriveStraight(swerveDrive, .15, 180) // Backup slowly into MID RUNG
+  //             .until(() -> climberHooks.isBarDetected(HookSelection.HOOK_1))
+  //         .andThen(new WaitCommand(.1)));
 
   // Back up until arm passes vertical point, rotate the climber, grab HIGH RUNG
   // private static final SequentialCommandGroup climbSequencePart2 =
