@@ -90,15 +90,15 @@ public class RobotContainer {
   public static final Arm arm = new Arm();
   public static final ClimberExtender climberExtender = new ClimberExtender();
   public static final ClimberHooks climberHooks = new ClimberHooks();
-  public static final ClimberRotator climberRotator = new ClimberRotator();
-  public static final Subsystem[] allSubsystems = new Subsystem[] {swerveDrive, raspberryPiVision, claw, arm, climberExtender, climberHooks, climberRotator};
+  // public static final ClimberRotator climberRotator = new ClimberRotator();
+public static final Subsystem[] allSubsystems = new Subsystem[] {swerveDrive, raspberryPiVision, claw, arm, climberExtender, climberHooks/*, climberRotator*/};
 
   // Commands
   private final DriveWithController driveWithController = new DriveWithController(swerveDrive, driveController);
   private final ManualClaw manualClaw = new ManualClaw(claw, manipulatorController);
   private final RotateArmToResting armToResting = new RotateArmToResting(arm);
   private final RotateArmToScoring armToScoring = new RotateArmToScoring(arm);
-  private final ManualClimber manualClimber = new ManualClimber(climberRotator, manipulatorController);
+  // private final ManualClimber manualClimber = new ManualClimber(climberRotator, manipulatorController);
 
   // Raise the climber, drive to the MID RUNG & grab it when detected
   private static final SequentialCommandGroup climbSequencePart1 =
@@ -111,51 +111,51 @@ public class RobotContainer {
           .andThen(new WaitCommand(.1)));
 
   // Back up until arm passes vertical point, rotate the climber, grab HIGH RUNG
-  private static final SequentialCommandGroup climbSequencePart2 =
-          new DriveStraight(swerveDrive, .1, 0) // Slowly moving forward
-              .until(() -> climberRotator.getRotatorPosition() > 800) // TBD
-          .andThen(new PerpetualCommand(new InstantCommand(() -> climberRotator.rotateMotor(), climberRotator))
-              .until(() -> climberHooks.isBarDetected(HookSelection.HOOK_2)))
-          .andThen(new PerpetualCommand(new InstantCommand(() -> climberRotator.rotateMotor(), climberRotator))
-              .until(() -> !climberHooks.isBarDetected(HookSelection.HOOK_2)))
-          .andThen(new InstantCommand(() -> climberRotator.stopMotor()));
+  // private static final SequentialCommandGroup climbSequencePart2 =
+  //         new DriveStraight(swerveDrive, .1, 0) // Slowly moving forward
+  //             .until(() -> climberRotator.getRotatorPosition() > 800) // TBD
+  //         .andThen(new PerpetualCommand(new InstantCommand(() -> climberRotator.rotateMotor(), climberRotator))
+  //             .until(() -> climberHooks.isBarDetected(HookSelection.HOOK_2)))
+  //         .andThen(new PerpetualCommand(new InstantCommand(() -> climberRotator.rotateMotor(), climberRotator))
+  //             .until(() -> !climberHooks.isBarDetected(HookSelection.HOOK_2)))
+  //         .andThen(new InstantCommand(() -> climberRotator.stopMotor()));
 
-  // Release MID RUNG, wait, climb to TRAVERSAL RUNG and grab it
-  private static final SequentialCommandGroup climbSequencePart3 =
-          new InstantCommand(() -> climberRotator.backDriveMotor())
-          .andThen(new WaitCommand(0.3))
-          .andThen(new InstantCommand(() -> climberRotator.stopMotor())
-          .andThen(new WaitCommand(2)) // wait for robot to swing
-          .andThen(new PerpetualCommand(new InstantCommand(() -> climberRotator.rotateMotor(), climberRotator))
-              .until(() -> climberHooks.isBarDetected(HookSelection.HOOK_1)))
-          .andThen(new PerpetualCommand(new InstantCommand(() -> climberRotator.rotateMotor(), climberRotator))
-              .until(() -> !climberHooks.isBarDetected(HookSelection.HOOK_1)))
-          .andThen(new InstantCommand(() -> climberRotator.stopMotor())))
-          .andThen(new WaitCommand(1.0));
+  // // Release MID RUNG, wait, climb to TRAVERSAL RUNG and grab it
+  // private static final SequentialCommandGroup climbSequencePart3 =
+  //         new InstantCommand(() -> climberRotator.backDriveMotor())
+  //         .andThen(new WaitCommand(0.3))
+  //         .andThen(new InstantCommand(() -> climberRotator.stopMotor())
+  //         .andThen(new WaitCommand(2)) // wait for robot to swing
+  //         .andThen(new PerpetualCommand(new InstantCommand(() -> climberRotator.rotateMotor(), climberRotator))
+  //             .until(() -> climberHooks.isBarDetected(HookSelection.HOOK_1)))
+  //         .andThen(new PerpetualCommand(new InstantCommand(() -> climberRotator.rotateMotor(), climberRotator))
+  //             .until(() -> !climberHooks.isBarDetected(HookSelection.HOOK_1)))
+  //         .andThen(new InstantCommand(() -> climberRotator.stopMotor())))
+  //         .andThen(new WaitCommand(1.0));
 
-  // Release the High rung, wait 3/10s of a second, stop motor.        
-  private static final SequentialCommandGroup climbSequencePart4 =
-      new InstantCommand(() -> climberRotator.backDriveMotor())
-          .andThen(new WaitCommand(0.3))
-          .andThen(new InstantCommand(() -> climberRotator.stopMotor()));
+  // // Release the High rung, wait 3/10s of a second, stop motor.        
+  // private static final SequentialCommandGroup climbSequencePart4 =
+  //     new InstantCommand(() -> climberRotator.backDriveMotor())
+  //         .andThen(new WaitCommand(0.3))
+  //         .andThen(new InstantCommand(() -> climberRotator.stopMotor()));
           
-  private static final SequentialCommandGroup climbUnlatch = 
-      new InstantCommand(() -> climberRotator.backDriveMotor())
-          .andThen(new WaitCommand(0.3))
-          .andThen(() -> climberRotator.stopMotor());
+  // private static final SequentialCommandGroup climbUnlatch = 
+  //     new InstantCommand(() -> climberRotator.backDriveMotor())
+  //         .andThen(new WaitCommand(0.3))
+  //         .andThen(() -> climberRotator.stopMotor());
 
-          private static final SequentialCommandGroup climbUnlatchTwo = 
-      new InstantCommand(() -> climberRotator.backDriveMotor())
-          .andThen(new WaitCommand(0.6))
-          .andThen(() -> climberRotator.stopMotor());
+  //         private static final SequentialCommandGroup climbUnlatchTwo = 
+  //     new InstantCommand(() -> climberRotator.backDriveMotor())
+  //         .andThen(new WaitCommand(0.6))
+  //         .andThen(() -> climberRotator.stopMotor());
 
-  // Fully autonomous 3-stage traversal climb
-  private static final SequentialCommandGroup climbSequenceFull = null;
-      // new SequentialCommandGroup(climbSequencePart1, climbSequencePart2, climbSequencePart3);
+  // // Fully autonomous 3-stage traversal climb
+  // private static final SequentialCommandGroup climbSequenceFull = null;
+  //     // new SequentialCommandGroup(climbSequencePart1, climbSequencePart2, climbSequencePart3);
 
-  private static final Command abortClimb = new InstantCommand(() -> {}, allSubsystems)
-    .andThen(new PerpetualCommand(new InstantCommand(() -> climberRotator.rotateMotor(-0.15), climberRotator)))
-      .until(() -> climberRotator.getRotatorPosition() <= 10);
+  // private static final Command abortClimb = new InstantCommand(() -> {}, allSubsystems)
+  //   .andThen(new PerpetualCommand(new InstantCommand(() -> climberRotator.rotateMotor(-0.15), climberRotator)))
+  //     .until(() -> climberRotator.getRotatorPosition() <= 10);
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -179,7 +179,7 @@ public class RobotContainer {
 
     if (ClimberRotator.enableTab.getValue()) {
       ShuffleboardTab climberTab = Shuffleboard.getTab("Climber");
-      climberRotator.addShuffleboardLayout(climberTab);
+      // climberRotator.addShuffleboardLayout(climberTab);
       climberHooks.addShuffleboardLayout(climberTab);
     }
   }
@@ -193,7 +193,7 @@ public class RobotContainer {
   private void configureButtonBindings() {
     driverButtonA.whenPressed(new InstantCommand(() -> {}, allSubsystems) ); // Interrupt all
     driverMenuButton.whenPressed(new InstantCommand(() -> swerveDrive.resetHeading()));
-    driverLeftBumper.whenPressed(new KeepClimberRotatorVertical(climberRotator));
+    // driverLeftBumper.whenPressed(new KeepClimberRotatorVertical(climberRotator));
 
     // driverButtonB.whenPressed(new DriveStraight(swerveDrive, .25, 0)); // testing
     // driverButtonY.whenPressed(new DriveStraight(swerveDrive, .25, 180)); // testing
@@ -205,13 +205,13 @@ public class RobotContainer {
 
     manipulatorLeftBumper.whenPressed(armToResting);
     manipulatorRightBumper.whenPressed(armToScoring);
-    manipulatorStartButton.whenPressed(manualClimber);
-    manipulatorDpadRight.whenPressed(new RotateArmToStowed(arm));
-    // manipulatorDpadLeft.whenPressed(new DriveStraight(swerveDrive, .2, -90)); // testing
-    manipulatorDpadLeft.whenHeld(new InstantCommand(() -> climberRotator.rotateMotor()));
-    manipulatorDpadLeft.whenReleased(new InstantCommand(() -> climberRotator.stopMotor()));
-    manipulatorDpadUp.whenPressed(climbUnlatch);
-    manipulatorDpadDown.whenPressed(climbUnlatchTwo);
+    // manipulatorStartButton.whenPressed(manualClimber);
+    // manipulatorDpadRight.whenPressed(new RotateArmToStowed(arm));
+    // // manipulatorDpadLeft.whenPressed(new DriveStraight(swerveDrive, .2, -90)); // testing
+    // manipulatorDpadLeft.whenHeld(new InstantCommand(() -> climberRotator.rotateMotor()));
+    // manipulatorDpadLeft.whenReleased(new InstantCommand(() -> climberRotator.stopMotor()));
+    // manipulatorDpadUp.whenPressed(climbUnlatch);
+    // manipulatorDpadDown.whenPressed(climbUnlatchTwo);
     // manipulatorButtonA.whenPressed(climbSequencePart1);
     // manipulatorButtonB.whenPressed(climbSequencePart2);
     // manipulatorButtonX.whenPressed(climbSequencePart3);
@@ -226,7 +226,7 @@ public class RobotContainer {
 
   public void stopAllMotors() {
     swerveDrive.stopMotors();
-    climberRotator.stopMotor();
+    // climberRotator.stopMotor();
     claw.stopMotor();
   }
 }
