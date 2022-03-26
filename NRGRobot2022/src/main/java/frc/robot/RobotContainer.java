@@ -141,11 +141,13 @@ public class RobotContainer {
           
   private static final SequentialCommandGroup climbUnlatch = 
       new InstantCommand(() -> climberRotator.backDriveMotor())
-          .andThen(new WaitCommand(0.3));
+          .andThen(new WaitCommand(0.3))
+          .andThen(() -> climberRotator.stopMotor());
 
           private static final SequentialCommandGroup climbUnlatchTwo = 
       new InstantCommand(() -> climberRotator.backDriveMotor())
-          .andThen(new WaitCommand(0.6));
+          .andThen(new WaitCommand(0.6))
+          .andThen(() -> climberRotator.stopMotor());
 
   // Fully autonomous 3-stage traversal climb
   private static final SequentialCommandGroup climbSequenceFull = null;
