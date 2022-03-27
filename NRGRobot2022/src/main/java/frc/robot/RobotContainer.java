@@ -10,21 +10,15 @@ import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
-import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.PerpetualCommand;
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.Subsystem;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.POVButton;
-import frc.robot.commands.DriveStraight;
 import frc.robot.commands.DriveWithController;
-import frc.robot.commands.KeepClimberRotatorVertical;
 import frc.robot.commands.ManualClaw;
-import frc.robot.commands.ManualClimber;
 import frc.robot.commands.RotateArmToResting;
 import frc.robot.commands.RotateArmToScoring;
+import frc.robot.commands.RotateArmToScoring2;
 import frc.robot.commands.RotateArmToStowed;
 import frc.robot.commands.ToggleClimberExtender;
 import frc.robot.commands.TurnToAngle;
@@ -36,7 +30,6 @@ import frc.robot.subsystems.ClimberHooks;
 import frc.robot.subsystems.ClimberRotator;
 import frc.robot.subsystems.RaspberryPiVision;
 import frc.robot.subsystems.SwerveDrive;
-import frc.robot.subsystems.ClimberHooks.HookSelection;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -206,7 +199,9 @@ public static final Subsystem[] allSubsystems = new Subsystem[] {swerveDrive, ra
     manipulatorLeftBumper.whenPressed(armToResting);
     manipulatorRightBumper.whenPressed(armToScoring);
     // manipulatorStartButton.whenPressed(manualClimber);
-    // manipulatorDpadRight.whenPressed(new RotateArmToStowed(arm));
+    manipulatorDpadRight.whenPressed(new RotateArmToStowed(arm));
+    manipulatorDpadUp.whenPressed(new RotateArmToScoring2(arm));
+
     // // manipulatorDpadLeft.whenPressed(new DriveStraight(swerveDrive, .2, -90)); // testing
     // manipulatorDpadLeft.whenHeld(new InstantCommand(() -> climberRotator.rotateMotor()));
     // manipulatorDpadLeft.whenReleased(new InstantCommand(() -> climberRotator.stopMotor()));
