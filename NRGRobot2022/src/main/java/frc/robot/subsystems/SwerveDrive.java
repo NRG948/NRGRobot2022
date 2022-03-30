@@ -171,6 +171,10 @@ public class SwerveDrive extends SubsystemBase {
     return thetaController.calculate(getRotation2d().getRadians(), targetAngle.getRadians());
   }
 
+  /**
+   * Enable turning the robot to a specific angle
+   * @param angle Desired angle in degrees
+   */
   public void enableTurnToAngle(double angle) {
     turnToAngle = true;
     targetAngle = Rotation2d.fromDegrees(angle);

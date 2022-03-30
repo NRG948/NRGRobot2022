@@ -13,7 +13,12 @@ public class DriveStraightDistance extends DriveStraight {
   private Translation2d origin;
   /** Creates a new DriveStraightDistance. */
   public DriveStraightDistance(SwerveDrive sDrive, double speed, double heading, double distance) {
-    super(sDrive, speed, heading);
+    super(sDrive, speed, heading, sDrive.getRotation2d().getDegrees());
+    this.distance = distance;
+  }
+
+  public DriveStraightDistance(SwerveDrive sDrive, double speed, double heading, double distance, double orientation) {
+    super(sDrive, speed, heading, orientation);
     this.distance = distance;
   }
 
