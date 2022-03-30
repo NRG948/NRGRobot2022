@@ -7,25 +7,56 @@ package frc.robot.commands;
 import edu.wpi.first.math.geometry.Translation2d;
 import frc.robot.subsystems.SwerveDrive;
 
+/** A command to drive in a straight line for the specified distance and heading. */
 public class DriveStraightDistance extends DriveStraight {
   private final double distance;
   private Translation2d origin;
-  
-  /** Creates a new DriveStraightDistance. */
+
+  /**
+   * Constructs an instance of this class.
+   * 
+   * @param sDrive The swerve drivetrain.
+   * @param speed The speed at which to drive.
+   * @param heading The heading along which to drive.
+   * @param distance The distance to drive.
+   */
   public DriveStraightDistance(SwerveDrive sDrive, double speed, double heading, double distance) {
-    super(sDrive, speed, heading, sDrive.getRotation2d().getDegrees());
-    this.distance = distance;
+    this(sDrive, speed, heading, distance, sDrive.getRotation2d().getDegrees());
   }
 
+  /**
+   * Constructs an instance of this class.
+   * 
+   * @param sDrive The swerve drivetrain.
+   * @param speed The speed at which to drive.
+   * @param heading The heading along which to drive.
+   * @param distance The distance to drive.
+   * @param orientation The final orientation of the robot.
+   */
   public DriveStraightDistance(SwerveDrive sDrive, double speed, double heading, double distance, double orientation) {
     super(sDrive, speed, heading, orientation);
     this.distance = distance;
   }
   
+
+  /**
+   * Constructs an instance of this class.
+   * 
+   * @param sDrive The swerve drivetrain.
+   * @param speed The speed at which to drive.
+   * @param vector The vector along which to drive.
+   * @param orientation The final orientation of the robot.
+   */
   public DriveStraightDistance(SwerveDrive sDrive, double speed, Translation2d vector, double orientation){
     this(sDrive, speed, getHeading(vector), vector.getNorm(), orientation);
   }
 
+  /**
+   * Returns the angle of the specified vector.
+   * 
+   * @param vector
+   * @return The vector angle.
+   */
   private static double getHeading(Translation2d vector){
     return Math.toDegrees(Math.atan2(vector.getY(), vector.getX()));
   }

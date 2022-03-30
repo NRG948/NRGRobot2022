@@ -7,6 +7,7 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.SwerveDrive;
 
+/** A command to drive in a straight line. */
 public class DriveStraight extends CommandBase {
   protected final SwerveDrive swerveDrive;
   private final double xSpeed;
