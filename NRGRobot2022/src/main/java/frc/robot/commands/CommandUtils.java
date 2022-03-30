@@ -13,6 +13,8 @@ import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.trajectory.Trajectory;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
@@ -20,7 +22,7 @@ import frc.robot.subsystems.SwerveDrive;
 
 public final class CommandUtils {
         public static final ExecutorService executor = Executors.newSingleThreadExecutor();
-
+        // public static Field2d field;
         public static CommandBase newFollowWaypointsCommand(
                         SwerveDrive swerve,
                         Pose2d initialPose2d,
@@ -29,7 +31,9 @@ public final class CommandUtils {
                         boolean reversed) {
                 // Create config for trajectory
                 Trajectory trajectory = swerve.generateTrajectory(initialPose2d, waypoints, finalPose2d, reversed);
-
+                // field = new Field2d();
+                // SmartDashboard.putData(field);
+                // field.getObject("traj").setTrajectory(trajectory);
                 var thetaController = new ProfiledPIDController(
                                 SwerveDrive.turnP.getValue(),
                                 SwerveDrive.turnI.getValue(),
