@@ -4,6 +4,7 @@
 
 package frc.robot.commands;
 
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.SwerveDrive;
@@ -20,6 +21,14 @@ public class DriveStraightDistance extends DriveStraight {
   public DriveStraightDistance(SwerveDrive sDrive, double speed, double heading, double distance, double orientation) {
     super(sDrive, speed, heading, orientation);
     this.distance = distance;
+  }
+  
+  public DriveStraightDistance(SwerveDrive sDrive, double speed, Translation2d vector, double orientation){
+    this(sDrive, speed, getHeading(vector), vector.getNorm(), orientation);
+  }
+
+  private static double getHeading(Translation2d vector){
+    return Math.toDegrees(Math.atan2(vector.getY(), vector.getX()));
   }
 
   // Called when the command is initially scheduled.

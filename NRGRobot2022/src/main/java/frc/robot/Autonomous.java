@@ -24,6 +24,7 @@ import frc.robot.commands.CharacterizeArm;
 import frc.robot.commands.CharacterizeSwerveDrive;
 import frc.robot.commands.CommandUtils;
 import frc.robot.commands.DriveStraightDistance;
+import frc.robot.commands.DriveStraightTo;
 import frc.robot.commands.ResetSubsystems;
 import frc.robot.commands.RotateArmToResting;
 import frc.robot.commands.RotateArmToScoring;
@@ -48,6 +49,7 @@ public class Autonomous {
         PROFILE_ARM,
         TEST_DRIVE,
         RIGHT_TARMAC_TWO_BALLS,
+        RIGHT_TARMAC_TWO_BALLS_FAST,
         DOWN_TARMAC_TWO_BALLS,
         RIGHT_TARMAC_SHOOT_BACKUP,
         DOWN_TARMAC_SHOOT_BACKUP,
@@ -161,6 +163,26 @@ public class Autonomous {
                         new WaitUntilCommand(() -> RobotContainer.arm.isAtScoringPosition()).withTimeout(0.5),
                         new AutoClaw(0.75, 1, RobotContainer.claw),
                         new RotateArmToStowed(RobotContainer.arm));
+            
+            case RIGHT_TARMAC_TWO_BALLS_FAST:
+                return new ResetSubsystems(RobotContainer.swerveDrive).andThen(
+                        new InstantCommand(
+                                () -> RobotContainer.swerveDrive.resetOdometry(RIGHT_TARMAC_RIGHT_START_POSE)),
+                        new RotateArmToScoring(RobotContainer.arm),
+                        new WaitUntilCommand(() -> RobotContainer.arm.isAtScoringPosition()).withTimeout(0.5),
+                        new AutoClaw(0.75, 1, RobotContainer.claw),
+                        new RotateArmToStowed(RobotContainer.arm),
+                        new DriveStraightTo(RobotContainer.swerveDrive, -0.5, TARGET_RIGHT_POSE)
+                                .alongWith(new WaitUntilCommand(
+                                        () -> RobotContainer.swerveDrive.getHeadingDegrees() <= 15.0)
+                                                .andThen(new RotateArmToResting(RobotContainer.arm))
+                                                .andThen(() -> RobotContainer.claw.activateClaw(-1.0))),
+                        new InstantCommand(() -> RobotContainer.claw.stopMotor()),
+                        new DriveStraightTo(RobotContainer.swerveDrive, -0.5, RIGHT_TARMAC_RIGHT_START_POSE)
+                                .alongWith(new RotateArmToScoring(RobotContainer.arm)),
+                        new WaitUntilCommand(() -> RobotContainer.arm.isAtScoringPosition()).withTimeout(0.5),
+                        new AutoClaw(0.75, 1, RobotContainer.claw),
+                        new RotateArmToStowed(RobotContainer.arm));
 
             case DOWN_TARMAC_TWO_BALLS:
                 return new ResetSubsystems(RobotContainer.swerveDrive).andThen(
@@ -266,6 +288,7 @@ public class Autonomous {
         }
 
         chooseAutoPath.addOption("Right Tarmac Two Balls", ChooseAutoPath.RIGHT_TARMAC_TWO_BALLS);
+        chooseAutoPath.addOption("Right Tarmac Two Balls (Fast)", ChooseAutoPath.RIGHT_TARMAC_TWO_BALLS_FAST);
         chooseAutoPath.addOption("Down Tarmac Two Balls", ChooseAutoPath.DOWN_TARMAC_TWO_BALLS);
         chooseAutoPath.addOption("Right Tarmac Shoot & Backup", ChooseAutoPath.RIGHT_TARMAC_SHOOT_BACKUP);
         chooseAutoPath.addOption("Down Tarmac Shoot & Backup", ChooseAutoPath.DOWN_TARMAC_SHOOT_BACKUP);
