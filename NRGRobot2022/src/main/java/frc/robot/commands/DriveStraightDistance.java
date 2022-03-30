@@ -4,14 +4,13 @@
 
 package frc.robot.commands;
 
-import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.SwerveDrive;
 
 public class DriveStraightDistance extends DriveStraight {
   private final double distance;
   private Translation2d origin;
+  
   /** Creates a new DriveStraightDistance. */
   public DriveStraightDistance(SwerveDrive sDrive, double speed, double heading, double distance) {
     super(sDrive, speed, heading, sDrive.getRotation2d().getDegrees());
@@ -34,6 +33,7 @@ public class DriveStraightDistance extends DriveStraight {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+    super.initialize();
     origin = swerveDrive.getPose2d().getTranslation();
   }
 
