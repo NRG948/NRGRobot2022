@@ -171,3 +171,6 @@ simgui.json
 
 # Exclude SysID configuration files
 .SysID/
+
+# Exclude Glass configuration files
+glass.json
