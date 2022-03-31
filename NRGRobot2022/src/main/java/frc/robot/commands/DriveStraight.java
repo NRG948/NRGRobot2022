@@ -10,31 +10,34 @@ import frc.robot.subsystems.SwerveDrive;
 /** A command to drive in a straight line. */
 public class DriveStraight extends CommandBase {
   protected final SwerveDrive swerveDrive;
-  private final double xSpeed;
-  private final double ySpeed;
+  private double speed;
+  protected double heading;
+  protected double xSpeed;
+  protected double ySpeed;
   private final double orientation;
 
   /**
    * Constructs an instance of this class.
    * 
-   * @param sDrive  An instance of the swerve drive subsystem.
-   * @param speed   Speed to drive.
-   * @param heading The direction in degrees to drive.
+   * @param swerveDrive An instance of the swerve drive subsystem.
+   * @param speed       Speed to drive.
+   * @param heading     The direction in degrees to drive.
    * @param orientation The desired orientation of the robot
    */
-  public DriveStraight(SwerveDrive sDrive, double speed, double heading, double orientation) {
+  public DriveStraight(SwerveDrive swerveDrive, double speed, double heading, double orientation) {
     // Use addRequirements() here to declare subsystem dependencies.
-    swerveDrive = sDrive;
-    addRequirements(swerveDrive);
-    double headingRadians = Math.toRadians(heading);
-    xSpeed = speed * Math.cos(headingRadians);
-    ySpeed = speed * Math.sin(headingRadians);
+    this.swerveDrive = swerveDrive;
+    this.speed = speed;
     this.orientation = orientation;
+    addRequirements(swerveDrive);
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+    double headingRadians = Math.toRadians(heading);
+    xSpeed = speed * Math.cos(headingRadians);
+    ySpeed = speed * Math.sin(headingRadians);
     swerveDrive.enableTurnToAngle(orientation);
   }
 

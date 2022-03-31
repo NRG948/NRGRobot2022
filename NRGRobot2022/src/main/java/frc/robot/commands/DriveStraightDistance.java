@@ -4,20 +4,23 @@
 
 package frc.robot.commands;
 
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import frc.robot.subsystems.SwerveDrive;
 
-/** A command to drive in a straight line for the specified distance and heading. */
+/**
+ * A command to drive in a straight line for the specified distance and heading.
+ */
 public class DriveStraightDistance extends DriveStraight {
-  private final double distance;
+  protected double distance;
   private Translation2d origin;
 
   /**
    * Constructs an instance of this class.
    * 
-   * @param sDrive The swerve drivetrain.
-   * @param speed The speed at which to drive.
-   * @param heading The heading along which to drive.
+   * @param sDrive   The swerve drivetrain.
+   * @param speed    The speed at which to drive.
+   * @param heading  The heading along which to drive.
    * @param distance The distance to drive.
    */
   public DriveStraightDistance(SwerveDrive sDrive, double speed, double heading, double distance) {
@@ -27,38 +30,15 @@ public class DriveStraightDistance extends DriveStraight {
   /**
    * Constructs an instance of this class.
    * 
-   * @param sDrive The swerve drivetrain.
-   * @param speed The speed at which to drive.
-   * @param heading The heading along which to drive.
-   * @param distance The distance to drive.
+   * @param sDrive      The swerve drivetrain.
+   * @param speed       The speed at which to drive.
+   * @param heading     The heading along which to drive.
+   * @param distance    The distance to drive.
    * @param orientation The final orientation of the robot.
    */
   public DriveStraightDistance(SwerveDrive sDrive, double speed, double heading, double distance, double orientation) {
     super(sDrive, speed, heading, orientation);
     this.distance = distance;
-  }
-  
-
-  /**
-   * Constructs an instance of this class.
-   * 
-   * @param sDrive The swerve drivetrain.
-   * @param speed The speed at which to drive.
-   * @param vector The vector along which to drive.
-   * @param orientation The final orientation of the robot.
-   */
-  public DriveStraightDistance(SwerveDrive sDrive, double speed, Translation2d vector, double orientation){
-    this(sDrive, speed, getHeading(vector), vector.getNorm(), orientation);
-  }
-
-  /**
-   * Returns the angle of the specified vector.
-   * 
-   * @param vector
-   * @return The vector angle.
-   */
-  private static double getHeading(Translation2d vector){
-    return Math.toDegrees(Math.atan2(vector.getY(), vector.getX()));
   }
 
   // Called when the command is initially scheduled.
@@ -66,6 +46,16 @@ public class DriveStraightDistance extends DriveStraight {
   public void initialize() {
     super.initialize();
     origin = swerveDrive.getPose2d().getTranslation();
+    System.out.println(String.format("INIT DriveStraightDistance xSpeed: %f, ySpeed: %f, distance: %f, heading: %f, origin: %s", xSpeed, ySpeed, distance, heading, origin));
+  }
+
+  @Override
+  public void end(boolean interrupted) {
+    super.end(interrupted);
+
+    Pose2d finalPose = swerveDrive.getPose2d();
+
+    System.out.println(String.format("END DriveStraightDistance interrupted: %s, end: %s", interrupted, finalPose));
   }
 
   // Returns true when the command should end.
