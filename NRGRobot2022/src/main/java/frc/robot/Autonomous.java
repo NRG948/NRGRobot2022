@@ -172,13 +172,14 @@ public class Autonomous {
                         new WaitUntilCommand(() -> RobotContainer.arm.isAtScoringPosition()).withTimeout(0.5),
                         new AutoClaw(0.75, 1, RobotContainer.claw),
                         new RotateArmToStowed(RobotContainer.arm),
-                        new DriveStraightTo(RobotContainer.swerveDrive, -0.5, TARGET_RIGHT_POSE)
+                        new DriveStraightTo(RobotContainer.swerveDrive, 0.4, TARGET_RIGHT_POSE)
                                 .alongWith(new WaitUntilCommand(
                                         () -> RobotContainer.swerveDrive.getHeadingDegrees() <= 15.0)
-                                                .andThen(new RotateArmToResting(RobotContainer.arm))
-                                                .andThen(() -> RobotContainer.claw.activateClaw(-1.0))),
+                                                .andThen(new RotateArmToResting(RobotContainer.arm)
+                                                        .alongWith(new InstantCommand(() -> RobotContainer.claw.activateClaw(-1.0))))),
                         new InstantCommand(() -> RobotContainer.claw.stopMotor()),
-                        new DriveStraightTo(RobotContainer.swerveDrive, -0.5, RIGHT_TARMAC_RIGHT_START_POSE)
+                        new WaitCommand(0.5),
+                        new DriveStraightTo(RobotContainer.swerveDrive, 0.4, RIGHT_TARMAC_RIGHT_START_POSE)
                                 .alongWith(new RotateArmToScoring(RobotContainer.arm)),
                         new WaitUntilCommand(() -> RobotContainer.arm.isAtScoringPosition()).withTimeout(0.5),
                         new AutoClaw(0.75, 1, RobotContainer.claw),
