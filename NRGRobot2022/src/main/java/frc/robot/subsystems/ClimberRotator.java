@@ -27,9 +27,9 @@ import frc.robot.preferences.RobotPreferences.DoubleValue;
 public class ClimberRotator extends SubsystemBase {
 	
 	@RobotPreferencesValue
-	public static DoubleValue climbingPower = new DoubleValue("ClimberModule", "Climbing Power", 0.5);
+	public static DoubleValue climbingPower = new DoubleValue("ClimberModule", "Forward Power", 0.5);
 	@RobotPreferencesValue
-	public static DoubleValue climberBackDrivePower = new DoubleValue("ClimberModule", "Climber Backdrive Power", -0.15);
+	public static DoubleValue climberBackDrivePower = new DoubleValue("ClimberModule", "Backwards Power", -0.15);
 	@RobotPreferencesValue
 	public static final DoubleValue verticalTolerance = new DoubleValue("ClimberModule", "Vertical Tolerance", 1200);
 	@RobotPreferencesValue
