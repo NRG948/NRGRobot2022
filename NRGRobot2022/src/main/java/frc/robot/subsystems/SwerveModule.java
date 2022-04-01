@@ -5,6 +5,7 @@
 package frc.robot.subsystems;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.ctre.phoenix.sensors.AbsoluteSensorRange;
 import com.ctre.phoenix.sensors.CANCoder;
@@ -92,7 +93,9 @@ public class SwerveModule extends SubsystemBase {
    */
   public SwerveModule(int driveMotorChannel, int turningMotorChannel, int turningEncodeChannel, String moduleName) {
     driveMotor = new TalonFX(driveMotorChannel);
+    driveMotor.setNeutralMode(NeutralMode.Brake);
     turningMotor = new TalonFX(turningMotorChannel);
+    turningMotor.setNeutralMode(NeutralMode.Brake);
 
     turningEncoder = new CANCoder(turningEncodeChannel);
 
