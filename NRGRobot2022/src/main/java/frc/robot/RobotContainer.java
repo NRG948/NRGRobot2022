@@ -11,11 +11,14 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.Subsystem;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.POVButton;
 import frc.robot.commands.DriveWithController;
 import frc.robot.commands.ManualClaw;
+import frc.robot.commands.ManualClimber;
 import frc.robot.commands.RotateArmToResting;
 import frc.robot.commands.RotateArmToScoring;
 import frc.robot.commands.RotateArmToScoring2;
@@ -83,8 +86,8 @@ public class RobotContainer {
   public static final Arm arm = new Arm();
   public static final ClimberExtender climberExtender = new ClimberExtender();
   public static final ClimberHooks climberHooks = new ClimberHooks();
-  // public static final ClimberRotator climberRotator = new ClimberRotator();
-public static final Subsystem[] allSubsystems = new Subsystem[] {swerveDrive, raspberryPiVision, claw, arm, climberExtender, climberHooks/*, climberRotator*/};
+  public static final ClimberRotator climberRotator = new ClimberRotator();
+  public static final Subsystem[] allSubsystems = new Subsystem[] {swerveDrive, raspberryPiVision, claw, arm, climberExtender, climberHooks/*, climberRotator*/};
 
   // Commands
   private final DriveWithController driveWithController = new DriveWithController(swerveDrive, driveController);
@@ -198,15 +201,15 @@ public static final Subsystem[] allSubsystems = new Subsystem[] {swerveDrive, ra
 
     manipulatorLeftBumper.whenPressed(armToResting);
     manipulatorRightBumper.whenPressed(armToScoring);
-    // manipulatorStartButton.whenPressed(manualClimber);
+    manipulatorStartButton.whenPressed(new ManualClimber(climberRotator, manipulatorController));
     manipulatorDpadRight.whenPressed(new RotateArmToStowed(arm));
-    manipulatorDpadUp.whenPressed(new RotateArmToScoring2(arm));
+    manipulatorDpadLeft.whenPressed(new RotateArmToScoring2(arm));
 
-    // // manipulatorDpadLeft.whenPressed(new DriveStraight(swerveDrive, .2, -90)); // testing
-    // manipulatorDpadLeft.whenHeld(new InstantCommand(() -> climberRotator.rotateMotor()));
-    // manipulatorDpadLeft.whenReleased(new InstantCommand(() -> climberRotator.stopMotor()));
-    // manipulatorDpadUp.whenPressed(climbUnlatch);
-    // manipulatorDpadDown.whenPressed(climbUnlatchTwo);
+    // manipulatorDpadLeft.whenPressed(new DriveStraight(swerveDrive, .2, -90)); // testing
+    manipulatorDpadUp.whenHeld(new InstantCommand(() -> climberRotator.rotateMotor()));
+    manipulatorDpadUp.whenReleased(new InstantCommand(() -> climberRotator.stopMotor()));
+    manipulatorDpadDown.whenHeld(new InstantCommand(() -> climberRotator.backDriveMotor()));
+    manipulatorDpadDown.whenReleased(new InstantCommand(() -> climberRotator.stopMotor()));
     // manipulatorButtonA.whenPressed(climbSequencePart1);
     // manipulatorButtonB.whenPressed(climbSequencePart2);
     // manipulatorButtonX.whenPressed(climbSequencePart3);

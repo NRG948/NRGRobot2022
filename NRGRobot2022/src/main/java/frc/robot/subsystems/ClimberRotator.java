@@ -5,6 +5,7 @@
 package frc.robot.subsystems;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 
 //import com.ctre.phoenix.motorcontrol.can.TalonFX;
@@ -52,8 +53,13 @@ public class ClimberRotator extends SubsystemBase {
 		climberMotor1.setSelectedSensorPosition(0);
 		climberMotor2.setSelectedSensorPosition(0);
 
-		//Invert cimberMotor2 such that it runs in the same direction as climberMotor1
-		climberMotor2.setInverted(true);
+		//Invert one motor such that it runs in the same direction as each other
+		climberMotor1.setInverted(true);
+		climberMotor2.setInverted(false);
+		
+		//Sets motor to brake mode
+		climberMotor1.setNeutralMode(NeutralMode.Brake);
+		climberMotor2.setNeutralMode(NeutralMode.Brake);
 	}
 
 	@Override
