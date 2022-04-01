@@ -206,9 +206,9 @@ public class RobotContainer {
     manipulatorDpadLeft.whenPressed(new RotateArmToScoring2(arm));
 
     // manipulatorDpadLeft.whenPressed(new DriveStraight(swerveDrive, .2, -90)); // testing
-    manipulatorDpadUp.whenHeld(new InstantCommand(() -> climberRotator.rotateMotor()));
+    manipulatorDpadUp.whenHeld(new InstantCommand(() -> climberRotator.rotateMotor(), climberRotator));
     manipulatorDpadUp.whenReleased(new InstantCommand(() -> climberRotator.stopMotor()));
-    manipulatorDpadDown.whenHeld(new InstantCommand(() -> climberRotator.backDriveMotor()));
+    manipulatorDpadDown.whenHeld(new InstantCommand(() -> climberRotator.backDriveMotor(), climberRotator));
     manipulatorDpadDown.whenReleased(new InstantCommand(() -> climberRotator.stopMotor()));
     // manipulatorButtonA.whenPressed(climbSequencePart1);
     // manipulatorButtonB.whenPressed(climbSequencePart2);
