@@ -13,15 +13,14 @@ import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ClimberConstants;
-import frc.robot.preferences.RobotPreferencesLayout;
-import frc.robot.preferences.RobotPreferencesValue;
 import frc.robot.preferences.RobotPreferences.BooleanValue;
 import frc.robot.preferences.RobotPreferences.DoubleValue;
+import frc.robot.preferences.RobotPreferencesLayout;
+import frc.robot.preferences.RobotPreferencesValue;
 
 @RobotPreferencesLayout(groupName = "ClimberModule", column = 6, row = 0, width = 2, height = 3, type = "Grid Layout")
 public class ClimberRotator extends SubsystemBase {

@@ -7,6 +7,7 @@ package frc.robot.subsystems;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import com.kauailabs.navx.frc.AHRS;
 
 import edu.wpi.first.math.MathUtil;
@@ -27,27 +28,13 @@ import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
-import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
-import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
+import frc.robot.commands.CharacterizeSwerveDrive;
 import frc.robot.preferences.RobotPreferences.BooleanValue;
 import frc.robot.preferences.RobotPreferences.DoubleValue;
-import frc.robot.utilities.ShuffleboardUtils;
-import frc.robot.Autonomous;
-import frc.robot.RobotContainer;
-import frc.robot.commands.AutoClaw;
-import frc.robot.commands.CharacterizeArm;
-import frc.robot.commands.CharacterizeSwerveDrive;
-import frc.robot.commands.CommandUtils;
-import frc.robot.commands.DriveStraightDistance;
-import frc.robot.commands.ResetSubsystems;
-import frc.robot.commands.RotateArmToResting;
-import frc.robot.commands.RotateArmToScoring;
-import frc.robot.commands.RotateArmToStowed;
 import frc.robot.preferences.RobotPreferencesLayout;
 import frc.robot.preferences.RobotPreferencesValue;
+import frc.robot.utilities.ShuffleboardUtils;
 
 @RobotPreferencesLayout(groupName = "SwerveDrive", column = 0, row = 0, width = 2, height = 3, type = "Grid Layout")
 public class SwerveDrive extends SubsystemBase {
