@@ -28,8 +28,8 @@ import frc.robot.preferences.RobotPreferencesLayout;
 import frc.robot.preferences.RobotPreferencesValue;
 import frc.robot.preferences.RobotPreferences.DoubleValue;
 import frc.robot.utilities.ShuffleboardUtils;
-  @RobotPreferencesLayout(groupName = "SwerveModule", column = 2, row = 0, width = 2, height = 3, type = "Grid Layout")
 
+@RobotPreferencesLayout(groupName = "SwerveModule", column = 2, row = 0, width = 2, height = 3, type = "Grid Layout")
 public class SwerveModule extends SubsystemBase {
   @RobotPreferencesValue
   public static DoubleValue driveP = new DoubleValue("SwerveModule", "driveP", 1.0);
