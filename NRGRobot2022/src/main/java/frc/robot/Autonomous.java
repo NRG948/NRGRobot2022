@@ -50,6 +50,7 @@ public class Autonomous {
         TEST_DRIVE,
         RIGHT_TARMAC_TWO_BALLS,
         RIGHT_TARMAC_TWO_BALLS_FAST,
+        RIGHT_TARMAC_THREE_BALL,
         DOWN_TARMAC_TWO_BALLS,
         RIGHT_TARMAC_SHOOT_BACKUP,
         DOWN_TARMAC_SHOOT_BACKUP,
@@ -75,15 +76,19 @@ public class Autonomous {
 
     private static Translation2d ROBOT_FRONT_LEFT_LOCATION = new Translation2d(0.521, 0.432);
     private static Translation2d ROBOT_FRONT_RIGHT_LOCATION = new Translation2d(0.521, -0.432);
+    private static Translation2d ROBOT_THREE_BALL_TEST = new Translation2d(5.12, 1.887);
 
     private static Rotation2d TARMAC_DOWN_ORIENTATION = Rotation2d.fromDegrees(-21);
     private static Rotation2d TARMAC_RIGHT_ORIENTATION = Rotation2d.fromDegrees(69);
+    private static Rotation2d ROBOT_THREE_BALL_TEST_ORIENTATION = Rotation2d.fromDegrees(69);
 
     // Initial position for Tarmac right, right-side start.
     private static Translation2d RIGHT_TARMAC_RIGHT_START_LOCATION = new Translation2d(8.52, 3.04)
             .minus(ROBOT_FRONT_RIGHT_LOCATION.rotateBy(TARMAC_RIGHT_ORIENTATION));
     private static Pose2d RIGHT_TARMAC_RIGHT_START_POSE = new Pose2d(RIGHT_TARMAC_RIGHT_START_LOCATION,
             TARMAC_RIGHT_ORIENTATION);
+    private static Pose2d ROBOT_THREE_BALL = new Pose2d(ROBOT_THREE_BALL_TEST,
+            ROBOT_THREE_BALL_TEST_ORIENTATION);
     private static Translation2d RIGHT_TARMAC_RIGHT_WAYPOINT = new Translation2d(7.684, 1.662);
 
     private static Translation2d DOWN_TARMAC_LEFT_START_LOCATION = new Translation2d(7.651, 4.957)
@@ -163,8 +168,9 @@ public class Autonomous {
                         new WaitUntilCommand(() -> RobotContainer.arm.isAtScoringPosition()).withTimeout(0.5),
                         new AutoClaw(0.75, 1, RobotContainer.claw),
                         new RotateArmToStowed(RobotContainer.arm));
-            
-            case RIGHT_TARMAC_TWO_BALLS_FAST:
+            //
+
+            case RIGHT_TARMAC_THREE_BALL:
                 return new ResetSubsystems(RobotContainer.swerveDrive).andThen(
                         new InstantCommand(
                                 () -> RobotContainer.swerveDrive.resetOdometry(RIGHT_TARMAC_RIGHT_START_POSE)),
@@ -183,7 +189,33 @@ public class Autonomous {
                                 .alongWith(new RotateArmToScoring(RobotContainer.arm)),
                         new WaitUntilCommand(() -> RobotContainer.arm.isAtScoringPosition()).withTimeout(0.5),
                         new AutoClaw(0.75, 1, RobotContainer.claw),
-                        new RotateArmToStowed(RobotContainer.arm));
+                        new RotateArmToStowed(RobotContainer.arm),
+                        new WaitCommand(0.15), 
+                        new DriveStraightTo(RobotContainer.swerveDrive, 0.4, ROBOT_THREE_BALL),
+                        new WaitCommand(0.15),  
+                        new DriveStraightTo(RobotContainer.swerveDrive, 0.4, RIGHT_TARMAC_RIGHT_START_POSE));
+
+                        //
+                case RIGHT_TARMAC_TWO_BALLS_FAST:
+                        return new ResetSubsystems(RobotContainer.swerveDrive).andThen(
+                                new InstantCommand(
+                                        () -> RobotContainer.swerveDrive.resetOdometry(RIGHT_TARMAC_RIGHT_START_POSE)),
+                                new RotateArmToScoring(RobotContainer.arm),
+                                new WaitUntilCommand(() -> RobotContainer.arm.isAtScoringPosition()).withTimeout(0.5),
+                                new AutoClaw(0.75, 1, RobotContainer.claw),
+                                new RotateArmToStowed(RobotContainer.arm),
+                                new DriveStraightTo(RobotContainer.swerveDrive, 0.4, TARGET_RIGHT_POSE)
+                                        .alongWith(new WaitUntilCommand(
+                                                () -> RobotContainer.swerveDrive.getHeadingDegrees() <= 15.0)
+                                                        .andThen(new RotateArmToResting(RobotContainer.arm)
+                                                                .alongWith(new InstantCommand(() -> RobotContainer.claw.activateClaw(-1.0))))),
+                                new InstantCommand(() -> RobotContainer.claw.stopMotor()),
+                                new WaitCommand(0.5),
+                                new DriveStraightTo(RobotContainer.swerveDrive, 0.4, RIGHT_TARMAC_RIGHT_START_POSE)
+                                        .alongWith(new RotateArmToScoring(RobotContainer.arm)),
+                                new WaitUntilCommand(() -> RobotContainer.arm.isAtScoringPosition()).withTimeout(0.5),
+                                new AutoClaw(0.75, 1, RobotContainer.claw),
+                                new RotateArmToStowed(RobotContainer.arm));
 
             case DOWN_TARMAC_TWO_BALLS:
                 return new ResetSubsystems(RobotContainer.swerveDrive).andThen(
@@ -290,6 +322,7 @@ public class Autonomous {
 
         chooseAutoPath.addOption("Right Tarmac Two Balls", ChooseAutoPath.RIGHT_TARMAC_TWO_BALLS);
         chooseAutoPath.addOption("Right Tarmac Two Balls (Fast)", ChooseAutoPath.RIGHT_TARMAC_TWO_BALLS_FAST);
+        chooseAutoPath.addOption("Right Tarmac Three Ball", ChooseAutoPath.RIGHT_TARMAC_THREE_BALL);
         chooseAutoPath.addOption("Down Tarmac Two Balls", ChooseAutoPath.DOWN_TARMAC_TWO_BALLS);
         chooseAutoPath.addOption("Right Tarmac Shoot & Backup", ChooseAutoPath.RIGHT_TARMAC_SHOOT_BACKUP);
         chooseAutoPath.addOption("Down Tarmac Shoot & Backup", ChooseAutoPath.DOWN_TARMAC_SHOOT_BACKUP);
