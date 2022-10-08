@@ -74,13 +74,42 @@ public class Autonomous {
         }
     }
 
+    // Testing Positions for 3 ball -> 
+    private static Translation2d ROBOT_FRONT_FIRST_POINT = new Translation2d(8.269, 2.787);
+    private static Translation2d ROBOT_FRONT_SECOND_POINT = new Translation2d(7.606-0.40, 0.279-.39); //.279 changes 0.20 to 0.40 
+    private static Translation2d ROBOT_FRONT_THIRD_POINT = new Translation2d(7.864, 3.068);
+    private static Translation2d ROBOT_FRONT_FOURTH_POINT = new Translation2d(4.125, 1.887); 
+    private static Translation2d ROBOT_FRONT_FIFTH_POINT = new Translation2d(7.493, 3.383);
+
+
+    //rotations
+    private static Rotation2d TARMAC_FIRST_ORIENTATION = Rotation2d.fromDegrees(160);
+    private static Rotation2d TARMAC_SECOND_ORIENTATION = Rotation2d.fromDegrees(40); //changed from 40 to 43
+    private static Rotation2d TARMAC_THIRD_ORIENTATION = Rotation2d.fromDegrees(12.68); // changed degrees 
+    private static Rotation2d TARMAC_FOURTH_ORIENTATION = Rotation2d.fromDegrees(32.21); //changed to positive
+    private static Rotation2d TARMAC_FIFTH_ORIENTATION = Rotation2d.fromDegrees(-32.21);
+
+    //poses
+    private static Pose2d WAYPOINT_ONE = new Pose2d(ROBOT_FRONT_FIRST_POINT,
+            TARMAC_FIRST_ORIENTATION);
+    private static Pose2d WAYPOINT_TWO = new Pose2d(ROBOT_FRONT_SECOND_POINT,
+            TARMAC_SECOND_ORIENTATION);
+    private static Pose2d WAYPOINT_THREE = new Pose2d(ROBOT_FRONT_THIRD_POINT,
+            TARMAC_THIRD_ORIENTATION);
+    private static Pose2d WAYPOINT_FOUR = new Pose2d(ROBOT_FRONT_FOURTH_POINT,
+            TARMAC_FOURTH_ORIENTATION);
+    private static Pose2d WAYPOINT_FIVE = new Pose2d(ROBOT_FRONT_FIFTH_POINT,
+    TARMAC_FIFTH_ORIENTATION);
+
+
+    //
     private static Translation2d ROBOT_FRONT_LEFT_LOCATION = new Translation2d(0.521, 0.432);
     private static Translation2d ROBOT_FRONT_RIGHT_LOCATION = new Translation2d(0.521, -0.432);
     private static Translation2d ROBOT_THREE_BALL_TEST = new Translation2d(5.12, 1.887);
 
     private static Rotation2d TARMAC_DOWN_ORIENTATION = Rotation2d.fromDegrees(-21);
-    private static Rotation2d TARMAC_RIGHT_ORIENTATION = Rotation2d.fromDegrees(69);
-    private static Rotation2d ROBOT_THREE_BALL_TEST_ORIENTATION = Rotation2d.fromDegrees(69);
+    private static Rotation2d TARMAC_RIGHT_ORIENTATION = Rotation2d.fromDegrees(100);
+    private static Rotation2d ROBOT_THREE_BALL_TEST_ORIENTATION = Rotation2d.fromDegrees(240);
 
     // Initial position for Tarmac right, right-side start.
     private static Translation2d RIGHT_TARMAC_RIGHT_START_LOCATION = new Translation2d(8.52, 3.04)
@@ -97,10 +126,12 @@ public class Autonomous {
             TARMAC_DOWN_ORIENTATION);
 
     private static Translation2d TARGET_RIGHT_LOCATION = new Translation2d(7.583, 0.694);
-    private static Pose2d TARGET_RIGHT_POSE = new Pose2d(TARGET_RIGHT_LOCATION, Rotation2d.fromDegrees(-90 - 10));
+    private static Pose2d TARGET_RIGHT_POSE = new Pose2d(TARGET_RIGHT_LOCATION, Rotation2d.fromDegrees(-100));
 
     private static Translation2d TARGET_DOWN_LOCATION = new Translation2d(5.177, 6.105);
     private static Pose2d TARGET_DOWN_POSE = new Pose2d(TARGET_DOWN_LOCATION, Rotation2d.fromDegrees(159));
+
+
 
     /**
      * Use this to pass the autonomous command to the main {@link Robot} class.
@@ -178,22 +209,28 @@ public class Autonomous {
                         new WaitUntilCommand(() -> RobotContainer.arm.isAtScoringPosition()).withTimeout(0.5),
                         new AutoClaw(0.75, 1, RobotContainer.claw),
                         new RotateArmToStowed(RobotContainer.arm),
-                        new DriveStraightTo(RobotContainer.swerveDrive, 0.4, TARGET_RIGHT_POSE)
+                        new DriveStraightTo(RobotContainer.swerveDrive, 0.4, WAYPOINT_TWO)
                                 .alongWith(new WaitUntilCommand(
-                                        () -> RobotContainer.swerveDrive.getHeadingDegrees() <= 15.0)
+                                        () -> RobotContainer.swerveDrive.getHeadingDegrees() >= 120.0)
                                                 .andThen(new RotateArmToResting(RobotContainer.arm)
                                                         .alongWith(new InstantCommand(() -> RobotContainer.claw.activateClaw(-1.0))))),
                         new InstantCommand(() -> RobotContainer.claw.stopMotor()),
                         new WaitCommand(0.5),
-                        new DriveStraightTo(RobotContainer.swerveDrive, 0.4, RIGHT_TARMAC_RIGHT_START_POSE)
+                        new DriveStraightTo(RobotContainer.swerveDrive, 0.4, WAYPOINT_THREE)
                                 .alongWith(new RotateArmToScoring(RobotContainer.arm)),
                         new WaitUntilCommand(() -> RobotContainer.arm.isAtScoringPosition()).withTimeout(0.5),
                         new AutoClaw(0.75, 1, RobotContainer.claw),
                         new RotateArmToStowed(RobotContainer.arm),
-                        new WaitCommand(0.15), 
-                        new DriveStraightTo(RobotContainer.swerveDrive, 0.4, ROBOT_THREE_BALL),
+                        new DriveStraightTo(RobotContainer.swerveDrive, 0.4, WAYPOINT_FOUR)
+                                .alongWith(new WaitUntilCommand(
+                                        () -> RobotContainer.swerveDrive.getHeadingDegrees() >= 120.0)
+                                                .andThen(new RotateArmToResting(RobotContainer.arm)
+                                                        .alongWith(new InstantCommand(() -> RobotContainer.claw.activateClaw(-1.0))))),
                         new WaitCommand(0.15),  
-                        new DriveStraightTo(RobotContainer.swerveDrive, 0.4, RIGHT_TARMAC_RIGHT_START_POSE));
+                        new RotateArmToScoring(RobotContainer.arm),
+                        new DriveStraightTo(RobotContainer.swerveDrive, 0.4, WAYPOINT_FIVE)
+                                .andThen()
+                                );
 
                         //
                 case RIGHT_TARMAC_TWO_BALLS_FAST:
@@ -211,7 +248,7 @@ public class Autonomous {
                                                                 .alongWith(new InstantCommand(() -> RobotContainer.claw.activateClaw(-1.0))))),
                                 new InstantCommand(() -> RobotContainer.claw.stopMotor()),
                                 new WaitCommand(0.5),
-                                new DriveStraightTo(RobotContainer.swerveDrive, 0.4, RIGHT_TARMAC_RIGHT_START_POSE)
+                                new DriveStraightTo(RobotContainer.swerveDrive, 0.3, RIGHT_TARMAC_RIGHT_START_POSE)
                                         .alongWith(new RotateArmToScoring(RobotContainer.arm)),
                                 new WaitUntilCommand(() -> RobotContainer.arm.isAtScoringPosition()).withTimeout(0.5),
                                 new AutoClaw(0.75, 1, RobotContainer.claw),
@@ -267,17 +304,21 @@ public class Autonomous {
                         new RotateArmToScoring(RobotContainer.arm),
                         new WaitUntilCommand(() -> RobotContainer.arm.isAtScoringPosition()).withTimeout(0.5),
                         new AutoClaw(1.0, 1, RobotContainer.claw),
-                        new RotateArmToStowed(RobotContainer.arm),
-                        CommandUtils.newFollowWaypointsCommand(RobotContainer.swerveDrive,
-                                DOWN_TARMAC_LEFT_START_POSE,
-                                List.of(new Translation2d(5.919, 5.362)),
-                                TARGET_DOWN_POSE,
-                                true),
-                        new InstantCommand(() -> RobotContainer.swerveDrive.stopMotors()));
+                        new RotateArmToStowed(RobotContainer.arm)
+                       // CommandUtils.newFollowWaypointsCommand(RobotContainer.swerveDrive,
+                                // DOWN_TARMAC_LEFT_START_POSE,
+                                // List.of(new Translation2d(5.919, 5.362)),
+                                // TARGET_DOWN_POSE,
+                                // true),
+                                .andThen(new DriveStraightDistance(RobotContainer.swerveDrive, 0.33, -180, 1.5)), //reversed sign for -180
+
+
+                        new InstantCommand(() -> RobotContainer.swerveDrive.stopMotors()
+                        ));
 
             case DOWN_TARMAC_DRIVE_BACKWARDS:
                 return new ResetSubsystems(RobotContainer.swerveDrive)
-                        .andThen(new DriveStraightDistance(RobotContainer.swerveDrive, 0.33, -180, 1));
+                        .andThen(new DriveStraightDistance(RobotContainer.swerveDrive, 0.33, 180, 3)); //reversed sign for 180 and changed distance to 3 from 1.5
 
             case RIGHT_TARMAC_DRIVE_BACKWARDS:
                 return new ResetSubsystems(RobotContainer.swerveDrive)
