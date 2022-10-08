@@ -14,6 +14,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.POVButton;
+import frc.robot.commands.AutoClaw;
 import frc.robot.commands.DriveWithController;
 import frc.robot.commands.ManualClaw;
 import frc.robot.commands.ManualClimber;
@@ -202,6 +203,7 @@ public class RobotContainer {
     manipulatorStartButton.whenPressed(new ManualClimber(climberRotator, manipulatorController));
     manipulatorDpadRight.whenPressed(new RotateArmToStowed(arm));
     manipulatorDpadLeft.whenPressed(new RotateArmToScoring2(arm));
+    manipulatorButtonA.whenPressed(new RotateArmToStowed(arm).andThen(new AutoClaw(0.5, 1.0, claw), new RotateArmToResting(arm)));
 
     // manipulatorDpadLeft.whenPressed(new DriveStraight(swerveDrive, .2, -90)); // testing
     manipulatorDpadUp.whenHeld(new InstantCommand(() -> climberRotator.rotateMotor(), climberRotator));
