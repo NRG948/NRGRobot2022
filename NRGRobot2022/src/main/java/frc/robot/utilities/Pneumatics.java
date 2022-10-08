@@ -11,6 +11,7 @@ import frc.robot.preferences.RobotPreferences;
 public class Pneumatics {
 
     public static PneumaticsModuleType getModuleType() {
-        return RobotPreferences.practiceBot.getValue() ? PneumaticsModuleType.CTREPCM : PneumaticsModuleType.REVPH;
+        //return RobotPreferences.practiceBot.getValue() ? PneumaticsModuleType.CTREPCM : PneumaticsModuleType.REVPH;
+        return PneumaticsModuleType.CTREPCM;
     }
 }
