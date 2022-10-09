@@ -203,7 +203,7 @@ public class RobotContainer {
     manipulatorStartButton.whenPressed(new ManualClimber(climberRotator, manipulatorController));
     manipulatorDpadRight.whenPressed(new RotateArmToStowed(arm));
     manipulatorDpadLeft.whenPressed(new RotateArmToScoring2(arm));
-    manipulatorButtonA.whenPressed(new RotateArmToStowed(arm).andThen(new AutoClaw(0.5, 1.0, claw), new RotateArmToResting(arm)));
+    manipulatorButtonA.whenPressed(new RotateArmToScoring2(arm).andThen(new AutoClaw(0.5, 1.0, claw), new RotateArmToResting(RobotContainer.arm))); // previous argument was arm.
 
     // manipulatorDpadLeft.whenPressed(new DriveStraight(swerveDrive, .2, -90)); // testing
     manipulatorDpadUp.whenHeld(new InstantCommand(() -> climberRotator.rotateMotor(), climberRotator));
