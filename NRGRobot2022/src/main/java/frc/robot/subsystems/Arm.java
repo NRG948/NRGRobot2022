@@ -31,7 +31,7 @@ public class Arm extends ProfiledPIDSubsystem {
     @RobotPreferencesValue
     public static final DoubleValue scoringAngle = new DoubleValue("Arm", "scoringAngle", 87);
     @RobotPreferencesValue
-    public static final DoubleValue scoringAngle2 = new DoubleValue("Arm", "scoringAngleTwo", 67);
+    public static final DoubleValue scoringAngle2 = new DoubleValue("Arm", "scoringAngleTwo", 50); //changed 67 to 50
     @RobotPreferencesValue
     public static final DoubleValue restingAngle = new DoubleValue("Arm", "restingAngle", -20);
     @RobotPreferencesValue
