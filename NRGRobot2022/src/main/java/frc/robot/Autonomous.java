@@ -74,7 +74,6 @@ public class Autonomous {
             return delay;
         }
     }
-    //
 
     // Testing Positions for 3 ball -> 
     private static Translation2d ROBOT_FRONT_FIRST_POINT = new Translation2d(8.269, 2.787);
@@ -134,6 +133,28 @@ public class Autonomous {
     private static Pose2d TARGET_DOWN_POSE = new Pose2d(TARGET_DOWN_LOCATION, Rotation2d.fromDegrees(159));
 
 
+
+
+    /* Right tarmac three balls version 2 variables
+    * Changes made by Ethan, Antonia, Sai, Reshma, Flora, Nikita, Andy, and Patrick on 10/22/22
+    */
+    private static Translation2d RIGHT_TARMAC_THREE_BALLS_VERSION_2_START_POINT = new Translation2d(7.921, 3.181);
+    private static Translation2d RIGHT_TARMAC_THREE_BALLS_VERSION_2_FIRST_POINT = new Translation2d(5.413, 2.033);
+    private static Translation2d RIGHT_TARMAC_THREE_BALLS_VERSION_2_SECOND_POINT = new Translation2d(7.347, 0.403);
+    private static Translation2d RIGHT_TARMAC_THREE_BALLS_VERSION_2_THIRD_POINT = new Translation2d(8.089, 3.124);
+
+    // Declaring rotations dummy rotations
+    private static Rotation2d RIGHT_TARMAC_THREE_BALLS_VERSION_2_TARMAC_STARTING_ORIENTATION = Rotation2d.fromDegrees(180);
+    private static Rotation2d RIGHT_TARMAC_THREE_BALLS_VERSION_2_TARMAC_FIRST_ORIENTATION = Rotation2d.fromDegrees(180);
+    private static Rotation2d RIGHT_TARMAC_THREE_BALLS_VERSION_2_TARMAC_SECOND_ORIENTATION = Rotation2d.fromDegrees(180);
+    private static Rotation2d RIGHT_TARMAC_THREE_BALLS_VERSION_2_TARMAC_THIRD_ORIENTATION = Rotation2d.fromDegrees(180);
+
+    // Declaring Poses
+    private static Pose2d RIGHT_TARMAC_THREE_BALLS_VERSION_2_STARTPOSE = new Pose2d(RIGHT_TARMAC_THREE_BALLS_VERSION_2_START_POINT, RIGHT_TARMAC_THREE_BALLS_VERSION_2_TARMAC_STARTING_ORIENTATION);
+    private static Pose2d RIGHT_TARMAC_THREE_BALLS_VERSION_2_POSE1 = new Pose2d(RIGHT_TARMAC_THREE_BALLS_VERSION_2_FIRST_POINT, RIGHT_TARMAC_THREE_BALLS_VERSION_2_TARMAC_FIRST_ORIENTATION);
+    private static Pose2d RIGHT_TARMAC_THREE_BALLS_VERSION_2_POSE2 = new Pose2d(RIGHT_TARMAC_THREE_BALLS_VERSION_2_SECOND_POINT, RIGHT_TARMAC_THREE_BALLS_VERSION_2_TARMAC_SECOND_ORIENTATION);
+    private static Pose2d RIGHT_TARMAC_THREE_BALLS_VERSION_2_POSE3 = new Pose2d(RIGHT_TARMAC_THREE_BALLS_VERSION_2_THIRD_POINT, RIGHT_TARMAC_THREE_BALLS_VERSION_2_TARMAC_THIRD_ORIENTATION);
+  
 
     /**
      * Use this to pass the autonomous command to the main {@link Robot} class.
@@ -299,6 +320,59 @@ public class Autonomous {
                                 true),
                         new InstantCommand(() -> RobotContainer.swerveDrive.stopMotors()));
 
+         
+            /* RIGHT TARMAC THREE BALL CODE
+            * This automonous code is a work in process
+            * The goal of this autonomous code is to start at the right tarmac,
+            * drop off the first ball
+            * collect the two balls on the right side of the field
+            * drive back to the hub and score them both
+            */
+            case RIGHT_TARMAC_THREE_BALLS_VERSION_2:
+                //reseting swerve drive
+                return new ResetSubsystems(RobotContainer.swerveDrive).andThen(
+                new InstantCommand(
+                        //Resetting odometry
+                        () -> RobotContainer.swerveDrive.resetOdometry(RIGHT_TARMAC_THREE_BALLS_VERSION_2_STARTPOSE)),
+                // Moving arm up
+                new RotateArmToScoring(RobotContainer.arm),
+                // Waiting till command finishes
+                new WaitUntilCommand(() -> RobotContainer.arm.isAtScoringPosition()).withTimeout(0.5),
+                // Outake cargo
+                new AutoClaw(0.75, 1, RobotContainer.claw),
+                // Rotate arm down
+                new RotateArmToStowed(RobotContainer.arm),
+                // Going to first point (first cargo)
+                // Swerve drive to pose 1
+                new DriveStraightTo(RobotContainer.swerveDrive, 0.4, RIGHT_TARMAC_THREE_BALLS_VERSION_2_POSE1)
+                        // Waiting robot gets to RIGHT_TARMAC_THREE_BALLS_VERSION_2_POSE1
+                        .alongWith(new WaitUntilCommand(
+                        () -> RobotContainer.swerveDrive.getHeadingDegrees() <= 180.0)
+                                // Move arm down
+                                .andThen(new RotateArmToResting(RobotContainer.arm))
+                                // Intake cargo
+                                .andThen(() -> RobotContainer.claw.activateClaw(-1))),
+                //Stop motor
+                new InstantCommand(() -> RobotContainer.claw.stopMotor()),
+                //Swerve drive to Pose 2
+                new DriveStraightTo(RobotContainer.swerveDrive, 0.4, RIGHT_TARMAC_THREE_BALLS_VERSION_2_POSE2)
+                //Wait until claw is down and at pose 2
+                        .alongWith(new WaitUntilCommand(
+                        () -> RobotContainer.swerveDrive.getHeadingDegrees() <= 180.0)
+                                //activate claw
+                                .andThen(() -> RobotContainer.claw.activateClaw(-1))),
+                //Stop motor
+                new InstantCommand(() -> RobotContainer.claw.stopMotor()),
+                //Drive to hub
+                new DriveStraightTo(RobotContainer.swerveDrive, 0.4, RIGHT_TARMAC_THREE_BALLS_VERSION_2_POSE3)
+                // Raise arm
+                        .alongWith(new RotateArmToScoring(RobotContainer.arm)),
+                // Wait until arm is at scoring position
+                new WaitUntilCommand(() -> RobotContainer.arm.isAtScoringPosition()).withTimeout(0.5),
+                // Outake, end of auto
+                new AutoClaw(0.75, 1, RobotContainer.claw));
+
+           
             case DOWN_TARMAC_SHOOT_BACKUP:
                 return new ResetSubsystems(RobotContainer.swerveDrive).andThen(
                         new InstantCommand(
