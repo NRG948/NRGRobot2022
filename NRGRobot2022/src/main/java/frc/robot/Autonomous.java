@@ -55,7 +55,8 @@ public class Autonomous {
         RIGHT_TARMAC_SHOOT_BACKUP,
         DOWN_TARMAC_SHOOT_BACKUP,
         DOWN_TARMAC_DRIVE_BACKWARDS,
-        RIGHT_TARMAC_DRIVE_BACKWARDS
+        RIGHT_TARMAC_DRIVE_BACKWARDS,
+        RIGHT_TARMAC_THREE_BALLS_VERSION_2
     }
 
     private static enum ChooseAutoDelay {
@@ -231,8 +232,7 @@ public class Autonomous {
                         new DriveStraightTo(RobotContainer.swerveDrive, 0.4, WAYPOINT_FIVE)
                                 .andThen()
                                 );
-
-                        //
+                        
                 case RIGHT_TARMAC_TWO_BALLS_FAST:
                         return new ResetSubsystems(RobotContainer.swerveDrive).andThen(
                                 new InstantCommand(
@@ -281,6 +281,7 @@ public class Autonomous {
                         new WaitUntilCommand(() -> RobotContainer.arm.isAtScoringPosition()).withTimeout(0.5),
                         new AutoClaw(0.75, 1, RobotContainer.claw),
                         new RotateArmToStowed(RobotContainer.arm));
+
 
             case RIGHT_TARMAC_SHOOT_BACKUP:
                 return new ResetSubsystems(RobotContainer.swerveDrive).andThen(
